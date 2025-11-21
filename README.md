@@ -9,7 +9,7 @@ City Puzzle 是一款以「重建世界城市」為主題的互動式解謎遊�
 
 本專案使用 Flask + HTML + CSS + JavaScript 製作
 可互動的網頁遊戲原型，並採用模組化架構便於多人協作與系統擴充。
-⸻
+
 
 ## 專案目的（Project Goals）
 	•	呈現城市從「破壞 → 重建」的視覺轉換體驗
@@ -18,7 +18,7 @@ City Puzzle 是一款以「重建世界城市」為主題的互動式解謎遊�
 	•	透過 Flask 建立後端 API（城市狀態、拼圖狀態、玩家進度）
 	•	建立一個乾淨、模組化、易於合作與維護的專案架構
 
-⸻
+
 
 ## 遊戲核心玩法（Game Mechanism）
 	1.	收集拼圖碎片
@@ -33,18 +33,17 @@ City Puzzle 是一款以「重建世界城市」為主題的互動式解謎遊�
     全部國家恢復後遊戲結束，顯示全球重建成功的畫面。
     6.  累積分數排名
     玩家累積遊戲點數，可進入排行榜比拼。
-⸻
 
 ## 遊戲角色（International Rescue Squad）
 
 本遊戲內有一支救援小隊：
 	年齡層：1 位 40 歲隊長 + 3 位 20 歲隊員 + 2 位 戰地記者
     不同角色頭貼供玩家選擇
-⸻
-
-📁 專案架構（Project Structure）
 
 
+## 專案架構（Project Structure）
+
+```bash
 CITY_PUZZLE/
 │── app.py                  # Flask 主程式
 │── README.md               # 專案說明文件
@@ -66,20 +65,20 @@ CITY_PUZZLE/
 │       ├── city_ruin/      # 城市破敗狀態圖片
 │       ├── city_alive/     # 城市復興後彩色圖片
 │       └── ui/             # 介面素材（按鈕、Icon、Logo）
-...
+```
 
 
 
 
 
 
-## 📦 技術使用
+##  技術使用
 
 - Python 3.10
 - Flask
 - HTML / CSS / JavaScript（前端遊戲視覺與互動）
 
-## 🚀 如何啟動專案
+##  如何啟動專案
 
 1. 建立虛擬環境：
 ```bash
