@@ -19,7 +19,7 @@ body, html {
     align-items: center;
 
     /* 使用您上傳的圖片作為背景 */
-    background-image: url('首頁.jpg'); 
+    background-image: url('../picture/首頁.jpg'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

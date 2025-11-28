@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>貪吃蛇</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='game3.css') }}">
+ <link rel="stylesheet" href="../static/css/game3.css">
 </head>
 <body>
     <div class="game-wrapper">
-        <button class="home-button" onclick="window.location.href='{{ url_for('home') }}'">🏠 回首頁</button>
-        
+        <button id="home-button" class="home-button">🏠 回到首頁</button>        
         <header>
             <h1>經典貪吃蛇</h1>
             <div class="score-display">
@@ -27,6 +26,6 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='game3.js') }}"></script>
+    <script src="../static/js/game3.js"></script>
 </body>
 </html>
