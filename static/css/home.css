@@ -1,0 +1,144 @@
+/* 設定整個頁面和遊戲容器的基礎樣式 */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden; /* 防止滾動條出現 */
+}
+
+.game-container {
+    height: 100vh; /* 視窗高度 */
+    width: 100vw;  /* 視窗寬度 */
+    position: relative;
+    background-color: #000; /* 背景顏色，防止圖片加載前出現空白 */
+    /* 使用您上傳的圖片作為背景 */
+    background-image: url('../picture/首頁.jpg'); 
+    background-size: cover; /* 確保圖片覆蓋整個容器 */
+    background-position: center; /* 圖片中心對齊 */
+    background-repeat: no-repeat;
+    /* 加入一個半透明的深色覆蓋，讓文字更清晰 */
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4); 
+}
+
+/* --- 頂部和底部區塊定位 --- */
+
+/* 頂部 header (左上和右上) */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between; /* 將元素分開到兩側 */
+    align-items: flex-start;
+    z-index: 10; /* 確保在其他元素之上 */
+}
+
+/* 底部 footer (左下和右下) */
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between; /* 將元素分開到兩側 */
+    align-items: flex-end;
+    z-index: 10;
+}
+
+/* --- 左上角: 角色資訊樣式 --- */
+
+.player-info {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.avatar-container {
+    width: 60px;
+    height: 60px;
+    margin-right: 15px;
+    border: 3px solid gold; /* 頭貼邊框 */
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#player-score {
+    font-size: 0.9em;
+    color: #ffd700; /* 金色文字 */
+    margin-top: 3px;
+}
+
+
+/* --- 按鈕通用樣式 --- */
+
+.top-right-button,
+.bottom-left-button,
+.bottom-right-button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 2px black;
+    /* 確保按鈕不會因為背景圖過亮而難以辨識 */
+    min-width: 150px; 
+    text-align: center;
+}
+
+/* 右上角: 積分排名按鈕 */
+.top-right-button {
+    background-color: rgba(255, 69, 0, 0.8); /* 橘紅色 */
+    border: 2px solid white;
+}
+.top-right-button:hover {
+    background-color: rgba(255, 69, 0, 1);
+    transform: translateY(-2px);
+}
+
+/* 左下角: 繼續挑戰按鈕 */
+.bottom-left-button {
+    background-color: rgba(0, 128, 0, 0.8); /* 綠色 */
+    border: 2px solid white;
+}
+.bottom-left-button:hover {
+    background-color: rgba(0, 128, 0, 1);
+    transform: translateY(-2px);
+}
+
+/* 右下角: 選擇遊戲按鈕 */
+.bottom-right-button {
+    background-color: rgba(0, 100, 255, 0.8); /* 藍色 */
+    border: 2px solid white;
+}
+.bottom-right-button:hover {
+    background-color: rgba(0, 100, 255, 1);
+    transform: translateY(-2px);
+}
