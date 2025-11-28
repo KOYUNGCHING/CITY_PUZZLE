@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Puzzle - Story</title>
+
+    <!-- 引入 Google Fonts: Zen Kurenaido (手寫風格) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            /* 黑色背景：確保圖片載入失敗時文字可見 */
+            background-color: #000;
+            
+            /* 背景圖片路徑 */
+            background-image: url("{{ url_for('static', filename='../static/img/base_map/story_page.jpg') }}");
+            
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            overflow: hidden;
+            
+            /* 修改字體設定：
+               1. 'Zen Kurenaido': Google 手寫風字體
+               2. 'KaiTi', 'STKaiti': 標楷體 (Windows/Mac 內建書法字)
+               3. 'Microsoft JhengHei': 微軟正黑體 (最後的保險)
+            */
+            font-family: 'Zen Kurenaido', 'KaiTi', 'STKaiti', "Microsoft JhengHei", sans-serif;
+        }
+
+        .story-content {
+            position: absolute;
+            width: 70%;
+            left: 15%;
+            text-align: center;
+            color: #f0f0f0;
+            font-size: 1.8rem; /* 字體稍微加大一點，手寫字大一點比較好看 */
+            line-height: 2.2;
+            text-shadow: 2px 2px 8px #000;
+            font-weight: bold;
+            letter-spacing: 2px; /* 增加字距，增加孤獨感 */
+            
+            /* 動畫設定 */
+            top: 100vh; 
+            animation: scrollText 50s linear forwards; 
+        }
+
+        @keyframes scrollText {
+            0% { top: 100vh; }
+            100% { top: -200%; } 
+        }
+
+        .skip-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 150px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 100;
+        }
+        .skip-btn:hover { transform: scale(1.1); }
+        
+        /* 特別強調標題 */
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="story-content">
+        <h1>空白降臨 (The Blankfall)</h1>
+        <p>
+            公元 2048 年，一場被稱為 「空白降臨」 的全球性異常事件降臨地球。<br>
+            那天所有國家同時回報：城市的色彩正在消退，建築表面像被抽走生命力般退化為灰色，街道、森林、河川全都失去了光澤。<br>
+            不只是景象變得荒蕪，人們的記憶也開始斷裂，仿佛整個世界被分割成一片又一片破碎的拼圖。<br>
+            聯合國緊急召開最後一次全球通訊會議，一位瀕死的科學家給出驚人的說法── <br>
+            世界的資訊結構正在崩毀，地球正被一股未知力量重新「重組」。<br>
+            <br>
+            所有文明記錄、歷史資訊、文化記憶正在被「拆解」成碎片。<br>
+            為了反擊這場毀滅，人類組成了一支跨國菁英隊伍── 重連小隊（Re-Link Squad）。<br>
+            <br>
+            玩家手中的每一片拼圖，不只是道具， 而是地球得以延續文明的最後希望。<br>
+            拯救世界的旅程， 從拼回第一塊碎片開始──<br>
+            <br>
+            <strong>City Puzzle，世界由你重新連結。</strong>
+        </p>
+    </div>
+
+    <!-- 按鈕圖片 -->
+    <a href="/login">
+        <img src="{{ url_for('static', filename='img/button/SKIP.png') }}" class="skip-btn" alt="SKIP">
+    </a>
+</body>
+</html>
