@@ -1,0 +1,123 @@
+/* 設定整個頁面和容器的基礎樣式 */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    overflow: auto; /* 允許排名過長時滾動 */
+}
+
+.ranking-container {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* 使用您上傳的圖片作為背景 */
+    background-image: url('首頁.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* 關鍵：將背景顏色淡化 */
+    background-color: rgba(255, 255, 255, 0.7); /* 白色半透明覆蓋 */
+    background-blend-mode: overlay; /* 讓背景圖與顏色混合 */
+}
+
+/* --- 回首頁按鈕樣式 --- */
+.home-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: white;
+    background-color: rgba(200, 50, 50, 0.9); /* 紅色系 */
+    border: 2px solid white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+.home-button:hover {
+    background-color: rgba(255, 60, 60, 1);
+    transform: translateY(-1px);
+}
+
+/* --- 標題樣式 --- */
+.ranking-title {
+    color: #333;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+    margin-bottom: 30px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+}
+
+/* --- 排名表格樣式 --- */
+#ranking-table {
+    width: 80%;
+    max-width: 900px;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.9); /* 表格底色 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#ranking-table th, #ranking-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#ranking-table thead th {
+    background-color: #4CAF50; /* 表頭顏色 */
+    color: white;
+    font-size: 1.1em;
+}
+
+/* 數據行樣式 */
+#ranking-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+#ranking-table tbody tr:hover {
+    background-color: #e0f7fa;
+    cursor: default;
+}
+
+/* 前三名特別樣式 */
+#ranking-table tbody tr:nth-child(1) td {
+    background-color: #ffd700; /* 金色 */
+    font-weight: bold;
+}
+#ranking-table tbody tr:nth-child(2) td {
+    background-color: #c0c0c0; /* 銀色 */
+    font-weight: bold;
+}
+#ranking-table tbody tr:nth-child(3) td {
+    background-color: #cd7f32; /* 銅色 */
+    font-weight: bold;
+}
+
+/* 名次欄位縮窄 */
+#ranking-table th:nth-child(1), #ranking-table td:nth-child(1) {
+    width: 10%;
+    font-size: 1.2em;
+}
+
+/* 載入提示 */
+#loading-message {
+    margin-top: 50px;
+    font-size: 1.5em;
+    color: #555;
+    font-weight: bold;
+}
