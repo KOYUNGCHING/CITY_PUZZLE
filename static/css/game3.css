@@ -1,22 +1,47 @@
+/*
+ * 修正後的貪吃蛇遊戲樣式 (支援滿視窗, 滾動與背景圖)
+ */
+
 body, html {
     margin: 0;
     padding: 0;
-    height: 100%;
-    background-color: #2c3e50; /* 深藍色背景 */
-    color: white;
+    height: 100%; 
+    width: 100%;
+    
+    /* --- 應用背景圖片和淡化效果 --- */
+    background-image: url('../picture/首頁.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* 關鍵：使用淺色背景與 overlay 模式混合，實現圖片淡化 */
+    background-color: rgba(255, 255, 255, 0.7); 
+    background-blend-mode: overlay;
+    
+    /* 將預設文字顏色改為深色，以對應淡化後的淺色背景 */
+    color: #333; 
+    
     font-family: 'Arial', sans-serif;
+    
     display: flex;
     justify-content: center;
     align-items: center;
+    
+    overflow: auto; 
 }
 
 .game-wrapper {
-    background-color: #34495e;
+    /* 保持遊戲容器為深色，確保與淡化背景形成強烈對比 */
+    background-image: url('../picture/首頁.jpg');  
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
     text-align: center;
     position: relative;
+    display: block; 
+    
+    /* 確保容器內的文字是白色，與深色背景對比 */
+    color: white; 
 }
 
 /* 回首頁按鈕 */
@@ -32,6 +57,7 @@ body, html {
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s;
+    z-index: 20; 
 }
 .home-button:hover {
     background-color: #c0392b;
@@ -47,27 +73,31 @@ header h1 {
     justify-content: space-around;
     margin-bottom: 15px;
     font-size: 1.1em;
+    /* 確保分數文字清晰 */
+    color: white; 
 }
 
 /* 遊戲畫布 */
 #game-canvas {
-    border: 5px solid #2ecc71; /* 綠色邊框 */
-    background-color: #ecf0f1; /* 淺灰色畫布背景 */
-    display: block; /* 移除 canvas 下方的空白 */
+    border: 5px solid #2ecc71; 
+    background-color: #ecf0f1; 
+    display: block; 
 }
 
 /* 遊戲覆蓋層 (開始/遊戲結束) */
 #game-overlay {
     position: absolute;
-    top: 50%;
+    top: 50%; 
     left: 50%;
     transform: translate(-50%, -50%);
+    
     background-color: rgba(0, 0, 0, 0.85);
     padding: 30px 40px;
     border-radius: 10px;
     color: white;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
     transition: opacity 0.5s;
+    z-index: 10;
 }
 
 #overlay-title {
