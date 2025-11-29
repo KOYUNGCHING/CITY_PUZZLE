@@ -192,3 +192,38 @@ function dirToDelta(dir) {
     case "right": return { dx: 1, dy: 0 }; // 往右 x 加 1
   }
 }
+
+// === 玩家相關 ===
+function updatePlayer() {
+  if (!player) return; // 如果玩家死了，就不更新
+
+  // 先依照按鍵更新方向（只改方向，不一定會移動）
+  if (keys.ArrowUp) player.dir = "up";
+  else if (keys.ArrowDown) player.dir = "down";
+  else if (keys.ArrowLeft) player.dir = "left";
+  else if (keys.ArrowRight) player.dir = "right";
+
+  // 再處理移動（用 PLAYER_MOVE_DELAY 控制靈敏度）
+  if (player.moveCooldown > 0) {
+    player.moveCooldown--;       // 再等一點時間才可以移動
+  } else {
+    // 若有任何方向鍵被按住，就嘗試往當前方向移動一格
+    if (keys.ArrowUp || keys.ArrowDown || keys.ArrowLeft || keys.ArrowRight) {
+      const { dx, dy } = dirToDelta(player.dir); // 取得方向對應的位移
+      const nx = player.x + dx;                  // 計算下一格的 x
+      const ny = player.y + dy;                  // 計算下一格的 y
+      if (canTankMoveTo(nx, ny)) {               // 如果可以走就更新位置
+        player.x = nx;
+        player.y = ny;
+      }
+      player.moveCooldown = PLAYER_MOVE_DELAY;   // 重設移動冷卻時間
+    }
+  }
+
+  // 射擊邏輯
+  if (player.fireCooldown > 0) player.fireCooldown--;   // 冷卻時間減一
+  if (keys.Space && player.fireCooldown <= 0) {         // 若按住空白鍵且冷卻結束
+    fireBullet(player);                                 // 發射子彈
+    player.fireCooldown = 12;                           // 設定下一次可射擊的延遲
+  }
+}
