@@ -1,15 +1,11 @@
-// === 基本設定 ===
-const TILE_SIZE = 32;
-const COLS = 15;
-const ROWS = 15;
-
-// 遊戲名稱
-const GAME_TITLE = "Neon Tank Survival";
+const TILE_SIZE = 32;          // 每一格地圖的像素大小（32x32）
+const COLS = 15;               // 地圖有多少欄（x 方向）
+const ROWS = 15;               // 地圖有多少列（y 方向）
 
 // ★ 控制玩家移動延遲（數字越小越靈敏）
-const PLAYER_MOVE_DELAY = 3;  // 可改 2 或 1 更快
+const PLAYER_MOVE_DELAY = 3;   // 玩家每移動一次之間要等待的 frame 數（越小移動越快）
 
-// === 多關卡地圖 ===
+// 地圖 
 // 符號說明：
 // B = 磚牆（可打掉）
 // S = 鋼牆（不可破壞）
@@ -21,7 +17,7 @@ const PLAYER_MOVE_DELAY = 3;  // 可改 2 或 1 更快
 const LEVELS = [
   // ---- Level 1：新手關 ----
   [
-    "SSSSSSSSSSSSSSS",
+    "SSSSSSSSSSSSSSS", // 每一行是一列地圖，共 15 個字元 = 15 格
     "S.BB..W...BB..S",
     "S.BBB.WW.BBB..S",
     "S.....WWW.....S",
@@ -75,27 +71,28 @@ const LEVELS = [
   ],
 ];
 
-// tile 種類
-const TILE_EMPTY = 0;
-const TILE_BRICK = 1;
-const TILE_STEEL = 2;
-const TILE_WATER = 3;
-const TILE_BASE = 4;
+// tile 種類的數字代碼
+const TILE_EMPTY = 0;          // 空地
+const TILE_BRICK = 1;          // 磚牆
+const TILE_STEEL = 2;          // 鋼牆
+const TILE_WATER = 3;          // 水
+const TILE_BASE = 4;           // 基地
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas = document.getElementById("gameCanvas"); // 取得 HTML 中的 <canvas>
+const ctx = canvas.getContext("2d");                  // 取得 2D 繪圖 context
 
 // === 遊戲整體狀態 ===
-let map = [];
-let player = null;
-let playerHP = 5;
-let enemies = [];
-let bullets = [];
-let base = null;
-let gameState = "playing"; // "playing" | "win" | "lose"
-let currentLevel = 0;      // 目前在第幾關（0-based）
-let score = 0;             // 總分數
+let map = [];                 // 目前關卡的地圖資料（2D 陣列）
+let player = null;            // 玩家坦克物件
+let playerHP = 5;             // 玩家血量（被打 5 次才死）
+let enemies = [];             // 敵人坦克陣列
+let bullets = [];             // 所有在場上的子彈陣列
+let base = null;              // 基地的位置 {x, y}
+let gameState = "playing";    // 遊戲狀態："playing" | "win" | "lose"
+let currentLevel = 0;         // 目前關卡索引（從 0 開始）
+let score = 0;                // 總分數
 
+// 紀錄按鍵是否被按著
 const keys = {
   ArrowUp: false,
   ArrowDown: false,
@@ -106,76 +103,86 @@ const keys = {
 
 // === 初始化當前關卡地圖 ===
 function initMap() {
-  map = [];
-  enemies = [];
-  bullets = [];
-  player = null;
-  base = null;
-  playerHP = 5;
-  gameState = "playing";
+  map = [];                   // 清空地圖陣列
+  enemies = [];               // 清空敵人
+  bullets = [];               // 清空子彈
+  player = null;              // 清空玩家物件
+  base = null;                // 清空基地
+  playerHP = 5;               // 重設玩家血量為 5
+  gameState = "playing";      // 將遊戲狀態重設為進行中
 
-  const LEVEL = LEVELS[currentLevel];
+  const LEVEL = LEVELS[currentLevel]; // 取得當前關卡的字串地圖
 
-  for (let y = 0; y < ROWS; y++) {
-    const line = LEVEL[y];
-    const rowArr = [];
-    for (let x = 0; x < COLS; x++) {
-      const ch = line[x];
-      let tile = TILE_EMPTY;
+  for (let y = 0; y < ROWS; y++) {      // 逐列處理地圖
+    const line = LEVEL[y];              // 取出第 y 列的字串
+    const rowArr = [];                  // 準備一個新陣列代表第 y 列的 tile
+    for (let x = 0; x < COLS; x++) {    // 逐格處理
+      const ch = line[x];               // 取得該格的字元
+      let tile = TILE_EMPTY;            // 預設為空地
 
+      // 依照字元決定 tile 類型
       if (ch === "B") tile = TILE_BRICK;
       else if (ch === "S") tile = TILE_STEEL;
       else if (ch === "W") tile = TILE_WATER;
       else if (ch === "X") tile = TILE_BASE;
       else tile = TILE_EMPTY;
 
-      rowArr.push(tile);
+      rowArr.push(tile);               // 把 tile 推進該列陣列
 
+      // 根據字元建立特別物件（玩家 / 敵人 / 基地）
       if (ch === "P") {
         // 玩家：藍色
-        player = createTank(x, y, "up", "#00bfff");
+        player = createTank(x, y, "up", "#00bfff"); // 建立一個坦克物件給玩家
       } else if (ch === "E") {
         // 敵人：紅色
-        enemies.push(createTank(x, y, "up", "red"));
+        enemies.push(createTank(x, y, "up", "red")); // 建立敵人坦克丟進 enemies 陣列
       } else if (ch === "X") {
-        base = { x, y };
+        base = { x, y };             // 記錄基地位置
       }
     }
-    map.push(rowArr);
+    map.push(rowArr);                // 把這一列的 tile 陣列推進地圖
   }
 }
 
-// 建立坦克物件
+// 建立坦克物件用的工廠函式
 function createTank(gridX, gridY, dir, color) {
   return {
-    x: gridX,
-    y: gridY,
-    dir: dir,
-    color: color,
-    moveCooldown: 0,
-    fireCooldown: 0,
+    x: gridX,             // 坦克所在格子的 x 座標（以格為單位）
+    y: gridY,             // 坦克所在格子的 y 座標
+    dir: dir,             // 坦克目前面向方向："up" | "down" | "left" | "right"
+    color: color,         // 坦克顏色（玩家藍、敵人紅）
+    moveCooldown: 0,      // 下一次可以移動前要等待的 frame 數
+    fireCooldown: 0,      // 下一次可以開火前要等待的 frame 數
   };
 }
 
 // 判斷格子是否可以讓坦克進入
 function canTankMoveTo(x, y) {
-  if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
-  const t = map[y][x];
+  if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false; // 超出地圖範圍不能走
+  const t = map[y][x];                  // 取得該位置的 tile 類型
+  // 水、鋼牆、基地都不能進入
   if (t === TILE_STEEL || t === TILE_WATER || t === TILE_BASE) return false;
-  return t === TILE_EMPTY || t === TILE_BRICK;
+  return t === TILE_EMPTY || t === TILE_BRICK; // 空地或磚牆可以嘗試走進去
 }
 
 // 子彈是否撞到牆/基地
 function bulletHitsTile(x, y) {
-  if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return { hit: true, destroy: false };
+  if (x < 0 || x >= COLS || y < 0 || y >= ROWS)
+    return { hit: true, destroy: false };
+
   const t = map[y][x];
-  if (t === TILE_BRICK) return { hit: true, destroy: true };
-  if (t === TILE_STEEL) return { hit: true, destroy: false };
-  if (t === TILE_BASE) return { hit: true, destroy: "base" };
+
+  if (t === TILE_BRICK)
+    return { hit: true, destroy: true };
+  if (t === TILE_STEEL)
+    return { hit: true, destroy: false };
+  if (t === TILE_BASE)
+    return { hit: true, destroy: "base" };
+
   return { hit: false, destroy: false };
 }
 
-// 方向轉位移
+// 方向字串轉換成 (dx, dy) 單步位移
 function dirToDelta(dir) {
   switch (dir) {
     case "up": return { dx: 0, dy: -1 };
@@ -189,11 +196,13 @@ function dirToDelta(dir) {
 function updatePlayer() {
   if (!player) return;
 
+  // 先依照按鍵更新方向（只改方向，不一定會移動）
   if (keys.ArrowUp) player.dir = "up";
   else if (keys.ArrowDown) player.dir = "down";
   else if (keys.ArrowLeft) player.dir = "left";
   else if (keys.ArrowRight) player.dir = "right";
 
+  // 再處理移動
   if (player.moveCooldown > 0) {
     player.moveCooldown--;
   } else {
@@ -209,6 +218,7 @@ function updatePlayer() {
     }
   }
 
+  // 射擊邏輯
   if (player.fireCooldown > 0) player.fireCooldown--;
   if (keys.Space && player.fireCooldown <= 0) {
     fireBullet(player);
@@ -216,7 +226,7 @@ function updatePlayer() {
   }
 }
 
-// === 敵人 AI ===
+// 敵人 
 function updateEnemies() {
   enemies.forEach((enemy) => {
     let targetDir = enemy.dir;
@@ -226,21 +236,21 @@ function updateEnemies() {
       if (see) {
         targetDir = see.dir;
 
-        // 看到玩家才有機會射擊
-        if (enemy.fireCooldown <= 0 && Math.random() < 0.45) {
+        // 看得到玩家，有機率射擊
+        if (enemy.fireCooldown <= 0 && Math.random() < 0.5) {
           fireBullet(enemy);
-          // ★ 敵人射擊冷卻變久一點 → 子彈密度下降
-          enemy.fireCooldown = 26 + Math.floor(Math.random() * 10);
-          // ★ 看到玩家時移動也不要太快
-          enemy.moveCooldown = 22 + Math.floor(Math.random() * 10);
+          // ★ 調慢：看到玩家之後，行動間隔更久
+          enemy.moveCooldown = (24 - currentLevel * 3) + Math.floor(Math.random() * 10);
         }
       } else {
+        // 看不到玩家就有機率亂轉向
         if (Math.random() < 0.03) {
           const dirs = ["up", "down", "left", "right"];
           targetDir = dirs[Math.floor(Math.random() * dirs.length)];
         }
       }
     } else {
+      // 沒有玩家了也隨機走
       if (Math.random() < 0.03) {
         const dirs = ["up", "down", "left", "right"];
         targetDir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -249,7 +259,7 @@ function updateEnemies() {
 
     enemy.dir = targetDir;
 
-    // 移動速度整體變慢（數字越大越慢）
+    // 移動
     if (enemy.moveCooldown > 0) {
       enemy.moveCooldown--;
     } else {
@@ -263,8 +273,8 @@ function updateEnemies() {
         const dirs = ["up", "down", "left", "right"];
         enemy.dir = dirs[Math.floor(Math.random() * dirs.length)];
       }
-      // ★ 原本是 7 + rand(5)，現在改成 14 + rand(6) → 走路明顯變慢
-      enemy.moveCooldown = 14 + Math.floor(Math.random() * 6);
+      // ★ 調慢：基本移動冷卻變大 → 敵人走更慢
+      enemy.moveCooldown = 12 + Math.floor(Math.random() * 8);
     }
 
     if (enemy.fireCooldown > 0) enemy.fireCooldown--;
@@ -273,7 +283,7 @@ function updateEnemies() {
   enemies = enemies.filter((e) => !e.dead);
 }
 
-// 判斷敵人是否看得到玩家
+// 判斷敵人是否看得到玩家（同一列/同一行且中間沒有牆/基地）
 function enemySeePlayer(enemy, player) {
   if (enemy.x === player.x) {
     const dir = player.y < enemy.y ? "up" : "down";
@@ -305,8 +315,8 @@ function fireBullet(tank) {
     dir: tank.dir,
     offsetX: 0,
     offsetY: 0,
-    // ★ 玩家子彈 0.35（原本），敵人子彈再調慢 → 0.12
-    speed: tank === player ? 0.35 : 0.12,
+    // ★ 玩家 & 敵人子彈速度分開：敵人子彈更慢
+    speed: tank === player ? 0.35 : 0.10,
     from: tank,
   });
 }
@@ -341,6 +351,7 @@ function updateBullets() {
         continue;
       }
 
+      // 打到玩家
       if (player && b.from !== player && b.x === player.x && b.y === player.y) {
         playerHP -= 1;
         if (playerHP <= 0) {
@@ -351,6 +362,7 @@ function updateBullets() {
         continue;
       }
 
+      // 打到敵人
       for (let e of enemies) {
         if (b.from !== e && b.x === e.x && b.y === e.y) {
           e.dead = true;
@@ -362,6 +374,7 @@ function updateBullets() {
     }
   }
 
+  // 全部敵人消滅 → 過關或全破
   if (gameState === "playing" && enemies.length === 0 && player && base) {
     if (currentLevel < LEVELS.length - 1) {
       currentLevel++;
@@ -453,6 +466,7 @@ function drawMap() {
   }
 }
 
+// 畫一台坦克（玩家或敵人）
 function drawTank(tank) {
   if (!tank) return;
   const px = tank.x * TILE_SIZE;
@@ -461,6 +475,7 @@ function drawTank(tank) {
   ctx.fillStyle = tank.color;
   ctx.fillRect(px + 4, py + 4, TILE_SIZE - 8, TILE_SIZE - 8);
 
+  ctx.fillStyle = "#000";
   const centerX = px + TILE_SIZE / 2;
   const centerY = py + TILE_SIZE / 2;
   const len = TILE_SIZE / 2;
@@ -477,6 +492,7 @@ function drawTank(tank) {
   ctx.stroke();
 }
 
+// 畫出所有子彈
 function drawBullets() {
   ctx.fillStyle = "#ffff00";
   bullets.forEach((b) => {
@@ -494,27 +510,22 @@ function drawBullets() {
   });
 }
 
-// HUD
+// 畫出畫面上方的資訊（HUD）
 function drawHUD() {
   ctx.fillStyle = "#fff";
-
-  ctx.font = "18px sans-serif";
-  const titleWidth = ctx.measureText(GAME_TITLE).width;
-  ctx.fillText(GAME_TITLE, (canvas.width - titleWidth) / 2, 22);
-
   ctx.font = "14px sans-serif";
   let hpText = player ? `HP: ${playerHP}` : "HP: 0";
-  ctx.fillText(hpText, 10, 40);
-  ctx.fillText(`敵人數量: ${enemies.length}`, 10, 58);
-  ctx.fillText(`分數: ${score}`, 10, 76);
+  ctx.fillText(hpText, 10, 18);
+  ctx.fillText(`敵人數量: ${enemies.length}`, 10, 36);
+  ctx.fillText(`分數: ${score}`, 10, 54);
   ctx.fillText(
     `關卡: ${currentLevel + 1} / ${LEVELS.length}`,
     10,
-    94
+    72
   );
 }
 
-// 顯示勝利/失敗訊息
+// 顯示勝利/失敗訊息與提示
 function drawGameState() {
   if (gameState === "playing") return;
 
@@ -557,9 +568,14 @@ function gameLoop() {
 
 // === 鍵盤事件 ===
 window.addEventListener("keydown", (e) => {
+  // N 重開遊戲 → 回到第 1 關、分數歸零，並且重設所有按鍵狀態
   if (e.key === "n" || e.key === "N") {
     currentLevel = 0;
     score = 0;
+    // ★ 重設所有按鍵，避免重開後方向鍵或空白鍵還卡在 true
+    for (let k in keys) {
+      keys[k] = false;
+    }
     initMap();
     return;
   }
