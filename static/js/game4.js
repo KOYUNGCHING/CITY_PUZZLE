@@ -397,3 +397,172 @@ function updateBullets() {
     }
   }
 }
+// === 繪製 ===
+function drawMap() {
+  for (let y = 0; y < ROWS; y++) {          // 外層迴圈：逐列
+    for (let x = 0; x < COLS; x++) {        // 內層迴圈：逐欄
+      const tile = map[y][x];               // 取得該格的 tile 類型
+
+      switch (tile) {
+        case TILE_EMPTY: {
+          ctx.fillStyle = "#222";                                // 深灰色背景
+          ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          break;
+        }
+
+        case TILE_BRICK: {
+          ctx.fillStyle = "#aa5522";                             // 棕橘色磚牆
+          ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          break;
+        }
+
+        case TILE_STEEL: {
+          ctx.fillStyle = "#888888";                             // 銀灰鋼牆
+          ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          break;
+        }
+
+        case TILE_WATER: {
+          ctx.fillStyle = "#204a9b";                             // 深藍色水域
+          ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          break;
+        }
+
+        case TILE_BASE: {
+          //核心基地 
+          const cx = x * TILE_SIZE + TILE_SIZE / 2;  // 格子中心 x 座標
+          const cy = y * TILE_SIZE + TILE_SIZE / 2;  // 格子中心 y 座標
+          const r = TILE_SIZE * 0.35;                // 半徑（控制基地大小）
+
+          // 背景：深色方塊
+          ctx.fillStyle = "#0a0a12";
+          ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+          // 外圈六角形 (霓虹外框)
+          ctx.beginPath();
+          for (let k = 0; k < 6; k++) {
+            const angle = (Math.PI / 3) * k - Math.PI / 6; // 六角形頂點角度
+            const px = cx + r * 1.1 * Math.cos(angle);     // 頂點 x
+            const py = cy + r * 1.1 * Math.sin(angle);     // 頂點 y
+            if (k === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+          ctx.strokeStyle = "#00eaff";   // 亮藍色外框
+          ctx.lineWidth = 3;
+          ctx.shadowBlur = 15;           // 發光效果
+          ctx.shadowColor = "#00eaff";
+          ctx.stroke();
+
+          // 中央能量
+          ctx.beginPath();
+          ctx.arc(cx, cy, r * 0.6, 0, Math.PI * 2); // 中心圓形
+          ctx.fillStyle = "#00cfff";
+          ctx.shadowBlur = 20;
+          ctx.shadowColor = "#00cfff";
+          ctx.fill();
+
+          // 能量脈衝光圈
+          ctx.beginPath();
+          ctx.arc(cx, cy, r * 0.9, 0, Math.PI * 2);
+          ctx.strokeStyle = "#6a00ff";   // 紫色光圈
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = "#6a00ff";
+          ctx.stroke();
+
+          // 重置 shadow，避免之後的物件都發光
+          ctx.shadowBlur = 0;
+          ctx.shadowColor = "transparent";
+          break;
+        }
+      }
+
+      // 畫出格線，方便觀察網格位置
+      ctx.strokeStyle = "#111";
+      ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    }
+  }
+}
+// 畫一台坦克（玩家或敵人）
+function drawTank(tank) {
+  if (!tank) return;                               // 若坦克不存在就不畫
+  const px = tank.x * TILE_SIZE;                   // 左上角 x（依格子轉 pixel）
+  const py = tank.y * TILE_SIZE;                   // 左上角 y
+
+  ctx.fillStyle = tank.color;                     // 用坦克顏色填滿
+  ctx.fillRect(px + 4, py + 4, TILE_SIZE - 8, TILE_SIZE - 8); // 畫一個略小於格子的方塊
+
+  // 砲管
+  ctx.fillStyle = "#000";
+  const centerX = px + TILE_SIZE / 2;              // 坦克中心 x
+  const centerY = py + TILE_SIZE / 2;              // 坦克中心 y
+  const len = TILE_SIZE / 2;                       // 砲管長度
+  let endX = centerX;
+  let endY = centerY;
+  const d = dirToDelta(tank.dir);                  // 根據方向取 dx, dy
+  endX += d.dx * len;                              // 砲管末端 x
+  endY += d.dy * len;                              // 砲管末端 y
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY);                    // 從中心畫到末端
+  ctx.lineTo(endX, endY);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#000";                        // 黑色砲管
+  ctx.stroke();
+}
+
+// 畫出所有子彈
+function drawBullets() {
+  ctx.fillStyle = "#ffff00";                       // 黃色子彈
+  bullets.forEach((b) => {
+    const px = (b.x + b.offsetX) * TILE_SIZE;      // 子彈 x（含偏移）
+    const py = (b.y + b.offsetY) * TILE_SIZE;      // 子彈 y（含偏移）
+    ctx.beginPath();
+    ctx.arc(
+      px + TILE_SIZE / 2,                          // 圓心 x
+      py + TILE_SIZE / 2,                          // 圓心 y
+      4,                                           // 子彈半徑
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  });
+}
+
+// 畫出畫面上方的資訊（HUD）
+function drawHUD() {
+  ctx.fillStyle = "#fff";                          // 白色字體
+  ctx.font = "14px sans-serif";                    // 字型大小
+  let hpText = player ? `HP: ${playerHP}` : "HP: 0"; // 玩家還活著才顯示實際 HP
+  ctx.fillText(hpText, 10, 18);                    // 左上角顯示 HP
+  ctx.fillText(`敵人數量: ${enemies.length}`, 10, 36); // 顯示剩餘敵人數
+  ctx.fillText(`分數: ${score}`, 10, 54);          // 顯示分數
+  ctx.fillText(
+    `關卡: ${currentLevel + 1} / ${LEVELS.length}`, // 顯示目前關卡/總關數
+    10,
+    72
+  );
+}
+
+// 顯示勝利/失敗訊息與提示
+function drawGameState() {
+  if (gameState === "playing") return;             // 若遊戲還在進行，就不用畫這個
+
+  ctx.fillStyle = "rgba(0,0,0,0.6)";               // 半透明黑色背景條
+  ctx.fillRect(0, canvas.height / 2 - 40, canvas.width, 80);
+
+  ctx.fillStyle = "#fff";
+  ctx.font = "24px sans-serif";
+  let text = "";
+  if (gameState === "win") text = "全部通關！你是坦克之神 🎉"; // 全破訊息
+  if (gameState === "lose") text = "你失敗了，基地或你被摧毀。"; // 失敗訊息
+
+  const textWidth = ctx.measureText(text).width;   // 計算訊息寬度，用來置中
+  ctx.fillText(text, (canvas.width - textWidth) / 2, canvas.height / 2);
+
+  ctx.font = "16px sans-serif";
+  const t2 = "按 N 從第一關重新開始";             // 提示用 N 重開
+  const w2 = ctx.measureText(t2).width;
+  ctx.fillText(t2, (canvas.width - w2) / 2, canvas.height / 2 + 30);
+}
+
