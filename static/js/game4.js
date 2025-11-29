@@ -143,3 +143,52 @@ function initMap() {
     map.push(rowArr);                // 把這一列的 tile 陣列推進地圖
   }
 }
+
+// 建立坦克物件用的工廠函式
+function createTank(gridX, gridY, dir, color) {
+  return {
+    x: gridX,             // 坦克所在格子的 x 座標（以格為單位）
+    y: gridY,             // 坦克所在格子的 y 座標
+    dir: dir,             // 坦克目前面向方向："up" | "down" | "left" | "right"
+    color: color,         // 坦克顏色（玩家藍、敵人紅）
+    moveCooldown: 0,      // 下一次可以移動前要等待的 frame 數
+    fireCooldown: 0,      // 下一次可以開火前要等待的 frame 數
+  };
+}
+
+// 判斷格子是否可以讓坦克進入
+function canTankMoveTo(x, y) {
+  if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false; // 超出地圖範圍不能走
+  const t = map[y][x];                  // 取得該位置的 tile 類型
+  // 水、鋼牆、基地都不能進入
+  if (t === TILE_STEEL || t === TILE_WATER || t === TILE_BASE) return false;
+  return t === TILE_EMPTY || t === TILE_BRICK; // 空地或磚牆可以嘗試走進去（磚牆視為阻擋但你程式允許走，有點像貼牆）
+}
+
+// 子彈是否撞到牆/基地
+function bulletHitsTile(x, y) {
+  if (x < 0 || x >= COLS || y < 0 || y >= ROWS)  // 子彈超出地圖範圍
+    return { hit: true, destroy: false };        // 當作有撞到東西但不需要摧毀 tile
+
+  const t = map[y][x];            // 取得該格的 tile 類型
+
+  if (t === TILE_BRICK)           // 撞到磚牆：
+    return { hit: true, destroy: true };   // 有撞到，並且要把磚牆拆掉
+  if (t === TILE_STEEL)           // 撞到鋼牆：
+    return { hit: true, destroy: false };  // 有撞到，但不會被摧毀
+  if (t === TILE_BASE)            // 撞到基地：
+    return { hit: true, destroy: "base" }; // 特別回傳 "base"
+
+  // 水 / 空地：子彈可以穿過
+  return { hit: false, destroy: false };
+}
+
+// 方向字串轉換成 (dx, dy) 單步位移
+function dirToDelta(dir) {
+  switch (dir) {
+    case "up": return { dx: 0, dy: -1 };   // 往上 y 減 1
+    case "down": return { dx: 0, dy: 1 };  // 往下 y 加 1
+    case "left": return { dx: -1, dy: 0 }; // 往左 x 減 1
+    case "right": return { dx: 1, dy: 0 }; // 往右 x 加 1
+  }
+}
