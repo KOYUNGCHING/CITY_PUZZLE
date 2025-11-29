@@ -566,3 +566,51 @@ function drawGameState() {
   ctx.fillText(t2, (canvas.width - w2) / 2, canvas.height / 2 + 30);
 }
 
+// === 主迴圈 ===
+function gameLoop() {
+  if (gameState === "playing") {  // 只有在 playing 狀態才更新邏輯
+    if (player) updatePlayer();   // 更新玩家狀態
+    updateEnemies();              // 更新敵人
+    updateBullets();              // 更新子彈
+  }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // 清空整個畫布
+  drawMap();                    // 畫地圖
+  drawTank(player);             // 畫玩家坦克
+  enemies.forEach(drawTank);    // 畫所有敵人坦克
+  drawBullets();                // 畫子彈
+  drawHUD();                    // 畫 HUD 資訊
+  drawGameState();              // 若遊戲結束，畫出結束訊息
+
+  requestAnimationFrame(gameLoop); // 要求瀏覽器在下一個動畫 frame 再呼叫 gameLoop
+}
+
+// === 鍵盤事件 ===
+window.addEventListener("keydown", (e) => {
+  // N 重開遊戲 → 回到第 1 關、分數歸零
+  if (e.key === "n" || e.key === "N") {
+    currentLevel = 0;   // 關卡重設為第 0 關
+    score = 0;          // 分數歸零
+    initMap();          // 重新初始化地圖與狀態
+    return;             // 結束此次 keydown 處理（避免後面再處理到 N）
+  }
+
+  if (e.code === "Space") {   // 若按的是空白鍵
+    e.preventDefault();       // 阻止預設動作（例如頁面捲動）
+    keys.Space = true;        // 紀錄 Space 被按下
+  } else if (e.key in keys) { // 若是 ArrowUp/Down/Left/Right 其中之一
+    keys[e.key] = true;       // 將對應按鍵狀態改為 true
+  }
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.code === "Space") {   // 放開空白鍵
+    keys.Space = false;       // 將 Space 狀態改為 false
+  } else if (e.key in keys) { // 若是方向鍵之一放開
+    keys[e.key] = false;      // 將該方向鍵狀態改為 false
+  }
+});
+
+// === 初始化並開始 ===
+initMap();   // 載入第 1 關地圖並建立玩家、敵人、基地
+gameLoop();  // 啟動主迴圈，開始遊戲
