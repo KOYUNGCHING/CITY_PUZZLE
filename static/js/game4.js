@@ -285,3 +285,115 @@ function updateEnemies() {
   // 把被打死的敵人清掉（e.dead 為 true 的會被過濾掉）
   enemies = enemies.filter((e) => !e.dead);
 }
+
+// 判斷敵人是否看得到玩家（同一列/同一行且中間沒有牆/基地）
+function enemySeePlayer(enemy, player) {
+  if (enemy.x === player.x) {          // x 相同 → 在同一欄
+    const dir = player.y < enemy.y ? "up" : "down";    // 玩家在上或下
+    const step = player.y < enemy.y ? -1 : 1;          // 根據相對位置決定遞增方向
+    for (let y = enemy.y + step; y !== player.y; y += step) {
+      const t = map[y][enemy.x];       // 中間路徑上的 tile
+      // 若中間有磚牆/鋼牆/基地 → 擋住視線
+      if (t === TILE_BRICK || t === TILE_STEEL || t === TILE_BASE) return false;
+    }
+    return { dir };                    // 沒有阻擋，回傳要面向的方向
+  }
+  if (enemy.y === player.y) {          // y 相同 → 在同一列
+    const dir = player.x < enemy.x ? "left" : "right"; // 玩家在左或右
+    const step = player.x < enemy.x ? -1 : 1;
+    for (let x = enemy.x + step; x !== player.x; x += step) {
+      const t = map[enemy.y][x];       // 路徑上的 tile
+      if (t === TILE_BRICK || t === TILE_STEEL || t === TILE_BASE) return false;
+    }
+    return { dir };                    // 沒阻擋 → 看得到玩家
+  }
+  return false;                        // 既不同列又不同行 → 看不到
+}
+
+// === 子彈相關 ===
+function fireBullet(tank) {
+  const { dx, dy } = dirToDelta(tank.dir); // 從坦克方向取得位移
+  bullets.push({
+    x: tank.x,             // 子彈起始的格子 x
+    y: tank.y,             // 子彈起始的格子 y
+    dir: tank.dir,         // 子彈飛行方向
+    offsetX: 0,            // 用來做細緻移動的連續偏移（小數）
+    offsetY: 0,            // 同上（y 方向）
+    // ★ 玩家 & 敵人子彈速度分開：
+    speed: tank === player ? 0.35 : 0.18,  // 玩家子彈快一點，敵人子彈比較慢
+    from: tank,           // 記錄是哪個坦克射出的（用來避免打到自己）
+  });
+}
+
+function updateBullets() {
+  for (let i = bullets.length - 1; i >= 0; i--) {  // 從尾巴往前迭代（方便 splice）
+    const b = bullets[i];                         // 取得第 i 顆子彈
+    const { dx, dy } = dirToDelta(b.dir);         // 子彈飛行方向位移
+
+    // 使用 offsetX / offsetY 來做較平滑的移動（非一次一格）
+    b.offsetX += dx * b.speed;
+    b.offsetY += dy * b.speed;
+
+    // 當偏移量 >= 1（或 <= -1）時，表示跨過了一格
+    if (Math.abs(b.offsetX) >= 1 || Math.abs(b.offsetY) >= 1) {
+      b.x += Math.sign(b.offsetX);   // 根據正負號往前一格
+      b.y += Math.sign(b.offsetY);
+      b.offsetX = 0;                 // 重設偏移
+      b.offsetY = 0;
+
+      // 出界情況：直接移除子彈
+      if (b.x < 0 || b.x >= COLS || b.y < 0 || b.y >= ROWS) {
+        bullets.splice(i, 1);
+        continue;
+      }
+
+      // 判斷是否打到牆 / 基地
+      const hitInfo = bulletHitsTile(b.x, b.y);
+      if (hitInfo.hit) {
+        if (hitInfo.destroy === true) {
+          // 打掉磚牆：把地圖該格改成 EMPTY
+          map[b.y][b.x] = TILE_EMPTY;
+        } else if (hitInfo.destroy === "base") {
+          // 打爆基地 → Game Over
+          gameState = "lose";
+        }
+        bullets.splice(i, 1);  // 無論如何，子彈都消失
+        continue;
+      }
+
+      // 判斷是否打到玩家（子彈不是玩家自己射的）
+      if (player && b.from !== player && b.x === player.x && b.y === player.y) {
+        playerHP -= 1;                // 玩家血量 -1
+        if (playerHP <= 0) {          // 血量耗盡 → 玩家死亡
+          player = null;
+          gameState = "lose";         // 遊戲失敗
+        }
+        bullets.splice(i, 1);         // 移除子彈
+        continue;
+      }
+
+      // 判斷是否打到敵人
+      for (let e of enemies) {
+        if (b.from !== e && b.x === e.x && b.y === e.y) { // 不是自己射自己，且位置重合
+          e.dead = true;                                  // 標記敵人死亡
+          // ★ 加分：越後面關卡，單殺分數越高
+          score += 100 * (currentLevel + 1);              // 第 n+1 關每台敵人 100*(n+1) 分
+          bullets.splice(i, 1);                           // 移除子彈
+          break;
+        }
+      }
+    }
+  }
+
+  // 檢查是否全部敵人被消滅 → 過關 or 全破
+  if (gameState === "playing" && enemies.length === 0 && player && base) {
+    if (currentLevel < LEVELS.length - 1) {
+      // 還有下一關 → 關卡+1，重新初始化地圖
+      currentLevel++;
+      initMap();
+    } else {
+      // 沒有下一關了 → 全部通關
+      gameState = "win";
+    }
+  }
+}
