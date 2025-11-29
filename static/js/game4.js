@@ -133,7 +133,7 @@ function initMap() {
 
       if (ch === "P") {
         // 玩家：藍色
-        player = createTank(x, y, "up", "#00bfff"); // deepskyblue
+        player = createTank(x, y, "up", "#00bfff");
       } else if (ch === "E") {
         // 敵人：紅色
         enemies.push(createTank(x, y, "up", "red"));
@@ -161,7 +161,6 @@ function createTank(gridX, gridY, dir, color) {
 function canTankMoveTo(x, y) {
   if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
   const t = map[y][x];
-  // 水、鋼牆、基地都不能進入
   if (t === TILE_STEEL || t === TILE_WATER || t === TILE_BASE) return false;
   return t === TILE_EMPTY || t === TILE_BRICK;
 }
@@ -170,10 +169,9 @@ function canTankMoveTo(x, y) {
 function bulletHitsTile(x, y) {
   if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return { hit: true, destroy: false };
   const t = map[y][x];
-  if (t === TILE_BRICK) return { hit: true, destroy: true };   // 打掉磚牆
-  if (t === TILE_STEEL) return { hit: true, destroy: false };  // 鋼牆擋子彈
-  if (t === TILE_BASE) return { hit: true, destroy: "base" };  // 打到基地
-  // 水 / 空地 子彈可以穿過
+  if (t === TILE_BRICK) return { hit: true, destroy: true };
+  if (t === TILE_STEEL) return { hit: true, destroy: false };
+  if (t === TILE_BASE) return { hit: true, destroy: "base" };
   return { hit: false, destroy: false };
 }
 
@@ -191,13 +189,11 @@ function dirToDelta(dir) {
 function updatePlayer() {
   if (!player) return;
 
-  // 先依照按鍵更新方向
   if (keys.ArrowUp) player.dir = "up";
   else if (keys.ArrowDown) player.dir = "down";
   else if (keys.ArrowLeft) player.dir = "left";
   else if (keys.ArrowRight) player.dir = "right";
 
-  // 再處理移動（用 PLAYER_MOVE_DELAY 控制靈敏度）
   if (player.moveCooldown > 0) {
     player.moveCooldown--;
   } else {
@@ -213,7 +209,6 @@ function updatePlayer() {
     }
   }
 
-  // 射擊
   if (player.fireCooldown > 0) player.fireCooldown--;
   if (keys.Space && player.fireCooldown <= 0) {
     fireBullet(player);
@@ -231,23 +226,21 @@ function updateEnemies() {
       if (see) {
         targetDir = see.dir;
 
-        // 若玩家在炮口方向且中間無阻擋，嘗試射擊
-        if (enemy.fireCooldown <= 0 && Math.random() < 0.5) {
+        // 看到玩家才有機會射擊
+        if (enemy.fireCooldown <= 0 && Math.random() < 0.45) {
           fireBullet(enemy);
-          // ★ 修正：開火後重設射擊冷卻
-          enemy.fireCooldown = 20 + Math.floor(Math.random() * 10);
-          // 見到玩家時移動節奏（越後面關卡越快）
-          enemy.moveCooldown = (18 - currentLevel * 3) + Math.floor(Math.random() * 8);
+          // ★ 敵人射擊冷卻變久一點 → 子彈密度下降
+          enemy.fireCooldown = 26 + Math.floor(Math.random() * 10);
+          // ★ 看到玩家時移動也不要太快
+          enemy.moveCooldown = 22 + Math.floor(Math.random() * 10);
         }
       } else {
-        // 看不到玩家就有機率亂轉向
         if (Math.random() < 0.03) {
           const dirs = ["up", "down", "left", "right"];
           targetDir = dirs[Math.floor(Math.random() * dirs.length)];
         }
       }
     } else {
-      // 沒有玩家了也隨機走
       if (Math.random() < 0.03) {
         const dirs = ["up", "down", "left", "right"];
         targetDir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -256,7 +249,7 @@ function updateEnemies() {
 
     enemy.dir = targetDir;
 
-    // 移動
+    // 移動速度整體變慢（數字越大越慢）
     if (enemy.moveCooldown > 0) {
       enemy.moveCooldown--;
     } else {
@@ -267,21 +260,20 @@ function updateEnemies() {
         enemy.x = nx;
         enemy.y = ny;
       } else {
-        // 撞到不能走的，就換方向
         const dirs = ["up", "down", "left", "right"];
         enemy.dir = dirs[Math.floor(Math.random() * dirs.length)];
       }
-      enemy.moveCooldown = 7 + Math.floor(Math.random() * 5);
+      // ★ 原本是 7 + rand(5)，現在改成 14 + rand(6) → 走路明顯變慢
+      enemy.moveCooldown = 14 + Math.floor(Math.random() * 6);
     }
 
     if (enemy.fireCooldown > 0) enemy.fireCooldown--;
   });
 
-  // 把被打死的敵人清掉
   enemies = enemies.filter((e) => !e.dead);
 }
 
-// 判斷敵人是否看得到玩家（同一列/行且中間沒有磚牆/鋼牆/基地）
+// 判斷敵人是否看得到玩家
 function enemySeePlayer(enemy, player) {
   if (enemy.x === player.x) {
     const dir = player.y < enemy.y ? "up" : "down";
@@ -313,8 +305,8 @@ function fireBullet(tank) {
     dir: tank.dir,
     offsetX: 0,
     offsetY: 0,
-    // 玩家 & 敵人子彈速度分開：玩家快、敵人慢
-    speed: tank === player ? 0.35 : 0.18,
+    // ★ 玩家子彈 0.35（原本），敵人子彈再調慢 → 0.12
+    speed: tank === player ? 0.35 : 0.12,
     from: tank,
   });
 }
@@ -333,25 +325,22 @@ function updateBullets() {
       b.offsetX = 0;
       b.offsetY = 0;
 
-      // 出界
       if (b.x < 0 || b.x >= COLS || b.y < 0 || b.y >= ROWS) {
         bullets.splice(i, 1);
         continue;
       }
 
-      // 判斷是否打到牆 / 基地
       const hitInfo = bulletHitsTile(b.x, b.y);
       if (hitInfo.hit) {
         if (hitInfo.destroy === true) {
-          map[b.y][b.x] = TILE_EMPTY;       // 打掉磚牆
+          map[b.y][b.x] = TILE_EMPTY;
         } else if (hitInfo.destroy === "base") {
-          gameState = "lose";               // 打爆基地 → Game Over
+          gameState = "lose";
         }
         bullets.splice(i, 1);
         continue;
       }
 
-      // 判斷是否打到玩家
       if (player && b.from !== player && b.x === player.x && b.y === player.y) {
         playerHP -= 1;
         if (playerHP <= 0) {
@@ -362,11 +351,9 @@ function updateBullets() {
         continue;
       }
 
-      // 判斷是否打到敵人
       for (let e of enemies) {
         if (b.from !== e && b.x === e.x && b.y === e.y) {
           e.dead = true;
-          // 加分：越後面關卡，單殺分數越高
           score += 100 * (currentLevel + 1);
           bullets.splice(i, 1);
           break;
@@ -375,13 +362,12 @@ function updateBullets() {
     }
   }
 
-  // 檢查是否全部敵人被消滅 → 過關 or 全破
   if (gameState === "playing" && enemies.length === 0 && player && base) {
     if (currentLevel < LEVELS.length - 1) {
       currentLevel++;
-      initMap();   // 還有下一關 → 進入下一關
+      initMap();
     } else {
-      gameState = "win";  // 沒有下一關了 → 全部通關
+      gameState = "win";
     }
   }
 }
@@ -418,7 +404,6 @@ function drawMap() {
         }
 
         case TILE_BASE: {
-          // 酷炫 Cyberpunk 能源核心基地
           const cx = x * TILE_SIZE + TILE_SIZE / 2;
           const cy = y * TILE_SIZE + TILE_SIZE / 2;
           const r = TILE_SIZE * 0.35;
@@ -462,7 +447,6 @@ function drawMap() {
         }
       }
 
-      // 格線
       ctx.strokeStyle = "#111";
       ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
@@ -477,7 +461,6 @@ function drawTank(tank) {
   ctx.fillStyle = tank.color;
   ctx.fillRect(px + 4, py + 4, TILE_SIZE - 8, TILE_SIZE - 8);
 
-  // 砲管
   const centerX = px + TILE_SIZE / 2;
   const centerY = py + TILE_SIZE / 2;
   const len = TILE_SIZE / 2;
@@ -511,16 +494,14 @@ function drawBullets() {
   });
 }
 
-// HUD：遊戲名稱＋狀態資訊
+// HUD
 function drawHUD() {
   ctx.fillStyle = "#fff";
 
-  // 遊戲標題（置中）
   ctx.font = "18px sans-serif";
   const titleWidth = ctx.measureText(GAME_TITLE).width;
   ctx.fillText(GAME_TITLE, (canvas.width - titleWidth) / 2, 22);
 
-  // 狀態資訊
   ctx.font = "14px sans-serif";
   let hpText = player ? `HP: ${playerHP}` : "HP: 0";
   ctx.fillText(hpText, 10, 40);
@@ -576,7 +557,6 @@ function gameLoop() {
 
 // === 鍵盤事件 ===
 window.addEventListener("keydown", (e) => {
-  // N 重開遊戲 → 回到第 1 關、分數歸零
   if (e.key === "n" || e.key === "N") {
     currentLevel = 0;
     score = 0;
