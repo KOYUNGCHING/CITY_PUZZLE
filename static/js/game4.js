@@ -227,3 +227,61 @@ function updatePlayer() {
     player.fireCooldown = 12;                           // 設定下一次可射擊的延遲
   }
 }
+
+// 敵人 
+function updateEnemies() {
+  enemies.forEach((enemy) => {    // 逐一更新每一台敵人
+    let targetDir = enemy.dir;    // 預設維持原方向
+
+    if (player) {                 // 如果玩家還活著
+      const see = enemySeePlayer(enemy, player); // 檢查敵人是否看得到玩家（同列/同行）
+      if (see) {
+        targetDir = see.dir;      // 若看得到，將方向轉向對著玩家
+
+        // 若玩家在炮口方向且中間無阻擋，嘗試射擊
+        if (enemy.fireCooldown <= 0 && Math.random() < 0.5) { // 有一定機率開火
+          fireBullet(enemy);       // 敵人發射子彈
+          // ★ 看見玩家時，同步設定移動冷卻，讓行為稍微連動
+          enemy.moveCooldown = (18 - currentLevel * 3) + Math.floor(Math.random() * 8);
+        }
+      } else {
+        // 看不到玩家就有機率亂轉向
+        if (Math.random() < 0.03) {
+          const dirs = ["up", "down", "left", "right"];
+          targetDir = dirs[Math.floor(Math.random() * dirs.length)]; // 隨機方向
+        }
+      }
+    } else {
+      // 沒有玩家了也隨機走
+      if (Math.random() < 0.03) {
+        const dirs = ["up", "down", "left", "right"];
+        targetDir = dirs[Math.floor(Math.random() * dirs.length)];
+      }
+    }
+
+    enemy.dir = targetDir;  // 更新敵人方向
+
+    // 移動
+    if (enemy.moveCooldown > 0) {
+      enemy.moveCooldown--;   // 冷卻中，等待
+    } else {
+      const { dx, dy } = dirToDelta(enemy.dir); // 根據方向取得位移
+      const nx = enemy.x + dx;
+      const ny = enemy.y + dy;
+      if (canTankMoveTo(nx, ny)) {  // 若前面可以移動
+        enemy.x = nx;
+        enemy.y = ny;
+      } else {
+        // 撞到不能走的，就換方向
+        const dirs = ["up", "down", "left", "right"];
+        enemy.dir = dirs[Math.floor(Math.random() * dirs.length)];
+      }
+      enemy.moveCooldown = 7 + Math.floor(Math.random() * 5); // 基本移動冷卻（數字越小越快）
+    }
+
+    if (enemy.fireCooldown > 0) enemy.fireCooldown--; // 射擊冷卻減一
+  });
+
+  // 把被打死的敵人清掉（e.dead 為 true 的會被過濾掉）
+  enemies = enemies.filter((e) => !e.dead);
+}
