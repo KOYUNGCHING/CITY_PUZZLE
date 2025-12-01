@@ -47,7 +47,7 @@ body, html {
     z-index: 10;
 }
 .home-button:hover {
-    background-color: rgba(255, 60, 60, 1);
+    background-color: rgb(109, 61, 61);
     transform: translateY(-1px);
 }
 
@@ -80,7 +80,7 @@ body, html {
 }
 
 #ranking-table thead th {
-    background-color: #4CAF50; /* 表頭顏色 */
+    background-color: #afffaf; /* 表頭顏色 */
     color: white;
     font-size: 1.1em;
 }
@@ -96,7 +96,7 @@ body, html {
 
 /* 前三名特別樣式 */
 #ranking-table tbody tr:nth-child(1) td {
-    background-color: #ffd700; /* 金色 */
+    background-color: #faefb5; /* 金色 */
     font-weight: bold;
 }
 #ranking-table tbody tr:nth-child(2) td {
@@ -104,7 +104,7 @@ body, html {
     font-weight: bold;
 }
 #ranking-table tbody tr:nth-child(3) td {
-    background-color: #cd7f32; /* 銅色 */
+    background-color: #ffbf7e; /* 銅色 */
     font-weight: bold;
 }
 
