@@ -1,0 +1,18 @@
+/* style.css */
+body {
+    /* 確保畫布位於頁面中央 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #333; /* 暗色背景更符合廢墟主題 */
+}
+
+#gameCanvas {
+    /* 畫布樣式 */
+    border: 5px solid #000;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    background-color: #1a1a1a; /* 更深的背景，模擬夜晚或陰沉的天空 */
+}
