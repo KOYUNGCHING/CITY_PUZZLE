@@ -1,0 +1,82 @@
+/* 整體版面置中 */
+.select-game-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    background: #111827; /* 深色背景，想換顏色可改 */
+    color: #f9fafb;
+    box-sizing: border-box;
+}
+
+.header {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.back-button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #4b5563;
+    color: #f9fafb;
+    font-size: 0.9rem;
+}
+
+.back-button:hover {
+    background: #6b7280;
+}
+
+/* 四個正方形按鈕的格線排版 */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 140px);  /* 2x2 */
+    grid-template-rows: repeat(2, 140px);
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 正方形卡片 */
+.game-card {
+    width: 140px;
+    height: 140px;
+    background: #1f2937;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.game-card span {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.game-card small {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.game-card:hover {
+    transform: translateY(-4px);
+    background: #374151;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+}
