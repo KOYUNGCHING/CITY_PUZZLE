@@ -1,0 +1,308 @@
+/* 設定整個頁面和遊戲容器的基礎樣式 */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden; /* 防止滾動條出現 */
+}
+
+.game-container {
+    height: 100vh; /* 視窗高度 */
+    width: 100vw;  /* 視窗寬度 */
+    position: relative;
+    background-color: #000; 
+    background-image: url('../picture/首頁.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4); 
+}
+
+/* --- 頂部和底部區塊定位 --- */
+
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 10;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 10;
+}
+
+/* ---------------------------------------------------------------- */
+/* --- 左上角: 角色資訊群組 --- */
+/* ---------------------------------------------------------------- */
+
+.player-info {
+    display: flex;
+    align-items: center; 
+    
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    position: relative; 
+}
+
+.avatar-container {
+    width: 60px;
+    height: 60px;
+    margin-right: 15px;
+    border: 3px solid gold;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#player-score {
+    font-size: 0.9em;
+    color: #ffd700;
+    margin-top: 3px;
+}
+
+/* ---------------------------------------------------------------- */
+/* --- 登出按鈕 (Logout) 位於左斜下方，純圖片樣式 --- */
+/* ---------------------------------------------------------------- */
+
+.logout-corner-button {
+    background-color: transparent; 
+    border: none;               
+    border-radius: 0;                   
+    box-shadow: none;
+    
+    position: absolute; 
+    bottom: -5px;      
+    left: -5px;        
+    
+    width: 35px; 
+    height: 35px; 
+    
+    padding: 0; 
+    cursor: pointer;
+    transition: transform 0.1s; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 15;
+}
+
+.button-icon-mini {
+    width: 35px; 
+    height: 35px; 
+    object-fit: contain; 
+}
+
+.logout-corner-button:hover {
+    background-color: transparent;
+    transform: scale(1.1);
+}
+
+/* ---------------------------------------------------------------- */
+/* --- 其他圖片按鈕通用樣式 (右上/左下/右下) --- */
+/* ---------------------------------------------------------------- */
+
+.top-right-button,
+.bottom-left-button,
+.bottom-right-button {
+    background-color: transparent; 
+    border: none;               
+    box-shadow: none;           
+    
+    width: 70px;  
+    height: 70px; 
+    
+    padding: 0; 
+    cursor: pointer;
+    transition: transform 0.1s; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-icon {
+    width: 70px;  
+    height: 70px; 
+    object-fit: contain; 
+}
+
+/* Hover 效果 (其他按鈕共用) */
+.top-right-button:hover,
+.bottom-left-button:hover,
+.bottom-right-button:hover {
+    background-color: transparent; 
+    transform: scale(1.1);
+}
+
+
+/* ============================================== */
+/* ============== MODAL 彈窗樣式 (新增) ============== */
+/* ============================================== */
+
+/* 彈窗遮罩層 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* 深色半透明遮罩 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* 確保在所有元素之上 */
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.modal-overlay.hidden {
+    display: none;
+    opacity: 0;
+}
+
+/* 彈窗內容框 */
+.modal-content {
+    background-color: #1e1e1e; /* 深色背景 */
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.large-modal {
+    width: 90%;
+    max-width: 1000px;
+}
+
+.small-modal {
+    width: 80%;
+    max-width: 450px;
+}
+
+.modal-title {
+    text-align: center;
+    color: #ffd700;
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 3px black;
+}
+
+/* 關閉按鈕 */
+.modal-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.modal-close-button:hover {
+    opacity: 1;
+}
+
+/* 拼圖 Modal 內容樣式 */
+.landmark-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 響應式網格 */
+    gap: 20px;
+    padding-top: 10px;
+}
+
+.landmark-group h3 {
+    color: #00bcd4;
+    margin: 5px 0 10px;
+}
+
+.puzzle-pieces-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 5px;
+}
+
+.puzzle-piece {
+    background-color: #333;
+    border: 2px solid #555;
+    border-radius: 5px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9em;
+}
+
+.puzzle-piece.solved { /* 範例：已完成 */
+    background-color: #38c172; 
+    border-color: #00ff00;
+}
+
+.puzzle-piece.collecting { /* 範例：收集中 */
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+/* 遊戲選擇 Modal 內容樣式 */
+.game-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.game-link {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.game-link:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
