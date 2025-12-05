@@ -93,52 +93,57 @@ body, html {
 }
 
 
-/* --- 按鈕通用樣式 --- */
-
 .top-right-button,
 .bottom-left-button,
 .bottom-right-button {
-    padding: 15px 30px;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: white;
-    border: none;
-    border-radius: 8px;
+    /* 移除所有背景、邊框和陰影，使按鈕透明 */
+    background-color: transparent; /* 移除背景色 */
+    border: none;               /* 移除邊框 */
+    box-shadow: none;           /* 移除陰影 */
+    
+    /* 調整按鈕尺寸以適應圖片 (請根據您的圖片大小調整這些數值) */
+    width: 80px;  /* 圖片按鈕寬度 (稍微放大一點，給點點擊空間) */
+    height: 80px; /* 圖片按鈕高度 */
+    
+    /* 移除與文字相關的屬性 */
+    padding: 0; /* 移除內邊距 */
+    color: white; /* 雖然圖片不需要，但保留以防萬一 */
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-    text-shadow: 1px 1px 2px black;
-    /* 確保按鈕不會因為背景圖過亮而難以辨識 */
-    min-width: 150px; 
-    text-align: center;
+    transition: transform 0.1s; /* 只保留 hover 縮放的過渡效果 */
+    
+    /* 使用 Flexbox 讓圖片在按鈕內置中 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* 右上角: 積分排名按鈕 */
-.top-right-button {
-    background-color: rgba(255, 69, 0, 0.8); /* 橘紅色 */
-    border: 2px solid white;
-}
-.top-right-button:hover {
-    background-color: rgba(255, 69, 0, 1);
-    transform: translateY(-2px);
+/* 讓圖片在按鈕內完整顯示，並設定大小 */
+.button-icon {
+    width: 80px;  /* 圖片實際大小，與按鈕大小相同，完全覆蓋 */
+    height: 80px; 
+    object-fit: contain; 
 }
 
-/* 左下角: 繼續挑戰按鈕 */
-.bottom-left-button {
-    background-color: rgba(0, 128, 0, 0.8); /* 綠色 */
-    border: 2px solid white;
-}
-.bottom-left-button:hover {
-    background-color: rgba(0, 128, 0, 1);
-    transform: translateY(-2px);
-}
-
-/* 右下角: 選擇遊戲按鈕 */
-.bottom-right-button {
-    background-color: rgba(0, 100, 255, 0.8); /* 藍色 */
-    border: 2px solid white;
-}
+/* 移除所有 hover 效果，或者只保留縮放效果 */
+.top-right-button:hover,
+.bottom-left-button:hover,
 .bottom-right-button:hover {
-    background-color: rgba(0, 100, 255, 1);
-    transform: translateY(-2px);
+    /* 移除背景色的變動 */
+    background-color: transparent; 
+    /* 保持一點點回饋感 */
+    transform: scale(1.05); /* 輕微放大 */
+}
+
+
+/* 原有的定位保持不變 */
+.top-right-button {
+    /* 移除原有的橘紅色背景和白色邊框 */
+}
+
+.bottom-left-button {
+    /* 移除原有的綠色背景和白色邊框 */
+}
+
+.bottom-right-button {
+    /* 移除原有的藍色背景和白色邊框 */
 }
