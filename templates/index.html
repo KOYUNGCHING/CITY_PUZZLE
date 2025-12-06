@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
     
@@ -32,10 +32,10 @@
         </p>
     </div>
 
-    <a href="login.html" class="skip-btn-link">
-        <img src="../static/img/button/SKIP.png" class="skip-btn" alt="SKIP">
+    <a href="{{ url_for('login') }}" class="skip-btn-link">
+        <img src="{{ url_for('static', filename='img/button/SKIP.png') }}" class="skip-btn" alt="SKIP">
     </a>
 
-    <script src="../static/js/index.js"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>
