@@ -1,0 +1,64 @@
+/* 全局設定 */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000; /* 預防圖片沒載入時的底色 */
+    
+    /* 背景圖片路徑 (相對於此 CSS 檔案的位置) */
+    background-image: url('../img/base_map/story_page.jpg');
+    
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    overflow: hidden; /* 防止捲軸出現 */
+    
+    font-family: 'Zen Kurenaido', 'KaiTi', 'STKaiti', "Microsoft JhengHei", sans-serif;
+}
+
+/* 故事內容容器 */
+.story-content {
+    position: absolute;
+    width: 70%;
+    left: 15%;
+    text-align: center;
+    color: #f0f0f0;
+    font-size: 1.8rem;
+    line-height: 2.2;
+    text-shadow: 2px 2px 8px #000; /* 文字陰影，增加可讀性 */
+    font-weight: bold;
+    letter-spacing: 2px;
+    
+    /* 動畫設定：50秒內從下滾到上 */
+    top: 100vh; 
+    animation: scrollText 50s linear forwards; 
+}
+
+/* 滾動動畫關鍵影格 */
+@keyframes scrollText {
+    0% { top: 100vh; }    /* 起始位置：螢幕最下方 */
+    100% { top: -150%; }  /* 結束位置：滾出螢幕上方 */
+}
+
+/* 標題樣式 */
+h1 {
+    font-size: 3rem;
+    margin-bottom: 40px;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+/* Skip 按鈕樣式 */
+.skip-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 150px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 100; /* 確保按鈕在最上層 */
+}
+
+.skip-btn:hover { 
+    transform: scale(1.1); /* 滑鼠懸停放大效果 */
+}
