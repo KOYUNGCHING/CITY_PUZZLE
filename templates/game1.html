@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Puzzle - Sudoku</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../static/css/game1.css">
+</head>
+<body>
+
+    <div class="game-wrapper">
+        <div class="header-info">
+            <h1 class="game-title">DATA DECRYPTION</h1>
+            <div class="status-bar">
+                <div class="mistake-box">MISTAKES: <span id="mistake-count" style="color: #00ffcc;">0/3</span></div>
+                <div class="timer-box">TIME: <span id="timer">00:00</span></div>
+            </div>
+        </div>
+
+        <div class="difficulty-bar">
+            <button class="diff-btn" onclick="startGame('easy')">EASY (1)</button>
+            <button class="diff-btn" onclick="startGame('medium')">MEDIUM (3)</button>
+            <button class="diff-btn" onclick="startGame('hard')">HARD (5)</button>
+        </div>
+
+        <div id="sudoku-board" class="sudoku-board"></div>
+
+        <div class="number-pad">
+            <button class="num-btn" onclick="selectNumberPad(1)">1</button>
+            <button class="num-btn" onclick="selectNumberPad(2)">2</button>
+            <button class="num-btn" onclick="selectNumberPad(3)">3</button>
+            <button class="num-btn" onclick="selectNumberPad(4)">4</button>
+            <button class="num-btn" onclick="selectNumberPad(5)">5</button>
+            <button class="num-btn" onclick="selectNumberPad(6)">6</button>
+            <button class="num-btn" onclick="selectNumberPad(7)">7</button>
+            <button class="num-btn" onclick="selectNumberPad(8)">8</button>
+            <button class="num-btn" onclick="selectNumberPad(9)">9</button>
+            
+            <button id="btn-eraser" class="num-btn clear-btn" onclick="toggleEraser()">⌫</button>
+        </div>
+
+        <div class="action-bar">
+            <button class="action-btn" onclick="checkWinCondition()">DECRYPT</button>
+            <a href="home.html" class="action-btn back-btn">EXIT</a>
+        </div>
+    </div>
+
+    <script src="../static/js/game1.js"></script>
+</body>
+</html>
