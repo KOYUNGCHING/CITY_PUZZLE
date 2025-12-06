@@ -5,137 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>City Puzzle - Login</title>
 
-    <!-- 引入手寫風字體 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            /* 黑色背景：確保圖片讀取失敗時，白色的輸入框文字還看得到 */
-            background-color: #000;
-            
-            /* ★ 路徑修正 ★ 
-               Flask 的 static 資料夾對應規則：
-               url_for('static', filename='路徑') -> 會自動對應到你的 static 資料夾
-               
-               所以如果你的圖片在: static/img/base_map/Login_page.png
-               這裡就寫: filename='img/base_map/Login_page.png'
-            */
-            background-image: url("{{ url_for('static', filename='../static/img/base_map/Login_page.png') }}");
-            
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Zen Kurenaido', 'KaiTi', "Microsoft JhengHei", sans-serif;
-        }
-
-        .login-wrapper {
-            position: relative;
-            width: 600px;  
-            height: 800px; 
-            /* border: 1px solid red; 開發時可以打開這個來看框框位置 */
-        }
-
-        .input-field {
-            position: absolute;
-            background: transparent;
-            border: none;
-            color: white; /* 輸入的字是白色的 */
-            font-size: 24px; /* 字體加大 */
-            width: 320px; /* 根據你的框框寬度調整 */
-            height: 45px; /* 根據你的框框高度調整 */
-            outline: none;
-            padding-left: 10px;
-            font-family: inherit; /* 繼承手寫字體 */
-            /* border: 1px solid yellow;  <-- 建議：開發時可以打開這個黃色邊框，方便對齊 */
-        }
-
-        /* 修正 Placeholder (提示字) 的顏色，讓它在深色背景更明顯 */
-        ::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* 隱形登入按鈕 */
-        #btn-login {
-            position: absolute;
-            /* 根據你的背景圖按鈕位置調整 top 和 left */
-            top: 65%;
-            left: 25%;
-            width: 50%;
-            height: 60px;
-            cursor: pointer;
-            background: transparent;
-            border: none;
-            /* border: 1px solid red; <-- 開發時可以打開，確認按鈕位置 */
-        }
-
-        /* ★★★ 輸入框位置微調區 ★★★ */
-        /* 請在瀏覽器開發者工具中微調這些 top 和 left 的百分比，直到輸入框對齊你的背景圖 */
-        #username { 
-            top: 41%;  /* 距離頂部的位置 */
-            left: 28%; /* 距離左側的位置 */
-        }
-        #password { 
-            top: 51%;  /* 距離頂部的位置 */
-            left: 28%; /* 距離左側的位置 */
-        }
-    </style>
+    <link rel="stylesheet" href="../static/css/login.css">
 </head>
 <body>
 
     <div class="login-wrapper">
         <input type="text" id="username" class="input-field" placeholder="User Name" autocomplete="off">
         <input type="password" id="password" class="input-field" placeholder="Password">
-        <button id="btn-login" onclick="doLogin()"></button>
+        
+        <button id="btn-login" class="ghoul-btn">LOGIN</button>
     </div>
 
-    <script>
-        async function doLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-
-            if(!user || !pass) {
-                alert("請輸入帳號與密碼");
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: user, password: pass })
-                });
-                
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    // 登入成功
-                    localStorage.setItem('username', user);
-                    localStorage.setItem('avatar_id', result.avatar_id);
-                    localStorage.setItem('score', result.score);
-                    
-                    window.location.href = '/home'; // 進入主頁
-                    
-                } else if (result.status === 'wrong_password') {
-                    alert("提示：密碼錯誤");
-                    document.getElementById('password').value = ''; 
-                    
-                } else if (result.status === 'user_not_found') {
-                    alert("查無此帳號，將為您導向註冊頁面...");
-                    window.location.href = '/register';
-                }
-
-            } catch (error) {
-                console.error("Login Error:", error);
-                alert("系統錯誤，請檢查後端 Console");
-            }
-        }
-    </script>
+    <script src="../static/js/login.js"></script>
 </body>
 </html>
