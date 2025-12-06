@@ -1,0 +1,87 @@
+body {
+    margin: 0;
+    /* 黑色背景：確保圖片讀取失敗時，白色的輸入框文字還看得到 */
+    background-color: #000;
+    
+    /* ★ 路徑修正：改為相對路徑，方便直接預覽 ★ */
+    background-image: url('../img/base_map/Login_page.jpg');
+    
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Zen Kurenaido', 'KaiTi', "Microsoft JhengHei", sans-serif;
+}
+
+.login-wrapper {
+    position: relative;
+    width: 600px;  
+    height: 800px; 
+    /* border: 1px solid red; 開發時可以打開這個來看框框位置 */
+}
+
+/* --- 1. 修改輸入框樣式 (為了避開左邊的小人頭和鑰匙 icon) --- */
+.input-field {
+    position: absolute;
+    background: transparent;
+    border: none;
+    color: white; 
+    font-size: 24px;
+    width: 250px;       /* 寬度稍微縮小，避免超出框框 */
+    height: 45px;
+    outline: none;
+    padding-left: 60px; /* ★關鍵：左邊留白，才不會打字打在 icon 上 */
+    font-family: inherit;
+    /* border: 1px solid rgba(255, 255, 0, 0.3); */ /* 開發時可打開黃框檢查 */
+}
+
+/* --- 2. 新增：恐怖風格按鈕設計 (Ghoul Button) --- */
+.ghoul-btn {
+    position: absolute;
+    /* 預設位置，等一下教你微調 */
+    top: 62%; 
+    left: 28%;
+    
+    /* 大小設定 */
+    width: 320px; 
+    height: 55px;
+    
+    /* 樣式設定 */
+    background: transparent; /* 透明背景 */
+    border: none;            /* 不要邊框，因為背景圖已經有框了 */
+    color: rgba(255, 255, 255, 0.8); /*稍微透明的白色 */
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 5px; /* 字距拉開，比較有氣勢 */
+    transition: all 0.3s ease;
+}
+
+/* 滑鼠移過去的特效：變成血紅色，且發光 */
+.ghoul-btn:hover {
+    color: #ff0000; /* 血紅色 */
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000; /* 紅色光暈 */
+    transform: scale(1.05); /* 稍微放大 */
+}
+
+/* --- 3. 位置微調區 (這是您等一下要手動調整的地方) --- */
+/* 我先根據您的截圖抓了大概的數值 */
+
+#username { 
+    top: 39%;   /* 根據截圖，輸入框好像偏低，我改高一點 */
+    left: 28%;    /* 整體好像偏右，我往左移一點 */
+}
+
+#password { 
+    top: 47%; 
+    left: 28%; 
+}
+
+#btn-login {
+    top: 55.5%;   /* 這是第三個框框的大概位置 */
+    left: 23.5%;
+}
