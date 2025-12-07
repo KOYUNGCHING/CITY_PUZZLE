@@ -1,0 +1,144 @@
+/* --- 1. 全域設定 --- */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; 
+    font-family: 'Zen Kurenaido', 'KaiTi', "Microsoft JhengHei", sans-serif;
+}
+
+/* --- 2. 核心容器 --- */
+.reg-wrapper {
+    background-image: url('../img/base_map/REGISTER_page.jpg');
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-position: center;
+
+    aspect-ratio: 16 / 9;
+    width: max(100vw, 177.78vh);
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+/* --- 3. 頭像通用樣式 --- */
+.avatar-option {
+    position: absolute; 
+    cursor: pointer;
+    border-radius: 5px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+
+    width: 9%;  
+    height: 9%;
+    
+    /* ★★★ 修改這裡：把這一行刪掉，或改成 transparent ★★★ */
+    background: transparent;  /* 原本是 rgba(0, 0, 0, 0.2) */
+
+    overflow: visible;
+}
+.avatar-option img {
+    /* ★★★ 修改點 2：放大「圖片」的比例 ★★★ */
+    /* 讓圖片比框框還大 (140%)，這樣視覺上圖片大小就不會變 */
+    width: 140%;
+    height: 140%;
+    
+    object-fit: contain;
+    opacity: 0.7; 
+    transition: 0.3s;
+    
+    /* 確保圖片在框框的正中間 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.avatar-option:hover img {
+    opacity: 1;
+    /* 滑鼠移上去時，在原本放大的基礎上再稍微放大一點 */
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* 選中樣式 (這個光暈框會變小) */
+.avatar-option.selected {
+    border: none; 
+    background: radial-gradient(circle, rgba(139, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 70%);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+.avatar-option.selected img {
+    opacity: 1;
+    /* 選中時，在原本放大的基礎上再稍微放大一點 */
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+
+/* --- 4. 六個頭貼的獨立位置調整區 (數值不變) --- */
+#avatar-1 { top: 30.7%; left: 37%; }
+#avatar-2 { top: 30.7%; left: 45.5%; }
+#avatar-3 { top: 30.7%; left: 54%; }
+#avatar-4 { top: 45.5%; left: 37%; }
+#avatar-5 { top: 45.5%; left: 45.5%; }
+#avatar-6 { top: 45.5%; left: 54%; }
+
+
+/* --- 5. 輸入框樣式 --- */
+.input-field {
+    position: absolute;
+    
+    /* ★★★ 關鍵修改：這兩行讓框框完全消失，只剩文字 ★★★ */
+    background: transparent;  /* 背景透明 */
+    border: none;             /* 去掉邊框線 */
+    outline: none;            /* 去掉點擊時的藍色發光框 */
+
+    color: white; 
+    font-size: 2vw; 
+    
+    width: 28%;       
+    height: 5%;
+    
+    padding-left: 1%; 
+    font-family: inherit;
+    text-shadow: none;
+    
+    left: 43%; 
+}
+
+::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow: none;
+}
+
+/* --- 6. 註冊按鈕樣式 --- */
+.ghoul-btn {
+    position: absolute;
+    width: 28%; 
+    height: 7%;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 2.5vw;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 5px;
+    transition: all 0.3s ease;
+    border: none;
+    left: 36%; 
+}
+
+.ghoul-btn:hover {
+    color: #ff0000;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000;
+    transform: scale(1.05);
+}
+
+/* 垂直位置 */
+#reg-username { top: 60%; }
+#reg-password { top: 70.5%; }
+#btn-register { top: 81.7%; }

@@ -5,198 +5,46 @@
     <title>City Puzzle - Register</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- 引入手寫風字體 (與登入頁一致) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            /* 黑色背景：確保圖片讀取失敗時文字可見 */
-            background-color: #000;
-            
-            /* ★ 路徑修正 ★ 改用 base_map (下底線) */
-            background-image: url("{{ url_for('static', filename='../static/img/base_map/Register_page.png') }}");
-            
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Zen Kurenaido', 'KaiTi', "Microsoft JhengHei", sans-serif;
-        }
-
-        .reg-wrapper {
-            position: relative;
-            width: 600px;
-            height: 900px;
-            /* border: 1px solid blue; 開發時可打開輔助框線 */
-        }
-
-        /* ★★★ 頭像選擇區微調 ★★★ */
-        /* 這是一個包含 6 個格子的隱形容器，請調整它的位置與大小來對齊你畫的 6 個框 */
-        .avatar-container {
-            position: absolute;
-            
-            /* 1. 調整容器的位置 */
-            top: 26%;  
-            left: 17%; 
-            
-            /* 2. 調整容器的總寬度與總高度 */
-            width: 66%;
-            height: 28%;
-            
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 直欄 */
-            grid-template-rows: repeat(2, 1fr);    /* 2 橫列 */
-            
-            /* 3. 調整格子之間的間距 */
-            gap: 15px; 
-            
-            /* border: 1px solid yellow; 開發時打開這個黃框，確保它包住你畫的 6 個框 */
-        }
-
-        .avatar-option {
-            cursor: pointer;
-            border: 3px solid transparent; /* 預設邊框透明 */
-            border-radius: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.2s;
-            /* background: rgba(255,0,0,0.3); 開發時可打開紅底，確認每個格子的位置 */
-        }
-
-        /* 讓頭像圖片正確顯示 */
-        .avatar-option img {
-            width: 90%;
-            height: 90%;
-            object-fit: contain;
-            opacity: 0.7; /* 未選中時稍微透明 */
-        }
-
-        .avatar-option:hover img {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        .avatar-option.selected {
-            border-color: #ff3333; /* 選中時的紅框 */
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .avatar-option.selected img {
-            opacity: 1;
-        }
-
-        .input-field {
-            position: absolute;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 20px;
-            width: 280px; /* 根據你的框框寬度調整 */
-            height: 40px; /* 根據你的框框高度調整 */
-            outline: none;
-            padding-left: 10px;
-            font-family: inherit;
-            /* border: 1px solid yellow; 開發時可打開輔助線 */
-        }
-
-        /* 提示字顏色 */
-        ::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* ★★★ 輸入框與按鈕位置微調 ★★★ */
-        /* 請在瀏覽器開發者工具 (F12) 調整這些百分比 */
-        
-        #reg-username { 
-            top: 61%; /* 距離上方 */
-            left: 35%; /* 距離左方 */
-        }
-        
-        #reg-password { 
-            top: 71%; 
-            left: 35%; 
-        }
-
-        #btn-register {
-            position: absolute;
-            top: 81%; 
-            left: 20%;
-            width: 60%; 
-            height: 60px;
-            cursor: pointer;
-            background: transparent;
-            border: none;
-            /* border: 1px solid red; 開發時可打開確認按鈕位置 */
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 <body>
     <div class="reg-wrapper">
-        <!-- 6個頭像選擇格 -->
-        <div class="avatar-container">
-            <!-- 確保圖片路徑正確: static/img/Photo stickers/... -->
-            <div class="avatar-option" onclick="selectAvatar(1, this)">
-                <img src="{{ url_for('static', filename='../static/img/Photo stickers/Man1.png') }}">
-            </div>
-            <div class="avatar-option" onclick="selectAvatar(2, this)">
-                <img src="{{ url_for('static', filename='../static/img/Photo stickers/Man2.png') }}">
-            </div>
-            <div class="avatar-option" onclick="selectAvatar(3, this)">
-                <img src="{{ url_for('static', filename='../static/img/Photo stickers/Woman1.png') }}">
-            </div>
-            <div class="avatar-option" onclick="selectAvatar(4, this)">
-                <img src="{{ url_for('static', filename='../static/img/Photo stickers/Woman2.png') }}">
-            </div>
-            <div class="avatar-option" onclick="selectAvatar(5, this)">
-                <img src="{{ url_for('static', filename='../static/img/Photo stickers/Press1.png') }}">
-            </div>
-            <div class="avatar-option" onclick="selectAvatar(6, this)">
-                <img src="{{ url_for('static', filename='../static/img/Photo stickers/Press2.png') }}">
-            </div>
+        
+        <div class="avatar-option" id="avatar-1" data-id="1">
+            <img src="{{ url_for('static', filename='img/Photo_stickers/Man1.png') }}" alt="Avatar 1">
+        </div>
+        
+        <div class="avatar-option" id="avatar-2" data-id="2">
+            <img src="{{ url_for('static', filename='img/Photo_stickers/Man2.png') }}" alt="Avatar 2">
+        </div>
+        
+        <div class="avatar-option" id="avatar-3" data-id="3">
+            <img src="{{ url_for('static', filename='img/Photo_stickers/Woman1.png') }}" alt="Avatar 3">
+        </div>
+        
+        <div class="avatar-option" id="avatar-4" data-id="4">
+            <img src="{{ url_for('static', filename='img/Photo_stickers/Woman2.png') }}" alt="Avatar 4">
+        </div>
+        
+        <div class="avatar-option" id="avatar-5" data-id="5">
+            <img src="{{ url_for('static', filename='img/Photo_stickers/Press1.png') }}" alt="Avatar 5">
+        </div>
+        
+        <div class="avatar-option" id="avatar-6" data-id="6">
+            <img src="{{ url_for('static', filename='img/Photo_stickers/Press2.png') }}" alt="Avatar 6">
         </div>
 
-        <input type="text" id="reg-username" class="input-field" placeholder="Username">
-        <input type="password" id="reg-password" class="input-field" placeholder="Password">
+
+        <input type="text" id="reg-username" class="input-field" placeholder="Create Username" autocomplete="off">
+        <input type="password" id="reg-password" class="input-field" placeholder="Create Password">
         
-        <button id="btn-register" onclick="doRegister()"></button>
+        <button id="btn-register" class="ghoul-btn">REGISTER</button>
     </div>
 
-    <script>
-        let currentAvatarId = null;
-
-        function selectAvatar(id, el) {
-            currentAvatarId = id;
-            document.querySelectorAll('.avatar-option').forEach(d => d.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-
-        async function doRegister() {
-            const user = document.getElementById('reg-username').value;
-            const pass = document.getElementById('reg-password').value;
-
-            if (!user || !pass || !currentAvatarId) {
-                alert("請完整填寫帳號密碼，並選擇一個頭像！");
-                return;
-            }
-
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: user, password: pass, avatar_id: currentAvatarId })
-            });
-
-            const result = await response.json();
-            if (result.status === 'success') {
-                alert("註冊成功！請重新登入");
-                window.location.href = '/login';
-            } else {
-                alert("註冊失敗: " + result.message);
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
 </body>
 </html>

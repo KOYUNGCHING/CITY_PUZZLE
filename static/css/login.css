@@ -1,0 +1,96 @@
+/* --- 1. 全域設定 --- */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    height: 100vh;
+    width: 100vw;
+    
+    /* ★ 關鍵：因為我們會把圖放大到超出螢幕，所以必須隱藏捲軸 ★ */
+    overflow: hidden; 
+    
+    font-family: 'Zen Kurenaido', 'KaiTi', "Microsoft JhengHei", sans-serif;
+}
+
+/* --- 2. 核心容器：滿版且鎖定比例 --- */
+.login-wrapper {
+    /* 這裡不用 background-size: cover，因為我們要自己控制容器大小 */
+    background-image: url('../img/base_map/Login_page.jpg');
+    background-size: cover; /* 確保圖片填滿這個容器 */
+    background-repeat: no-repeat;
+    background-position: center;
+
+    /* ★ 步驟 A：鎖定 16:9 比例 (確保輸入框位置相對準確) ★ */
+    aspect-ratio: 16 / 9;
+
+    /* ★ 步驟 B：魔法數學 (讓容器永遠大於或等於螢幕) ★ */
+    /* 原理：如果螢幕很寬，寬度就用 100vw；
+       如果螢幕很長(直)，為了維持 16:9，寬度必須是高度的 1.77 倍 (177.78vh)。
+       max() 會選比較大的那個，確保永遠填滿畫面！
+    */
+    width: max(100vw, 177.78vh);
+    
+    /* ★ 步驟 C：絕對置中 (讓門永遠在螢幕正中央) ★ */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* --- 3. 輸入框樣式 --- */
+.input-field {
+    position: absolute;
+    background: transparent;
+    border: none;
+    color: white; 
+    
+    /* 字體與大小隨容器縮放 */
+    font-size: 2vw; 
+    width: 25%;       
+    height: 6%;
+    
+    outline: none;
+    padding-left: 3%; 
+    font-family: inherit;
+    /* border: 1px solid yellow;  開發時可打開 */
+}
+
+/* --- 4. 恐怖按鈕樣式 --- */
+.ghoul-btn {
+    position: absolute;
+    width: 28%; 
+    height: 8%;
+    background: transparent;
+    border: none;          
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Zen Kurenaido', sans-serif;
+    font-size: 2.5vw;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 5px;
+    transition: all 0.3s ease;
+}
+
+.ghoul-btn:hover {
+    color: #ff0000;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000;
+    transform: scale(1.05);
+}
+
+/* --- 5. 位置微調區 --- */
+/* 因為我們鎖定了 16:9 且置中，這裡的數值一旦調好，就再也不會跑掉了 */
+
+#username { 
+    top: 36.5%;   
+    left: 41%; /* 如果門偏左或偏右，請微調這裡 */
+}
+
+#password { 
+    top: 47%; 
+    left: 41%; 
+}
+
+#btn-login {
+    top: 58%;   
+    left: 36%;
+}
