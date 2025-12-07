@@ -1,0 +1,421 @@
+/* --- 全域設定 --- */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0d0d15;
+    color: #eee;
+    font-family: 'Zen Kurenaido', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    scale: 0.95;
+    position: relative;
+}
+
+/* --- 標題與面板 --- */
+.game-title {
+    font-size: 2.5rem;
+    margin: 0 0 10px 0;
+    letter-spacing: 5px;
+    color: #00ffcc;
+    text-shadow: 0 0 10px #00ffcc;
+    text-align: center;
+}
+
+.status-panel {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    margin-bottom: 10px;
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+.status-item.wide { min-width: 150px; }
+
+.label { font-size: 0.8rem; color: #888; }
+.value { font-size: 1.5rem; font-weight: bold; color: #fff; }
+
+/* --- 時間倒數條 --- */
+.timer-container {
+    width: 100%;
+    height: 10px;
+    background-color: #333;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #555;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.timer-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff3333, #ff6600);
+    box-shadow: 0 0 10px #ff3333;
+    transition: width 1s linear;
+}
+.timer-bar.critical { animation: flash 0.5s infinite alternate; }
+
+.fragment-info {
+    margin-top: 5px;
+    font-size: 1rem;
+    color: #aaa;
+    text-align: center;
+}
+
+/* --- 遊戲棋盤 --- */
+.game-board {
+    width: 512px; 
+    height: 512px;
+    background-color: #1a1a24;
+    border: 2px solid #00ffcc;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+    position: relative; 
+    overflow: hidden;
+}
+
+/* --- 方塊樣式 --- */
+.block {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+    position: absolute;
+    transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                left 0.4s ease,
+                transform 0.2s, 
+                opacity 0.2s;
+}
+.block:hover { filter: brightness(1.2); transform: scale(1.05); z-index: 10; }
+
+/* 4色定義 */
+.color-1 { background: #ff3333; border: 2px solid #ff6666; } 
+.color-2 { background: #3388ff; border: 2px solid #66aaff; } 
+.color-3 { background: #33ff66; border: 2px solid #66ff88; } 
+.color-4 { background: #ffff33; border: 2px solid #ffff88; } 
+
+.block.vanishing { transform: scale(0); opacity: 0; }
+.block.connected-hint { filter: brightness(1.3); box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+
+/* --- 按鈕 --- */
+.action-bar { margin-top: 10px; display: flex; gap: 20px; }
+.action-btn {
+    padding: 10px 30px; font-size: 1.2rem;
+    background: transparent; border: 1px solid #00ffcc; color: #00ffcc;
+    cursor: pointer; font-family: inherit; transition: 0.3s; text-decoration: none;
+}
+.action-btn:hover { background: #00ffcc; color: #000; box-shadow: 0 0 15px #00ffcc; }
+.back-btn { border-color: #ff3333; color: #ff3333; }
+.back-btn:hover { background: #ff3333; color: white; box-shadow: 0 0 15px #ff3333; }
+
+/* --- 遮罩層 (Overlay) --- */
+.overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85); 
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.3s;
+}
+
+.overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.overlay-content {
+    background: #1a1a24;
+    border: 2px solid #00ffcc;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
+    max-width: 400px;
+}
+
+.overlay-content h2 {
+    color: #00ffcc;
+    font-size: 2rem;
+    margin-top: 0;
+    text-shadow: 0 0 10px #00ffcc;
+}
+
+.overlay-text {
+    text-align: left;
+    color: #ccc;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.start-btn {
+    width: 100%;
+    font-size: 1.5rem;
+    padding: 15px;
+}
+
+/* --- 暫停頁面的小撇步 --- */
+.tip-box {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #ffff00;
+    padding: 15px;
+    margin: 20px 0 30px 0;
+    text-align: left;
+    min-height: 80px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tip-label {
+    color: #ffff00;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 0 0 5px 0;
+    letter-spacing: 1px;
+}/* --- 全域設定 --- */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0d0d15;
+    color: #eee;
+    font-family: 'Zen Kurenaido', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    
+    /* ★ 這裡改回 hidden，因為我們要確保它不捲動 ★ */
+    overflow: hidden; 
+    
+    user-select: none;
+}
+
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* 間距縮小 */
+    scale: 0.9; /* 整體縮小一點，確保筆電螢幕也看得到 */
+    position: relative;
+}
+
+/* --- 標題 --- */
+.game-title {
+    font-size: 2.2rem; /* 字體稍微縮小 */
+    margin: 0 0 5px 0;
+    letter-spacing: 5px;
+    color: #00ffcc;
+    text-shadow: 0 0 10px #00ffcc;
+    text-align: center;
+}
+
+/* --- ★★★ 新增：儀表板排版 (左右並排) ★★★ --- */
+.dashboard-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* 左邊面板和右邊按鈕的距離 */
+    margin-bottom: 5px;
+}
+
+/* 狀態面板 (左邊) */
+.status-panel {
+    display: flex;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 15px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    margin: 0; /* 移除原本的 margin */
+    height: 80px; /* 固定高度，對齊按鈕 */
+    box-sizing: border-box;
+    align-items: center;
+}
+
+/* 按鈕區 (右邊) */
+.action-bar { 
+    display: flex; 
+    flex-direction: column; /* ★ 垂直排列 ★ */
+    gap: 5px; 
+    margin: 0;
+}
+
+.action-btn {
+    padding: 5px 0; /* 上下縮小 */
+    width: 100px;   /* 固定寬度 */
+    font-size: 0.9rem; /* 字體縮小 */
+    text-align: center;
+    background: transparent; 
+    border: 1px solid #00ffcc; 
+    color: #00ffcc;
+    cursor: pointer; 
+    font-family: inherit; 
+    transition: 0.3s; 
+    text-decoration: none;
+    border-radius: 5px;
+    display: block; /* 確保 a tag 也是區塊 */
+}
+.action-btn:hover { background: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
+.back-btn { border-color: #ff3333; color: #ff3333; }
+.back-btn:hover { background: #ff3333; color: white; box-shadow: 0 0 10px #ff3333; }
+
+/* 狀態項目 */
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50px;
+}
+.status-item.wide { min-width: 120px; }
+
+.label { font-size: 0.75rem; color: #888; margin-bottom: 3px;}
+.value { font-size: 1.3rem; font-weight: bold; color: #fff; }
+
+/* --- 時間倒數條 --- */
+.timer-container {
+    width: 100%;
+    height: 8px; /* 變細一點 */
+    background-color: #333;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #555;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    margin-bottom: 5px;
+}
+
+.timer-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff3333, #ff6600);
+    box-shadow: 0 0 10px #ff3333;
+    transition: width 1s linear;
+}
+.timer-bar.critical { animation: flash 0.5s infinite alternate; }
+
+.fragment-info {
+    font-size: 0.9rem;
+    color: #aaa;
+    text-align: center;
+}
+
+/* --- 遊戲棋盤 --- */
+.game-board {
+    width: 512px; 
+    height: 512px;
+    background-color: #1a1a24;
+    border: 2px solid #00ffcc;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+    position: relative; 
+    overflow: hidden;
+}
+
+/* --- 方塊樣式 (維持不變) --- */
+.block {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+    position: absolute;
+    transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                left 0.4s ease,
+                transform 0.2s, 
+                opacity 0.2s;
+}
+.block:hover { filter: brightness(1.2); transform: scale(1.05); z-index: 10; }
+
+.color-1 { background: #ff3333; border: 2px solid #ff6666; } 
+.color-2 { background: #3388ff; border: 2px solid #66aaff; } 
+.color-3 { background: #33ff66; border: 2px solid #66ff88; } 
+.color-4 { background: #ffff33; border: 2px solid #ffff88; } 
+
+.block.vanishing { transform: scale(0); opacity: 0; }
+.block.connected-hint { filter: brightness(1.3); box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+
+/* --- 遮罩層 --- */
+.overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85); 
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.3s;
+}
+.overlay.hidden { opacity: 0; pointer-events: none; }
+
+.overlay-content {
+    background: #1a1a24;
+    border: 2px solid #00ffcc;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
+    max-width: 400px;
+}
+.overlay-content h2 { color: #00ffcc; font-size: 2rem; margin-top: 0; text-shadow: 0 0 10px #00ffcc; }
+.overlay-text { text-align: left; color: #ccc; font-size: 1.1rem; margin-bottom: 30px; line-height: 1.6; }
+.start-btn { width: 100%; font-size: 1.5rem; padding: 15px; }
+
+/* Tip Box */
+.tip-box {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #ffff00;
+    padding: 15px;
+    margin: 20px 0 30px 0;
+    text-align: left;
+    min-height: 80px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.tip-label { color: #ffff00; font-weight: bold; font-size: 0.9rem; margin: 0 0 5px 0; letter-spacing: 1px; }
+.tip-content { color: #fff; font-size: 1.2rem; margin: 0; line-height: 1.4; animation: fadeIn 0.5s ease-in-out; }
+
+@keyframes flash { from { filter: brightness(1); } to { filter: brightness(2); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+.tip-content {
+    color: #fff;
+    font-size: 1.2rem;
+    margin: 0;
+    line-height: 1.4;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes flash {
+    from { filter: brightness(1); }
+    to { filter: brightness(2); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
