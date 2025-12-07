@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Puzzle - Collapse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/game2.css">
+</head>
+<body>
+
+    <div class="game-wrapper">
+        <div class="header-info">
+            <h1 class="game-title">ENERGY HARVEST</h1>
+            
+            <div class="dashboard-row">
+                
+                <div class="status-panel">
+                    <div class="status-item">
+                        <span class="label">LEVEL</span>
+                        <span class="value" id="level-display">1</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">BEST</span>
+                        <span class="value" id="high-score-display" style="color: #ffff00;">0</span>
+                    </div>
+                    <div class="status-item wide">
+                        <span class="label">PROGRESS</span>
+                        <span class="value" id="score-text">0 / 100</span>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="action-btn" onclick="togglePause()">PAUSE</button>
+                    <button class="action-btn" onclick="location.reload()">RESTART</button>
+                    <a href="home.html" class="action-btn back-btn">EXIT</a>
+                </div>
+            </div>
+            <div class="timer-container">
+                <div id="timer-bar" class="timer-bar" style="width: 100%;"></div>
+            </div>
+            
+            <div class="fragment-info">
+                Fragments Collected: <span id="fragment-display" style="color: #00ffcc;">0</span>
+            </div>
+        </div>
+
+        <div id="game-board" class="game-board"></div>
+
+        <div id="game-overlay" class="overlay">
+            <div class="overlay-content">
+                <h2 id="overlay-title">MISSION BRIEFING</h2>
+                <div id="overlay-desc" class="overlay-text">
+                    <p>1. Click groups of 3+ blocks to harvest energy.</p>
+                    <p>2. Reach the target score before time runs out.</p>
+                    <p>3. Blocks will fall and refill automatically.</p>
+                    <p>4. <strong>Combo 15+</strong> blocks for double points!</p>
+                    <p style="color: #ff3333; margin-top: 10px;">WARNING: Don't let the energy run dry!</p>
+                </div>
+                <button class="action-btn start-btn" onclick="startGameSession()">START MISSION</button>
+            </div>
+        </div>
+
+        <div id="pause-overlay" class="overlay hidden">
+            <div class="overlay-content">
+                <h2 style="color: #ffff00; text-shadow: 0 0 10px #ffff00;">GAME PAUSED</h2>
+                <div class="tip-box">
+                    <p class="tip-label">💡 SURVIVAL TIP:</p>
+                    <p id="tip-text" class="tip-content">Loading tips...</p>
+                </div>
+                <button class="action-btn start-btn" onclick="togglePause()">RESUME</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../static/js/game2.js"></script>
+</body>
+</html>
