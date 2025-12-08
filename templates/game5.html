@@ -1,29 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>挖礦挑戰！</title>
-    <link rel="stylesheet" href="../static/css/game5.css">
+  <meta charset="UTF-8" />
+  <title>彩金礦工 - 關卡版</title>
+  <link rel="stylesheet" href="../static/css/game5.css" />
 </head>
 <body>
+  <h1>彩金礦工</h1>
+  <div id="info">
+    <span id="score">分數：0</span>
+    <span id="level">關卡：1</span>
+    <span id="target">目標：60</span>
+    <span id="timer">時間：60</span>
+    <span class="tips">空白鍵：發射夾子　R：重新開始</span>
+  </div>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-    <div id="game-container">
-        <div id="game-info">
-            <p>💰 分數: <span id="score">0</span></p>
-            <p>⏳ 時間: <span id="time">02:00</span></p>
-            <p>💣 炸彈: <span id="bombs-count">3</span></p>
-        </div>
-
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
-
-        <div id="game-overlay" class="hidden">
-            <h2 id="overlay-message">點擊開始</h2>
-            <p id="overlay-status"></p>
-            <button id="startButton">開始遊戲</button>
-        </div>
-    </div>
-
-    <script src="game5.js"></script>
+  <script src="../static/js/game5.js"></script>
 </body>
 </html>
