@@ -2,12 +2,28 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>火柴人跑酷遊戲</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>挖礦挑戰！</title>
     <link rel="stylesheet" href="../static/css/game5.css">
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
 
-    <script src="../static/js/game5.js"></script>
+    <div id="game-container">
+        <div id="game-info">
+            <p>💰 分數: <span id="score">0</span></p>
+            <p>⏳ 時間: <span id="time">02:00</span></p>
+            <p>💣 炸彈: <span id="bombs-count">3</span></p>
+        </div>
+
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div id="game-overlay" class="hidden">
+            <h2 id="overlay-message">點擊開始</h2>
+            <p id="overlay-status"></p>
+            <button id="startButton">開始遊戲</button>
+        </div>
+    </div>
+
+    <script src="game5.js"></script>
 </body>
 </html>
