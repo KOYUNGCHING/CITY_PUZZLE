@@ -36,6 +36,9 @@ body, html {
     justify-content: space-between; /* 將元素分開到兩側 */
     align-items: flex-start;
     z-index: 10; /* 確保在其他元素之上 */
+    
+    /* 確保 header 是一個定位上下文，這是登出按鈕絕對定位的依據 */
+    position: relative; /* 關鍵修正，保持原有邏輯 */
 }
 
 /* 底部 footer (左下和右下) */
@@ -62,6 +65,8 @@ body, html {
     border-radius: 8px;
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    
+    /* 保持原有樣式，但移除 position: relative; 如果 header 是 relative，player-info 就不需要 */
 }
 
 .avatar-container {
@@ -92,7 +97,64 @@ body, html {
     margin-top: 3px;
 }
 
-/* === 四個角落按鈕共用樣式 === */
+/* --- 左上角: 登出按鈕樣式 (LOGOUT) --- */
+/* home.css (修正後的登出按鈕定位) */
+
+/* 登出按鈕的定位 */
+/* home.css (修正後的登出按鈕定位) */
+
+/* 登出按鈕的定位 */
+.logout-position {
+    /* 使用絕對定位，讓它位於 player-info 旁邊或斜下方 */
+    position: absolute; 
+    top: 95px; /* 保持垂直位置不變 */
+    left: 20px; /* 關鍵修正：將水平位置往左調整 */
+    
+    /* 確保按鈕本身沒有多餘的樣式干擾定位 */
+    padding: 5px; 
+    border: none;
+    background: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.logout-position .button-icon {
+    /* 調整登出圖標的大小 */
+    width: 40px; 
+    height: 40px; 
+    display: block;
+}
+
+/* 讓按鈕在滑鼠懸停時有效果 (可選) */
+.logout-position:hover {
+    opacity: 0.8;
+}
+
+.logout-position .button-icon {
+    /* 調整登出圖標的大小 */
+    width: 40px; 
+    height: 40px; 
+    display: block;
+}
+
+/* 讓按鈕在滑鼠懸停時有效果 (可選) */
+.logout-position:hover {
+    opacity: 0.8;
+}
+
+.logout-position .button-icon {
+    /* 調整登出圖標的大小 */
+    width: 40px; 
+    height: 40px; 
+    display: block;
+}
+
+/* 讓按鈕在滑鼠懸停時有效果 (可選) */
+.logout-position:hover {
+    opacity: 0.8;
+}
+
+/* --- 四個角落按鈕共用樣式 --- */
 .top-right-button,
 .bottom-left-button,
 .bottom-right-button {
@@ -132,4 +194,9 @@ body, html {
 .bottom-left-button:hover,
 .bottom-right-button:hover {
     transform: scale(1.5);
+}
+
+/* 主內容區域（用於在 header 和 footer 之間佔位，通常在背景設置完畢後會被圖片覆蓋） */
+.main-content {
+    /* 如果有內容，可能需要定位 */
 }

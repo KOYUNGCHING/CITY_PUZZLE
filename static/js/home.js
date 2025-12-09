@@ -3,13 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const rankButton = document.getElementById('rank-button');
     const puzzleJumpButton = document.getElementById('puzzle-jump-button');
     const selectGameButton = document.getElementById('select-game-button');
+    // 新增: 登出按鈕
+    const logoutButton = document.getElementById('logout-button'); 
 
     // === 獲取玩家資訊元素 ===
     const playerName = document.getElementById('player-name');
     const playerAvatar = document.querySelector('.avatar');
     const playerScore = document.getElementById('player-score');
 
-    // === 載入動態玩家資料 (您已有的邏輯) ===
+    // === 載入動態玩家資料 ===
     function loadPlayerData() {
         // 這裡應該從 localStorage 或 API 獲取登入數據
         const username = localStorage.getItem('logged_in_username') || '勇敢的記者';
@@ -17,12 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const fragments = localStorage.getItem('logged_in_fragments') || '0'; 
 
         playerName.textContent = username;
-        // 根據您首頁圖上的 "總得分: 2450"，這裡使用碎片數作為分數顯示
         playerScore.textContent = `總得分: ${fragments}`; 
         
-        // 假設頭像圖片的路徑是 /static/img/avatars/avatar_[ID].png
+        // 這裡可以加入頭像圖片的載入邏輯
         // const avatarId = localStorage.getItem('logged_in_avatar_id') || 1;
-        // playerAvatar.src = `/static/img/avatars/avatar_${avatarId}.png`;
+        // if (playerAvatar) {
+        //     playerAvatar.src = `/static/img/avatars/avatar_${avatarId}.png`;
+        // }
 
         console.log(`玩家 ${username} 的數據已加載。`);
     }
@@ -31,32 +34,40 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPlayerData();
 
     // =======================================================
-    // === 按鈕功能 (已根據 Flask 路由 /ranking, /puzzle, /game 修正) ===
+    // === 按鈕功能 (整合所有路由和登出邏輯) ===
     // =======================================================
 
-    // 1. 積分排名按鈕
+    // 1. 積分排名按鈕 (跳轉到 /ranking)
     if (rankButton) {
         rankButton.addEventListener('click', () => {
-            // 路由應為 /ranking (與 app.py 的 @app.route("/ranking") 對應)
             window.location.href = "/ranking"; 
         });
     }
 
-
-    // 2. ALL PUZZLES 按鈕 (新需求: 跳轉到拼圖收集頁面)
+    // 2. ALL PUZZLES 按鈕 (跳轉到 /puzzle)
     if (puzzleJumpButton) {
         puzzleJumpButton.addEventListener('click', () => {
-            // 路由應為 /puzzle (與 app.py 的 @app.route("/puzzle") 對應)
             window.location.href = "/puzzle"; 
         });
     }
 
-
-    // 3. 選擇遊戲按鈕
+    // 3. 選擇遊戲按鈕 (跳轉到 /game)
     if (selectGameButton) {
         selectGameButton.addEventListener('click', () => {
-            // 路由應為 /game (與 app.py 的 @app.route("/game") 對應)
             window.location.href = "/game"; 
+        });
+    }
+    
+    // 4. 登出功能 (跳轉到 /login 並清除狀態)
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            // 清除本地儲存的登入狀態
+            localStorage.removeItem('logged_in_username');
+            localStorage.removeItem('logged_in_fragments');
+            localStorage.removeItem('logged_in_avatar_id');
+            
+            // 跳轉到登入頁面
+            window.location.href = "/login";
         });
     }
 });

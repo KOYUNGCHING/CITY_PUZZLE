@@ -24,7 +24,7 @@ body::before {
     height: 100%;
     
     /* 圖片路徑修正：從 css/ 退回一層到 static/，再進入 img/ 找 home_page.jpg */
-    background-image: url('../img/home_page.jpg'); 
+    background-image: url('../img/base_map/home_page.jpg'); 
     background-size: cover; 
     background-position: center; 
     
