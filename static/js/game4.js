@@ -507,7 +507,7 @@ statusTextEl.textContent =
 
 // ===== Back 按鈕：回首頁 =====
 document.getElementById("back-btn").addEventListener("click", () => {
-  window.location.href = "/home"; 
+  window.location.href = "/game"; 
   // 若你的首頁不是 "/", 例如 "/home"，就改成：
   // window.location.href = "/home";
 });

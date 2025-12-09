@@ -508,7 +508,7 @@ document.getElementById("restartBtn").addEventListener("click", () => {
 // ====== 新增：回首頁按鈕 ======
 document.getElementById("homeBtn").addEventListener("click", () => {
   // 如果你的首頁是 "/"
-  window.location.href = "/home";
+  window.location.href = "/game";
   // 若要導向其他頁，例如 "/index" 可改成：
   // window.location.href = "/index";
 });

@@ -606,3 +606,10 @@ restartBtn.addEventListener("click", resetGame);
 // === 開始遊戲 ===
 resetGame();
 requestAnimationFrame(loop);
+
+// ===== Back 按鈕：回首頁 =====
+document.getElementById("back-btn").addEventListener("click", () => {
+  window.location.href = "/game"; 
+  // 若你的首頁不是 "/", 例如 "/home"，就改成：
+  // window.location.href = "/home";
+});
