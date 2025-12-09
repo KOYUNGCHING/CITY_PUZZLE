@@ -1,392 +1,608 @@
-// ========== 1. DOM 物件 ==========
-const canvas = document.getElementById("gameCanvas");
+// === 取得畫布與 UI 元素 ===
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const scoreSpan = document.getElementById("score");
-const levelSpan = document.getElementById("level");
-const targetSpan = document.getElementById("target");
-const timerSpan = document.getElementById("timer");
+const hpText = document.getElementById("hpText");
+const scoreText = document.getElementById("scoreText");
+const alienCountText = document.getElementById("alienCount");
+const buffText = document.getElementById("buffText");
+const restartBtn = document.getElementById("restartBtn");
 
-// ========== 2. 夾子與狀態 ==========
-const baseX = canvas.width / 2; // 夾子起點 x
-const baseY = 80;               // 夾子起點 y
+const WIDTH = canvas.width;
+const HEIGHT = canvas.height;
 
-const STATE = {
-  SWING: "swing",   // 左右擺動
-  EXTEND: "extend", // 往外伸
-  PULL: "pull",     // 往回拉
-};
+// === 輸入狀態 ===
+const keys = {};
+let mouseX = WIDTH / 2;
+let mouseY = HEIGHT / 2;
+let shooting = false;
 
-let state = STATE.SWING;
-
-// 擺動角：以「垂直向下」為基準
-let angleOffset = 0;      // 相對於垂直向下的偏移
-let angleDir = 1;         // 1 = 往右, -1 = 往左
-const swingRange = 0.8;   // 最大擺動弧度 (~45°)
-const angleSpeed = 0.02;  // 擺動速度
-
-// 繩子長度
-let ropeLength = 80;
-const minRopeLength = 80;
-const maxRopeLength = 550;
-const extendSpeed = 7;
-const basePullSpeed = 7;
-
-// 爪子判定範圍（越大越好抓）
-const CLAW_CATCH_RADIUS = 28;
-
-// 分數、關卡、目標分數（目標看「總分」）
-let score = 0;
-let currentLevelIndex = 0;   // 0 代表第 1 關
-let currentTarget = 60;      // 第一關目標分數
-
-// 計時器與遊戲狀態
-let timeLeft = 60;
+// === 遊戲狀態 ===
+let lastTime = 0;
+let player;
+let enemies = [];
+let bullets = [];
+let powerups = [];
+let spawnTimer = 0;
 let gameOver = false;
+let score = 0;
 
-// 抓到的物體（null 表示沒有）
-let caughtItem = null;
+// === 牆壁（不能穿過） ===
+const walls = [
+  // 中央一塊
+  { x: 350, y: 230, w: 200, h: 30 },
+  // 左上
+  { x: 150, y: 120, w: 120, h: 30 },
+  // 右下
+  { x: 600, y: 400, w: 180, h: 30 },
+  // 左下
+  { x: 120, y: 380, w: 140, h: 30 },
+  // 右上
+  { x: 600, y: 160, w: 150, h: 30 }
+];
 
-// 地面物件
-const items = [];
+// === 玩家與敵人、子彈、道具的 class ===
+class Player {
+  constructor() {
+    this.x = WIDTH / 2;
+    this.y = HEIGHT / 2;
+    this.radius = 16;
+    this.baseSpeed = 220;
+    this.hp = 100;
+    this.maxHp = 100;
 
-// ========== 3. 物件建立 ==========
+    this.speedBuffTimer = 0;
+    this.shieldTimer = 0;
 
-function addItem(x, y, type) {
-  if (type === "small") {
-    items.push({
-      x,
-      y,
-      type,
-      radius: 18,
-      value: 10,
-      pullSpeed: 6,
-    });
-  } else if (type === "medium") {
-    items.push({
-      x,
-      y,
-      type,
-      radius: 25,
-      value: 20,
-      pullSpeed: 5,
-    });
-  } else if (type === "large") {
-    items.push({
-      x,
-      y,
-      type,
-      radius: 32,
-      value: 30,
-      pullSpeed: 4,
-    });
-  } else if (type === "rock") {
-    items.push({
-      x,
-      y,
-      type,
-      radius: 20,
-      value: 1,
-      pullSpeed: 2,  // 石頭：拉回速度慢
-    });
-  }
-}
-
-// 隨機產生一關的物件（無限關卡用）
-function loadLevel(levelIndex) {
-  items.length = 0; // 清空上一關物件
-
-  // 關卡編號從 0 開始，顯示要 +1
-  const displayLevel = levelIndex + 1;
-
-  // 這關要放多少金塊、石頭（可以自己調）
-  const numGold = 5 + Math.min(levelIndex * 2, 12);    // 金塊數量隨關卡增加，上限大約 17
-  const numRocks = 2 + Math.floor(levelIndex / 2);     // 石頭越挖越多
-
-  let totalGoldScore = 0;
-
-  // y 位置：關卡越深，整體越靠近底部
-  function randomY() {
-    const base = 340 + Math.min(levelIndex * 15, 160); // 越後面 base 越大 → 越下面
-    const maxY = 540;
-    return base + Math.random() * (maxY - base);
+    this.fireCooldown = 0;
+    this.fireRate = 0.18; // 秒
   }
 
-  function randomX() {
-    return 80 + Math.random() * 640; // 留左右邊界
+  getSpeed() {
+    return this.baseSpeed * (this.speedBuffTimer > 0 ? 1.6 : 1);
   }
 
-  // 先生成金塊
-  for (let i = 0; i < numGold; i++) {
-    const r = Math.random();
-    let type;
-    if (r < 0.5) type = "small";
-    else if (r < 0.85) type = "medium";
-    else type = "large";
-
-    const x = randomX();
-    const y = randomY();
-    addItem(x, y, type);
-
-    if (type === "small") totalGoldScore += 10;
-    else if (type === "medium") totalGoldScore += 20;
-    else totalGoldScore += 30;
+  hasShield() {
+    return this.shieldTimer > 0;
   }
 
-  // 再加石頭
-  for (let i = 0; i < numRocks; i++) {
-    const x = randomX();
-    const y = randomY();
-    addItem(x, y, "rock");
-  }
+  update(dt) {
+    // 移動
+    let dx = 0;
+    let dy = 0;
+    if (keys["ArrowUp"]) dy -= 1;
+    if (keys["ArrowDown"]) dy += 1;
+    if (keys["ArrowLeft"]) dx -= 1;
+    if (keys["ArrowRight"]) dx += 1;
 
-  // 設定本關目標（用「總分」門檻，會越來越高）
-  // 這裡用「第一關 60 分，之後每關多 40 分」的簡單規則
-  currentTarget = 60 + levelIndex * 40;
-
-  // 重設夾子狀態 & 計時
-  state = STATE.SWING;
-  ropeLength = minRopeLength;
-  angleOffset = 0;
-  angleDir = 1;
-  caughtItem = null;
-
-  timeLeft = 60;
-  gameOver = false;
-
-  // 更新 UI
-  levelSpan.textContent = "關卡：" + displayLevel;
-  targetSpan.textContent = "目標：" + currentTarget;
-  timerSpan.textContent = "時間：" + timeLeft;
-  scoreSpan.textContent = "分數：" + score;
-}
-
-// ========== 4. 計時器：每秒減一 ==========
-function startTimer() {
-  setInterval(() => {
-    if (gameOver) return;
-
-    timeLeft--;
-    if (timeLeft < 0) timeLeft = 0;
-    timerSpan.textContent = "時間：" + timeLeft;
-
-    if (timeLeft <= 0) {
-      // 時間到，判斷總分有沒有達標
-      if (score >= currentTarget) {
-        goToNextLevel();
-      } else {
-        gameOver = true;
-      }
+    const len = Math.hypot(dx, dy);
+    if (len > 0) {
+      dx /= len;
+      dy /= len;
     }
-  }, 1000);
-}
 
-// ========== 5. 進下一關 ==========
-function goToNextLevel() {
-  currentLevelIndex++;
-  loadLevel(currentLevelIndex);  // 自動生成下一關
-}
+    const speed = this.getSpeed();
+    let nextX = this.x + dx * speed * dt;
+    let nextY = this.y + dy * speed * dt;
 
-// ========== 6. 鍵盤操作 ==========
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    if (!gameOver && state === STATE.SWING) {
-      state = STATE.EXTEND;
+    // 碰撞偵測：分開處理 X/Y，避免黏牆
+    // X
+    const oldX = this.x;
+    this.x = nextX;
+    if (this.collidesWithWalls()) {
+      this.x = oldX;
     }
-    e.preventDefault();
+    // Y
+    const oldY = this.y;
+    this.y = nextY;
+    if (this.collidesWithWalls()) {
+      this.y = oldY;
+    }
+
+    // 邊界
+    this.x = Math.max(this.radius, Math.min(WIDTH - this.radius, this.x));
+    this.y = Math.max(this.radius, Math.min(HEIGHT - this.radius, this.y));
+
+    // Buff 計時
+    if (this.speedBuffTimer > 0) this.speedBuffTimer -= dt;
+    if (this.shieldTimer > 0) this.shieldTimer -= dt;
+
+    // 開火冷卻
+    if (this.fireCooldown > 0) this.fireCooldown -= dt;
+
+    if (shooting) {
+      this.tryShoot();
+    }
   }
 
-  if (e.key === "r" || e.key === "R") {
-    // 重新整個遊戲
-    score = 0;
-    scoreSpan.textContent = "分數：" + score;
-    currentLevelIndex = 0;
-    loadLevel(currentLevelIndex);
+  collidesWithWalls() {
+    const r = this.radius;
+    const px = this.x;
+    const py = this.y;
+    for (let w of walls) {
+      const closestX = clamp(px, w.x, w.x + w.w);
+      const closestY = clamp(py, w.y, w.y + w.h);
+      const dist = Math.hypot(px - closestX, py - closestY);
+      if (dist < r) return true;
+    }
+    return false;
   }
-});
 
-// ========== 7. 夾子運動邏輯 ==========
-function update() {
+  tryShoot() {
+    if (this.fireCooldown > 0) return;
+    this.fireCooldown = this.fireRate;
+
+    const angle = Math.atan2(mouseY - this.y, mouseX - this.x);
+    const speed = 520;
+    const bullet = new Bullet(
+      this.x + Math.cos(angle) * this.radius,
+      this.y + Math.sin(angle) * this.radius,
+      Math.cos(angle) * speed,
+      Math.sin(angle) * speed
+    );
+    bullets.push(bullet);
+  }
+
+  draw() {
+    const angle = Math.atan2(mouseY - this.y, mouseX - this.x);
+
+    // 可以略帶火柴人感：頭＋身體＋手＋腳
+    ctx.save();
+    ctx.translate(this.x, this.y);
+
+    // 頭
+    ctx.beginPath();
+    ctx.arc(0, -18, 8, 0, Math.PI * 2);
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 身體
+    ctx.beginPath();
+    ctx.moveTo(0, -10);
+    ctx.lineTo(0, 12);
+    ctx.stroke();
+
+    // 腿
+    ctx.beginPath();
+    ctx.moveTo(0, 12);
+    ctx.lineTo(-8, 26);
+    ctx.moveTo(0, 12);
+    ctx.lineTo(8, 26);
+    ctx.stroke();
+
+    // 手臂＋槍，朝向滑鼠
+    ctx.save();
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(14, -2);
+    ctx.stroke(); // 手臂
+
+    ctx.beginPath();
+    ctx.moveTo(14, -2);
+    ctx.lineTo(30, -2);
+    ctx.lineWidth = 3;
+    ctx.stroke(); // 槍
+    ctx.restore();
+
+    // 护盾效果（有無敵時畫一圈光環）
+    if (this.hasShield()) {
+      ctx.beginPath();
+      ctx.arc(0, 0, this.radius + 6, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(80, 200, 255, 0.8)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+}
+
+class Enemy {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.radius = 14;
+    this.speed = 110; // 比玩家慢
+    this.hp = 2;
+  }
+
+  update(dt) {
+    // 朝玩家移動
+    const angle = Math.atan2(player.y - this.y, player.x - this.x);
+    const vx = Math.cos(angle) * this.speed * dt;
+    const vy = Math.sin(angle) * this.speed * dt;
+
+    // 分離處理 X/Y 碰撞
+    const oldX = this.x;
+    this.x += vx;
+    if (this.collidesWithWalls()) {
+      this.x = oldX;
+    }
+
+    const oldY = this.y;
+    this.y += vy;
+    if (this.collidesWithWalls()) {
+      this.y = oldY;
+    }
+  }
+
+  collidesWithWalls() {
+    const r = this.radius;
+    const px = this.x;
+    const py = this.y;
+    for (let w of walls) {
+      const closestX = clamp(px, w.x, w.x + w.w);
+      const closestY = clamp(py, w.y, w.y + w.h);
+      const dist = Math.hypot(px - closestX, py - closestY);
+      if (dist < r) return true;
+    }
+    return false;
+  }
+
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+
+    // 外星人身體
+    ctx.beginPath();
+    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = "#7ef9c4";
+    ctx.fill();
+    ctx.strokeStyle = "#033";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 眼睛
+    ctx.beginPath();
+    ctx.arc(-5, -3, 3, 0, Math.PI * 2);
+    ctx.arc(5, -3, 3, 0, Math.PI * 2);
+    ctx.fillStyle = "#033";
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+class Bullet {
+  constructor(x, y, vx, vy) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.radius = 4;
+    this.life = 0.9; // 秒
+  }
+
+  update(dt) {
+    this.x += this.vx * dt;
+    this.y += this.vy * dt;
+    this.life -= dt;
+  }
+
+  isOutOfBounds() {
+    return (
+      this.x < -20 ||
+      this.x > WIDTH + 20 ||
+      this.y < -20 ||
+      this.y > HEIGHT + 20
+    );
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffdd99";
+    ctx.fill();
+  }
+}
+
+class Powerup {
+  constructor(x, y, type) {
+    this.x = x;
+    this.y = y;
+    this.radius = 10;
+    this.type = type; // "heal" | "speed" | "shield"
+    this.life = 15; // 秒
+  }
+
+  update(dt) {
+    this.life -= dt;
+  }
+
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+
+    ctx.beginPath();
+    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+
+    if (this.type === "heal") {
+      ctx.fillStyle = "#ff6b81";
+    } else if (this.type === "speed") {
+      ctx.fillStyle = "#6bc5ff";
+    } else {
+      ctx.fillStyle = "#ffe066";
+    }
+    ctx.fill();
+
+    ctx.fillStyle = "#111";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    if (this.type === "heal") ctx.fillText("+HP", 0, 0);
+    else if (this.type === "speed") ctx.fillText("SPD", 0, 0);
+    else ctx.fillText("S", 0, 0);
+
+    ctx.restore();
+  }
+}
+
+// === 工具函式 ===
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
+function circleRectCollide(cx, cy, cr, rx, ry, rw, rh) {
+  const closestX = clamp(cx, rx, rx + rw);
+  const closestY = clamp(cy, ry, ry + rh);
+  const dist = Math.hypot(cx - closestX, cy - closestY);
+  return dist < cr;
+}
+
+// === 道具處理 ===
+function spawnPowerup(x, y) {
+  const r = Math.random();
+  let type;
+  if (r < 0.4) type = "heal";
+  else if (r < 0.7) type = "speed";
+  else type = "shield";
+  powerups.push(new Powerup(x, y, type));
+}
+
+function applyPowerup(powerup) {
+  if (powerup.type === "heal") {
+    player.hp = Math.min(player.maxHp, player.hp + 35);
+  } else if (powerup.type === "speed") {
+    player.speedBuffTimer = 8; // 8 秒
+  } else if (powerup.type === "shield") {
+    player.shieldTimer = 6; // 6 秒
+  }
+}
+
+// === 敵人生成 ===
+function spawnEnemy() {
+  // 從四個邊隨機生成
+  const edge = Math.floor(Math.random() * 4);
+  let x, y;
+  if (edge === 0) {
+    x = Math.random() * WIDTH;
+    y = -20;
+  } else if (edge === 1) {
+    x = Math.random() * WIDTH;
+    y = HEIGHT + 20;
+  } else if (edge === 2) {
+    x = -20;
+    y = Math.random() * HEIGHT;
+  } else {
+    x = WIDTH + 20;
+    y = Math.random() * HEIGHT;
+  }
+  const enemy = new Enemy(x, y);
+  enemies.push(enemy);
+}
+
+// === 更新與繪圖 ===
+function update(dt) {
   if (gameOver) return;
 
-  if (state === STATE.SWING) {
-    angleOffset += angleSpeed * angleDir;
-    if (angleOffset > swingRange) {
-      angleOffset = swingRange;
-      angleDir = -1;
-    } else if (angleOffset < -swingRange) {
-      angleOffset = -swingRange;
-      angleDir = 1;
-    }
-  } else if (state === STATE.EXTEND) {
-    ropeLength += extendSpeed;
+  player.update(dt);
 
-    const { tipX, tipY } = getClawTip();
+  // 敵人生成（控制最大數量與時間）
+  const maxEnemies = 10;
+  spawnTimer -= dt;
+  if (spawnTimer <= 0 && enemies.length < maxEnemies) {
+    spawnEnemy();
+    spawnTimer = 1.2; // 每 1.2 秒最多生一隻
+  }
 
-    // 檢查是否碰到物件（用物體半徑 + 爪子判定半徑）
-    for (let i = 0; i < items.length; i++) {
-      const it = items[i];
-      const dx = tipX - it.x;
-      const dy = tipY - it.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+  // 更新敵人
+  for (let e of enemies) {
+    e.update(dt);
+  }
 
-      if (dist < it.radius + CLAW_CATCH_RADIUS) {
-        caughtItem = it;
-        items.splice(i, 1);
-        state = STATE.PULL;
+  // 更新子彈
+  for (let b of bullets) {
+    b.update(dt);
+  }
+
+  // 更新道具
+  for (let p of powerups) {
+    p.update(dt);
+  }
+
+  // 子彈 & 敵人 碰撞
+  for (let i = enemies.length - 1; i >= 0; i--) {
+    const e = enemies[i];
+    for (let j = bullets.length - 1; j >= 0; j--) {
+      const b = bullets[j];
+      const dist = Math.hypot(e.x - b.x, e.y - b.y);
+      if (dist < e.radius + b.radius) {
+        bullets.splice(j, 1);
+        e.hp -= 1;
+        if (e.hp <= 0) {
+          // 死亡：加分並掉道具
+          score += 10;
+          spawnPowerup(e.x, e.y);
+          enemies.splice(i, 1);
+        }
         break;
       }
     }
+  }
 
-    if (ropeLength >= maxRopeLength && state === STATE.EXTEND) {
-      state = STATE.PULL;
-    }
-  } else if (state === STATE.PULL) {
-    let pullSpeed = basePullSpeed;
-    if (caughtItem) pullSpeed = caughtItem.pullSpeed;
-
-    ropeLength -= pullSpeed;
-
-    if (ropeLength <= minRopeLength) {
-      ropeLength = minRopeLength;
-
-      if (caughtItem) {
-        score += caughtItem.value;
-        scoreSpan.textContent = "分數：" + score;
-        caughtItem = null;
-
-        // 在時間沒到之前，如果總分已經超過目標，也可以直接往下一關
-        if (!gameOver && score >= currentTarget) {
-          goToNextLevel();
+  // 敵人 & 玩家 碰撞
+  for (let e of enemies) {
+    const dist = Math.hypot(e.x - player.x, e.y - player.y);
+    if (dist < e.radius + player.radius) {
+      if (!player.hasShield()) {
+        player.hp -= 25 * dt; // 連續撞會持續扣血
+        if (player.hp <= 0) {
+          player.hp = 0;
+          gameOver = true;
         }
       }
-      state = STATE.SWING;
     }
   }
+
+  // 玩家 & 道具 碰撞
+  for (let i = powerups.length - 1; i >= 0; i--) {
+    const p = powerups[i];
+    const dist = Math.hypot(p.x - player.x, p.y - player.y);
+    if (dist < p.radius + player.radius) {
+      applyPowerup(p);
+      powerups.splice(i, 1);
+      continue;
+    }
+    if (p.life <= 0) {
+      powerups.splice(i, 1);
+    }
+  }
+
+  // 子彈刪除
+  bullets = bullets.filter((b) => b.life > 0 && !b.isOutOfBounds());
+
+  // 更新 UI
+  hpText.textContent = `${player.hp.toFixed(0)} / ${player.maxHp}`;
+  scoreText.textContent = score;
+  alienCountText.textContent = enemies.length;
+  let buffs = [];
+  if (player.speedBuffTimer > 0)
+    buffs.push(`Speed ${player.speedBuffTimer.toFixed(1)}s`);
+  if (player.shieldTimer > 0)
+    buffs.push(`Shield ${player.shieldTimer.toFixed(1)}s`);
+  buffText.textContent = buffs.length ? buffs.join(" | ") : "None";
 }
 
-// 夾子末端位置
-function getClawTip() {
-  const angle = Math.PI / 2 + angleOffset; // π/2 為正下方
-  const tipX = baseX + ropeLength * Math.cos(angle);
-  const tipY = baseY + ropeLength * Math.sin(angle);
-  return { tipX, tipY, angle };
-}
-
-// ========== 8. 繪圖 ==========
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-  // 地面
-  ctx.fillStyle = "#003300";
-  ctx.fillRect(0, 560, canvas.width, 40);
-
-  // 礦工底座
-  ctx.fillStyle = "#888";
-  ctx.fillRect(baseX - 30, baseY - 20, 60, 20);
-  ctx.fillStyle = "#ccc";
-  ctx.fillRect(baseX - 10, baseY - 40, 20, 20);
-
-  // 繩子 + 夾子
-  const { tipX, tipY, angle } = getClawTip();
-
-  // 繩子
-  ctx.strokeStyle = "#fff";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(baseX, baseY);
-  ctx.lineTo(tipX, tipY);
-  ctx.stroke();
-
-  // 夾子：機械電動爪
-  ctx.save();
-  ctx.translate(tipX, tipY);
-  ctx.rotate(angle - Math.PI / 2); // 讓爪子朝著繩子方向
-
-  // 1. 馬達本體
-  ctx.fillStyle = "#bbbbbb";
-  ctx.fillRect(-7, -28, 14, 20);
-
-  // 2. 關節
-  ctx.fillStyle = "#888888";
-  ctx.fillRect(-4, -8, 8, 12);
-
-  // 3. 左右爪臂
-  ctx.strokeStyle = "#ffd700";
-  ctx.lineWidth = 3;
-
-  ctx.beginPath();
-  ctx.moveTo(-3, 0);
-  ctx.lineTo(-18, 16);
-  ctx.lineTo(-12, 22);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(3, 0);
-  ctx.lineTo(18, 16);
-  ctx.lineTo(12, 22);
-  ctx.stroke();
-
-  // 4. 爪尖端小金屬塊
-  ctx.fillStyle = "#ffcc33";
-  ctx.beginPath();
-  ctx.arc(-12, 22, 3, 0, Math.PI * 2);
-  ctx.arc(12, 22, 3, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.restore();
-
-  // 抓到物件時，畫在夾子下方
-  if (caughtItem) {
+  // 背景網格（只是美觀）
+  ctx.strokeStyle = "#252b33";
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= WIDTH; x += 40) {
     ctx.beginPath();
-    ctx.fillStyle = caughtItem.type === "rock" ? "#777" : "#ffd700";
-    ctx.arc(tipX, tipY + caughtItem.radius, caughtItem.radius, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, HEIGHT);
+    ctx.stroke();
+  }
+  for (let y = 0; y <= HEIGHT; y += 40) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(WIDTH, y);
+    ctx.stroke();
   }
 
-  // 地上的物件
-  for (const it of items) {
-    ctx.beginPath();
-    ctx.fillStyle = it.type === "rock" ? "#777" : "#ffd700";
-    ctx.arc(it.x, it.y, it.radius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 顯示分數值
-    ctx.fillStyle = "#000";
-    ctx.font = "12px Microsoft JhengHei";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(it.value, it.x, it.y);
+  // 牆
+  for (let w of walls) {
+    ctx.fillStyle = "#3b4250";
+    ctx.fillRect(w.x, w.y, w.w, w.h);
+    ctx.strokeStyle = "#111";
+    ctx.strokeRect(w.x, w.y, w.w, w.h);
   }
 
-  // 遊戲失敗畫面
+  // 道具
+  for (let p of powerups) {
+    p.draw();
+  }
+
+  // 子彈
+  for (let b of bullets) {
+    b.draw();
+  }
+
+  // 敵人
+  for (let e of enemies) {
+    e.draw();
+  }
+
+  // 玩家
+  player.draw();
+
+  // Game Over 文字
   if (gameOver) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-    ctx.fillStyle = "#ff4444";
-    ctx.font = "40px Microsoft JhengHei";
+    ctx.fillStyle = "#fff";
+    ctx.font = "40px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("挑戰失敗！", canvas.width / 2, canvas.height / 2 - 20);
-
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "22px Microsoft JhengHei";
-    ctx.fillText(
-      "按 R 重新開始",
-      canvas.width / 2,
-      canvas.height / 2 + 20
-    );
+    ctx.fillText("GAME OVER", WIDTH / 2, HEIGHT / 2 - 10);
+    ctx.font = "20px sans-serif";
+    ctx.fillText("按 R 或下方按鈕重新開始", WIDTH / 2, HEIGHT / 2 + 30);
   }
 }
 
-// ========== 9. 主迴圈 ==========
-function gameLoop() {
-  update();
+// === 主迴圈 ===
+function loop(timestamp) {
+  const dt = (timestamp - lastTime) / 1000 || 0;
+  lastTime = timestamp;
+
+  update(dt);
   draw();
-  requestAnimationFrame(gameLoop);
+
+  requestAnimationFrame(loop);
 }
 
-// ========== 10. 啟動 ==========
-loadLevel(currentLevelIndex);  // 生成第 1 關
-startTimer();
-gameLoop();
+// === 初始化與重設 ===
+function resetGame() {
+  player = new Player();
+  enemies = [];
+  bullets = [];
+  powerups = [];
+  spawnTimer = 0.5;
+  gameOver = false;
+  score = 0;
+  lastTime = performance.now();
+}
+
+// === 事件 ===
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    shooting = true;
+    e.preventDefault(); // 避免往下捲動
+  }
+  if (e.code === "KeyR") {
+    resetGame();
+  }
+  keys[e.code] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.code === "Space") {
+    shooting = false;
+  }
+  keys[e.code] = false;
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+});
+
+canvas.addEventListener("mousedown", () => {
+  shooting = true;
+});
+
+canvas.addEventListener("mouseup", () => {
+  shooting = false;
+});
+
+restartBtn.addEventListener("click", resetGame);
+
+// === 開始遊戲 ===
+resetGame();
+requestAnimationFrame(loop);

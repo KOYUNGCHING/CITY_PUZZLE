@@ -2,19 +2,32 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>彩金礦工 - 關卡版</title>
+  <title>Stickman vs Aliens</title>
   <link rel="stylesheet" href="../static/css/game5.css" />
 </head>
 <body>
-  <h1>彩金礦工</h1>
-  <div id="info">
-    <span id="score">分數：0</span>
-    <span id="level">關卡：1</span>
-    <span id="target">目標：60</span>
-    <span id="timer">時間：60</span>
-    <span class="tips">空白鍵：發射夾子　R：重新開始</span>
+  <h1 class="title">Stickman vs Aliens</h1>
+
+  <div class="game-container">
+    <canvas id="game" width="900" height="600"></canvas>
+
+    <div class="ui">
+      <div class="stat">HP: <span id="hpText"></span></div>
+      <div class="stat">Score: <span id="scoreText">0</span></div>
+      <div class="stat">Aliens: <span id="alienCount">0</span></div>
+      <div class="stat">Buffs:
+        <span id="buffText">None</span>
+      </div>
+      <div class="hint">
+        移動：方向鍵 ↑ ↓ ← →<br>
+        射擊：空白鍵　瞄準：滑鼠<br>
+      </div>
+    </div>
   </div>
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+  <div class="footer">
+    <button id="restartBtn">重新開始</button>
+  </div>
 
   <script src="../static/js/game5.js"></script>
 </body>
