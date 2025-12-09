@@ -504,3 +504,10 @@ document.documentElement.style.setProperty('--cols', COLS);
 render();
 statusTextEl.textContent =
   "按下「開始 / 重來」後，方塊會自動下落，可以用滑鼠拖動它們。";
+
+// ===== Back 按鈕：回首頁 =====
+document.getElementById("back-btn").addEventListener("click", () => {
+  window.location.href = "/home"; 
+  // 若你的首頁不是 "/", 例如 "/home"，就改成：
+  // window.location.href = "/home";
+});
