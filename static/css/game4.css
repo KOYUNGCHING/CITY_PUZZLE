@@ -1,21 +1,184 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans TC", sans-serif;
+}
+
 body {
-  background: #111;
-  color: #eee;
-  font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #020617;
+  color: #e5e7eb;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.wrapper {
+  background: #020617;
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 20px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+}
+
+.header {
   text-align: center;
+  margin-bottom: 16px;
 }
 
-h1 {
-  margin-top: 20px;
-  font-size: 28px;
+.header h1 {
+  font-size: 2rem;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
 }
 
-p {
-  margin-bottom: 10px;
-  line-height: 1.5;
+.header p {
+  font-size: 0.95rem;
+  color: #9ca3af;
 }
 
-#gameCanvas {
-  border: 2px solid #eee;
-  background: #000;
+/* 面板 */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stat {
+  flex: 1;
+  min-width: 180px;
+  background: #020617;
+  border-radius: 10px;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  padding: 6px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.label {
+  color: #9ca3af;
+}
+
+#status-text {
+  color: #facc15;
+}
+
+/* 按鈕 */
+.btn {
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #60a5fa;
+  background: #2563eb;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s ease, transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* 棋盤 */
+.board-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.board {
+  background: #020617;
+  border-radius: 12px;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  padding: 8px;
+  display: grid;
+  gap: 4px;
+}
+
+/* 一顆格子 */
+.cell {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #1f2937;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1rem;
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.cell.empty {
+  background: #020617;
+  border-style: dashed;
+  border-color: #111827;
+  color: transparent;
+}
+
+.cell.tile {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.cell.falling {
+  border: 2px solid #facc15;
+}
+
+/* 說明 */
+.help {
+  border-top: 1px solid rgba(55, 65, 81, 0.8);
+  padding-top: 10px;
+  margin-top: 6px;
+}
+
+.help h2 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.help ul {
+  list-style: disc;
+  margin-left: 18px;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.help li + li {
+  margin-top: 3px;
+}
+
+/* RWD */
+@media (max-width: 600px) {
+  .wrapper {
+    padding: 14px;
+  }
+
+  .cell {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
 }

@@ -5,18 +5,14 @@ app = Flask(__name__)
 DB_NAME = "city_puzzle.db"
 
 # -------------------------
-# 資料庫初始化 (已修改為您指定的新欄位)
+# 資料庫初始化 (保持不變)
 # -------------------------
 def init_db():
     """初始化資料庫：建立 users 表格"""
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     
-    # 修改：根據您的需求更新了欄位
-    # id: 主鍵
-    # username: 帳號
-    # password: 密碼
-    # avatar_id: 頭像編號
+    # id: 主鍵, username: 帳號, password: 密碼, avatar_id: 頭像編號
     # total_fragments: 累積獲得的拼圖碎片 (排行榜用)
     # current_fragments: 目前持有的拼圖碎片 (可消費用)
     # progress_id: 目前解鎖進度 (0~16)
@@ -36,7 +32,7 @@ def init_db():
 init_db()
 
 # -------------------------
-# 你的頁面路由 (Story, Login, Register)
+# 頁面路由 (保持不變)
 # -------------------------
 
 @app.route("/")
@@ -54,69 +50,13 @@ def register():
     """註冊頁 (Register Page)"""
     return render_template("register.html")
 
-# -------------------------
-# 你的 API 邏輯 (Login, Register) - 已配合新資料庫修改
-# -------------------------
-
-@app.route('/api/login', methods=['POST'])
-def login_api():
-    data = request.json
-    username = data.get('username')
-    password = data.get('password')
-
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
-    # 抓取所有新欄位資料
-    c.execute("SELECT * FROM users WHERE username=?", (username,))
-    user = c.fetchone()
-    conn.close()
-
-    if user:
-        # DB欄位順序: 0:id, 1:username, 2:password, 3:avatar_id, 4:total_fragments, 5:current_fragments, 6:progress_id
-        if user[2] == password:
-            return jsonify({
-                'status': 'success', 
-                'message': '登入成功', 
-                'username': user[1],
-                'avatar_id': user[3],
-                'total_fragments': user[4],    # 累積碎片
-                'current_fragments': user[5],  # 目前碎片 (可用於前端顯示分數)
-                'score': user[5],              # 保留 score 欄位回傳 (對應 current_fragments) 以免舊 JS 報錯
-                'progress_id': user[6]         # 解鎖進度
-            })
-        else:
-            return jsonify({'status': 'wrong_password', 'message': '密碼錯誤'})
-    else:
-        return jsonify({'status': 'user_not_found', 'message': '帳號不存在'})
-
-@app.route('/api/register', methods=['POST'])
-def register_api():
-    data = request.json
-    try:
-        conn = sqlite3.connect(DB_NAME)
-        c = conn.cursor()
-        # 註冊時，碎片與進度都預設為 0
-        c.execute('''INSERT INTO users 
-                     (username, password, avatar_id, total_fragments, current_fragments, progress_id) 
-                     VALUES (?, ?, ?, 0, 0, 0)''', 
-                  (data['username'], data['password'], data['avatar_id']))
-        conn.commit()
-        conn.close()
-        return jsonify({'status': 'success', 'message': '註冊成功'})
-    except sqlite3.IntegrityError:
-        return jsonify({'status': 'error', 'message': '該帳號已被註冊'})
-
-# -------------------------
-# 夥伴的頁面路由 (Home, Games) - 保持原樣
-# -------------------------
-
 @app.route("/home")
 def home():
     return render_template("home.html") 
 
 @app.route("/game")
 def game_hub():
-    return render_template("game_hub.html")  
+    return render_template("game.html")  
 
 @app.route("/game/1")
 def game1():
@@ -134,9 +74,67 @@ def game3():
 def game4():
     return render_template("game4.html")
 
+@app.route("/game/5")
+def game5():
+    return render_template("game5.html")
+    
+@app.route("/ranking")
+def ranking():
+    return render_template("ranking.html")
+
+# 新增：拼圖收集頁面路由
+@app.route("/puzzle")
+def puzzle_page():
+    return render_template("puzzle_select.html") 
+
 # -------------------------
-# 夥伴的貪吃蛇遊戲 API (Game 3) - 保持原樣
+# API 邏輯 (Login, Register, High Score, Ranking) (保持不變)
 # -------------------------
+
+@app.route('/api/login', methods=['POST'])
+def login_api():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE username=?", (username,))
+    user = c.fetchone()
+    conn.close()
+
+    if user:
+        if user[2] == password:
+            return jsonify({
+                'status': 'success', 
+                'message': '登入成功', 
+                'username': user[1],
+                'avatar_id': user[3],
+                'total_fragments': user[4],
+                'current_fragments': user[5],
+                'score': user[5],
+                'progress_id': user[6]
+            })
+        else:
+            return jsonify({'status': 'wrong_password', 'message': '密碼錯誤'})
+    else:
+        return jsonify({'status': 'user_not_found', 'message': '帳號不存在'})
+
+@app.route('/api/register', methods=['POST'])
+def register_api():
+    data = request.json
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        c = conn.cursor()
+        c.execute('''INSERT INTO users 
+                     (username, password, avatar_id, total_fragments, current_fragments, progress_id) 
+                     VALUES (?, ?, ?, 0, 0, 0)''', 
+                  (data['username'], data['password'], data['avatar_id']))
+        conn.commit()
+        conn.close()
+        return jsonify({'status': 'success', 'message': '註冊成功'})
+    except sqlite3.IntegrityError:
+        return jsonify({'status': 'error', 'message': '該帳號已被註冊'})
 
 HIGH_SCORE_DATA = { "score": 0, "player": "N/A" }
 
@@ -158,36 +156,109 @@ def submit_score():
     else:
         return jsonify({"message": "Not a high score."}), 200
 
-# -------------------------
-# 成績 / 排行榜 (使用真實 DB 數據) - 已修正對應新欄位
-# -------------------------
-
-@app.route("/ranking")
-def ranking():
-    return render_template("ranking.html")
-
 @app.route("/api/ranking", methods=['GET'])
 def get_ranking_data():
-    """從資料庫抓取真實的前 10 名玩家資料"""
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    
-    # 修改：排行榜應該依照「累積獲得的碎片 (total_fragments)」來排序
     c.execute("SELECT username, total_fragments, avatar_id FROM users ORDER BY total_fragments DESC LIMIT 10")
     data = c.fetchall()
     conn.close()
 
-    # 轉換成夥伴前端需要的 JSON 格式
     real_ranking_data = []
     for row in data:
         real_ranking_data.append({
-            "name": row[0],      # 顯示名稱
-            "account": row[0],   # 帳號
-            "score": row[1],     # 這裡回傳 total_fragments 給排行榜顯示
-            "avatar_id": row[2]  # 頭像ID
+            "name": row[0],
+            "account": row[0],
+            "score": row[1],
+            "avatar_id": row[2]
         })
     
     return jsonify(real_ranking_data)
+
+# -------------------------
+# 拼圖收集頁 API (修改: 新增邏輯來處理碎片和進度更新)
+# -------------------------
+
+# 全局變數來定義解鎖邏輯
+FRAGMENT_COST = 1000 # 每塊拼圖所需的碎片數
+
+@app.route("/api/puzzle_progress", methods=['GET'])
+def get_puzzle_progress():
+    """根據帳號獲取玩家當前的進度和碎片數"""
+    username = request.args.get('username')
+    
+    if not username:
+        return jsonify({'status': 'error', 'message': '需要提供帳號'}), 400
+
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    
+    # 抓取 progress_id (6) 和 current_fragments (5)
+    c.execute("SELECT current_fragments, progress_id FROM users WHERE username=?", (username,))
+    user_data = c.fetchone()
+    conn.close()
+
+    if user_data:
+        return jsonify({
+            'status': 'success',
+            'current_fragments': user_data[0], # 目前可用的碎片數 (對應分數)
+            'progress_id': user_data[1]       # 目前解鎖進度 (0~16)
+        })
+    else:
+        return jsonify({'status': 'user_not_found', 'message': '找不到該使用者'}), 404
+
+# 新增 API: 用於解鎖下一塊拼圖
+@app.route("/api/unlock_puzzle", methods=['POST'])
+def unlock_puzzle():
+    """消費碎片並將玩家的 progress_id 增加 1"""
+    data = request.json
+    username = data.get('username')
+    
+    if not username:
+        return jsonify({'status': 'error', 'message': '需要提供帳號'}), 400
+
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    
+    # 1. 獲取當前數據
+    c.execute("SELECT current_fragments, progress_id FROM users WHERE username=?", (username,))
+    user_data = c.fetchone()
+    
+    if not user_data:
+        conn.close()
+        return jsonify({'status': 'error', 'message': '找不到使用者'}), 404
+        
+    current_fragments = user_data[0]
+    progress_id = user_data[1]
+
+    # 2. 檢查是否滿足解鎖條件
+    MAX_PROGRESS = 16
+    if progress_id >= MAX_PROGRESS:
+        conn.close()
+        return jsonify({'status': 'fail', 'message': '已完成所有拼圖'}), 200
+        
+    if current_fragments < FRAGMENT_COST:
+        conn.close()
+        return jsonify({'status': 'fail', 'message': f'碎片不足，需要 {FRAGMENT_COST} 碎片'}), 200
+        
+    # 3. 執行解鎖
+    new_fragments = current_fragments - FRAGMENT_COST
+    new_progress_id = progress_id + 1
+    
+    c.execute('''UPDATE users 
+                 SET current_fragments = ?, progress_id = ? 
+                 WHERE username = ?''', 
+              (new_fragments, new_progress_id, username))
+    
+    conn.commit()
+    conn.close()
+    
+    return jsonify({
+        'status': 'success', 
+        'message': f'成功解鎖第 {new_progress_id} 塊拼圖！',
+        'new_fragments': new_fragments,
+        'new_progress_id': new_progress_id
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

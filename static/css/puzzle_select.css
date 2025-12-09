@@ -1,308 +1,188 @@
-/* 設定整個頁面和遊戲容器的基礎樣式 */
-body, html {
+/* puzzle_select.css (位於 static/css/) */
+
+/* --- 1. 全頁背景圖設定 --- */
+body {
+    font-family: 'Arial', sans-serif;
+    /* 讓內容層疊在背景圖之上 */
+    position: relative; 
+    z-index: 1; 
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #f0f0f0;
     margin: 0;
     padding: 0;
-    height: 100%;
-    width: 100%;
-    font-family: 'Arial', sans-serif;
-    overflow: hidden; /* 防止滾動條出現 */
+    min-height: 100vh;
 }
 
-.game-container {
-    height: 100vh; /* 視窗高度 */
-    width: 100vw;  /* 視窗寬度 */
-    position: relative;
-    background-color: #000; 
-    background-image: url('../picture/首頁.jpg'); 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4); 
-}
-
-/* --- 頂部和底部區塊定位 --- */
-
-.header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    z-index: 10;
-}
-
-.footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    z-index: 10;
-}
-
-/* ---------------------------------------------------------------- */
-/* --- 左上角: 角色資訊群組 --- */
-/* ---------------------------------------------------------------- */
-
-.player-info {
-    display: flex;
-    align-items: center; 
-    
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 10px 15px;
-    border-radius: 8px;
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    position: relative; 
-}
-
-.avatar-container {
-    width: 60px;
-    height: 60px;
-    margin-right: 15px;
-    border: 3px solid gold;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-}
-
-.avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.text-info {
-    display: flex;
-    flex-direction: column;
-    font-size: 1.1em;
-    font-weight: bold;
-}
-
-#player-score {
-    font-size: 0.9em;
-    color: #ffd700;
-    margin-top: 3px;
-}
-
-/* ---------------------------------------------------------------- */
-/* --- 登出按鈕 (Logout) 位於左斜下方，純圖片樣式 --- */
-/* ---------------------------------------------------------------- */
-
-.logout-corner-button {
-    background-color: transparent; 
-    border: none;               
-    border-radius: 0;                   
-    box-shadow: none;
-    
-    position: absolute; 
-    bottom: -5px;      
-    left: -5px;        
-    
-    width: 35px; 
-    height: 35px; 
-    
-    padding: 0; 
-    cursor: pointer;
-    transition: transform 0.1s; 
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 15;
-}
-
-.button-icon-mini {
-    width: 35px; 
-    height: 35px; 
-    object-fit: contain; 
-}
-
-.logout-corner-button:hover {
-    background-color: transparent;
-    transform: scale(1.1);
-}
-
-/* ---------------------------------------------------------------- */
-/* --- 其他圖片按鈕通用樣式 (右上/左下/右下) --- */
-/* ---------------------------------------------------------------- */
-
-.top-right-button,
-.bottom-left-button,
-.bottom-right-button {
-    background-color: transparent; 
-    border: none;               
-    box-shadow: none;           
-    
-    width: 70px;  
-    height: 70px; 
-    
-    padding: 0; 
-    cursor: pointer;
-    transition: transform 0.1s; 
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.button-icon {
-    width: 70px;  
-    height: 70px; 
-    object-fit: contain; 
-}
-
-/* Hover 效果 (其他按鈕共用) */
-.top-right-button:hover,
-.bottom-left-button:hover,
-.bottom-right-button:hover {
-    background-color: transparent; 
-    transform: scale(1.1);
-}
-
-
-/* ============================================== */
-/* ============== MODAL 彈窗樣式 (新增) ============== */
-/* ============================================== */
-
-/* 彈窗遮罩層 */
-.modal-overlay {
-    position: fixed;
+/* 添加一個偽元素作為背景層 */
+body::before {
+    content: '';
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85); /* 深色半透明遮罩 */
+    
+    /* 修正背景圖路徑：從 css/ 退回一層到 static/，再進入 img/ 找 home_page.jpg */
+    background-image: url('../img/base_map/home_page.jpg'); 
+    background-size: cover; 
+    background-position: center; 
+    
+    /* 淡化濾鏡 */
+    filter: brightness(0.3) grayscale(50%); 
+    z-index: -1; 
+}
+
+
+/* --- 2. header/controls 樣式 (添加半透明背景讓文字清晰) --- */
+header {
+    width: 100%;
+    padding: 15px 50px;
+    background-color: rgba(128, 66, 63, 0.8); /* 讓 header 半透明 */
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    z-index: 1000; /* 確保在所有元素之上 */
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.modal-overlay.hidden {
-    display: none;
-    opacity: 0;
-}
-
-/* 彈窗內容框 */
-.modal-content {
-    background-color: #1e1e1e; /* 深色背景 */
-    color: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-    position: relative;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.large-modal {
-    width: 90%;
-    max-width: 1000px;
-}
-
-.small-modal {
-    width: 80%;
-    max-width: 450px;
-}
-
-.modal-title {
-    text-align: center;
-    color: #ffd700;
-    font-size: 2em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     margin-bottom: 20px;
-    text-shadow: 1px 1px 3px black;
 }
 
-/* 關閉按鈕 */
-.modal-close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
+header h2 {
+    margin: 0;
+    color: #fff;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.back-button {
+    text-decoration: none;
+    color: #ffcc00;
+    padding: 8px 15px;
+    border: 1px solid #ffcc00;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #ffcc00;
+    color: #1a1a2e;
+}
+
+#user-info {
+    text-align: right;
+    font-weight: bold;
+}
+
+/* --- 控制台樣式 --- */
+#controls {
+    margin-bottom: 30px;
+    padding: 15px 30px;
+    background-color: rgba(119, 33, 33, 0.9); /* 讓控制台更不透明 */
+    border-radius: 8px;
+    text-align: center;
+}
+
+#controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ffcc00;
+    color: #1a1a2e;
     border: none;
-    color: white;
-    font-size: 1.5em;
+    border-radius: 5px; 
     cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s;
+    font-weight: bold;
+    transition: background-color 0.3s;
 }
 
-.modal-close-button:hover {
+#controls button:hover:not(:disabled) {
+    background-color: #e0b000;
+}
+
+#controls button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+    color: #ccc;
+}
+
+/* --- 3. 拼圖主體樣式 --- */
+
+.landmark-row {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+.landmark-container {
+    position: relative;
+    width: 250px; 
+    height: 150px; 
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    border: 3px solid #444;
+    border-radius: 4px;
+}
+
+.landmark-title {
+    position: absolute;
+    top: -30px; 
+    width: 100%;
+    text-align: center;
+    color: #ffcc00;
+    font-weight: bold;
+    z-index: 5;
+    transition: top 0.3s;
+}
+
+.landmark-container:hover .landmark-title {
+    top: 5px; 
+}
+
+/* 圖片底圖和覆蓋層 */
+.base-image, .pieces-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.base-image {
+    display: block;
+    filter: brightness(0.5); 
+}
+
+.pieces-overlay {
+    filter: grayscale(100%); 
+}
+
+/* 單個拼圖塊的通用樣式 */
+.puzzle-piece {
+    position: absolute;
+    width: 50%; 
+    height: 50%; 
+    opacity: 0; 
+    transition: opacity 1s ease-in-out; 
+    background-size: 200% 200%; 
+    background-repeat: no-repeat;
+}
+
+/* 解鎖時的樣式 */
+.unlocked {
     opacity: 1;
 }
 
-/* 拼圖 Modal 內容樣式 */
-.landmark-grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 響應式網格 */
-    gap: 20px;
-    padding-top: 10px;
+/* --- 4. 彩色拼圖塊背景圖路徑修正 --- */
+/* 從 static/css/ 退回一層到 static/，再進入 img/Puzzles/ 找圖片 */
+#landmark-101 .puzzle-piece {
+    background-image: url('../img/Puzzles/101_prosperity.jpg'); 
 }
-
-.landmark-group h3 {
-    color: #00bcd4;
-    margin: 5px 0 10px;
+#landmark-eiffel .puzzle-piece {
+    background-image: url('../img/Puzzles/eiffel_prosperity.jpg'); 
 }
-
-.puzzle-pieces-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 5px;
+#landmark-liberty .puzzle-piece {
+    background-image: url('../img/Puzzles/liberty_prosperity.jpg'); 
 }
-
-.puzzle-piece {
-    background-color: #333;
-    border: 2px solid #555;
-    border-radius: 5px;
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.9em;
-}
-
-.puzzle-piece.solved { /* 範例：已完成 */
-    background-color: #38c172; 
-    border-color: #00ff00;
-}
-
-.puzzle-piece.collecting { /* 範例：收集中 */
-    border-color: #ffd700;
-    color: #ffd700;
-}
-
-/* 遊戲選擇 Modal 內容樣式 */
-.game-options {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 10px 0;
-}
-
-.game-link {
-    background-color: #007bff;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.2s, transform 0.1s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.game-link:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
+#landmark-pyramid .puzzle-piece {
+    background-image: url('../img/Puzzles/pyramid_prosperity.jpg'); 
 }

@@ -36,6 +36,9 @@ body, html {
     justify-content: space-between; /* 將元素分開到兩側 */
     align-items: flex-start;
     z-index: 10; /* 確保在其他元素之上 */
+    
+    /* 確保 header 是一個定位上下文，這是登出按鈕絕對定位的依據 */
+    position: relative; /* 關鍵修正，保持原有邏輯 */
 }
 
 /* 底部 footer (左下和右下) */
@@ -62,6 +65,8 @@ body, html {
     border-radius: 8px;
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    
+    /* 保持原有樣式，但移除 position: relative; 如果 header 是 relative，player-info 就不需要 */
 }
 
 .avatar-container {
@@ -92,58 +97,106 @@ body, html {
     margin-top: 3px;
 }
 
+/* --- 左上角: 登出按鈕樣式 (LOGOUT) --- */
+/* home.css (修正後的登出按鈕定位) */
 
+/* 登出按鈕的定位 */
+/* home.css (修正後的登出按鈕定位) */
+
+/* 登出按鈕的定位 */
+.logout-position {
+    /* 使用絕對定位，讓它位於 player-info 旁邊或斜下方 */
+    position: absolute; 
+    top: 95px; /* 保持垂直位置不變 */
+    left: 20px; /* 關鍵修正：將水平位置往左調整 */
+    
+    /* 確保按鈕本身沒有多餘的樣式干擾定位 */
+    padding: 5px; 
+    border: none;
+    background: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.logout-position .button-icon {
+    /* 調整登出圖標的大小 */
+    width: 40px; 
+    height: 40px; 
+    display: block;
+}
+
+/* 讓按鈕在滑鼠懸停時有效果 (可選) */
+.logout-position:hover {
+    opacity: 0.8;
+}
+
+.logout-position .button-icon {
+    /* 調整登出圖標的大小 */
+    width: 40px; 
+    height: 40px; 
+    display: block;
+}
+
+/* 讓按鈕在滑鼠懸停時有效果 (可選) */
+.logout-position:hover {
+    opacity: 0.8;
+}
+
+.logout-position .button-icon {
+    /* 調整登出圖標的大小 */
+    width: 40px; 
+    height: 40px; 
+    display: block;
+}
+
+/* 讓按鈕在滑鼠懸停時有效果 (可選) */
+.logout-position:hover {
+    opacity: 0.8;
+}
+
+/* --- 四個角落按鈕共用樣式 --- */
 .top-right-button,
 .bottom-left-button,
 .bottom-right-button {
-    /* 移除所有背景、邊框和陰影，使按鈕透明 */
-    background-color: transparent; /* 移除背景色 */
-    border: none;               /* 移除邊框 */
-    box-shadow: none;           /* 移除陰影 */
-    
-    /* 調整按鈕尺寸以適應圖片 (請根據您的圖片大小調整這些數值) */
-    width: 80px;  /* 圖片按鈕寬度 (稍微放大一點，給點點擊空間) */
-    height: 80px; /* 圖片按鈕高度 */
-    
-    /* 移除與文字相關的屬性 */
-    padding: 0; /* 移除內邊距 */
-    color: white; /* 雖然圖片不需要，但保留以防萬一 */
+    background-color: transparent;   /* 按鈕本身透明 */
+    border: none;
+    box-shadow: none;
+
+    /* 給一個基礎點擊範圍（可再調） */
+    width: 90px;
+    height: 90px;
+
+    padding: 0;
+    color: white;
     cursor: pointer;
-    transition: transform 0.1s; /* 只保留 hover 縮放的過渡效果 */
-    
-    /* 使用 Flexbox 讓圖片在按鈕內置中 */
+
     display: flex;
     justify-content: center;
     align-items: center;
+
+    /* 先整體放大一點 */
+    transform: scale(1.4);
+    transform-origin: center;
+    transition: transform 0.15s ease;
 }
 
-/* 讓圖片在按鈕內完整顯示，並設定大小 */
-.button-icon {
-    width: 80px;  /* 圖片實際大小，與按鈕大小相同，完全覆蓋 */
-    height: 80px; 
-    object-fit: contain; 
+/* 圖片填滿整個按鈕區域 */
+.top-right-button .button-icon,
+.bottom-left-button .button-icon,
+.bottom-right-button .button-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;   /* 保持比例不變形 */
 }
 
-/* 移除所有 hover 效果，或者只保留縮放效果 */
+/* 滑過去再稍微放大一點（在原本 1.4 的基礎上） */
 .top-right-button:hover,
 .bottom-left-button:hover,
 .bottom-right-button:hover {
-    /* 移除背景色的變動 */
-    background-color: transparent; 
-    /* 保持一點點回饋感 */
-    transform: scale(1.05); /* 輕微放大 */
+    transform: scale(1.5);
 }
 
-
-/* 原有的定位保持不變 */
-.top-right-button {
-    /* 移除原有的橘紅色背景和白色邊框 */
-}
-
-.bottom-left-button {
-    /* 移除原有的綠色背景和白色邊框 */
-}
-
-.bottom-right-button {
-    /* 移除原有的藍色背景和白色邊框 */
+/* 主內容區域（用於在 header 和 footer 之間佔位，通常在背景設置完畢後會被圖片覆蓋） */
+.main-content {
+    /* 如果有內容，可能需要定位 */
 }

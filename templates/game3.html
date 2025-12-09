@@ -1,32 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>滅火</title>
-    
-    <link rel="stylesheet" href="../static/css/game3.css"></head>
+  <meta charset="UTF-8" />
+  <title>彩金礦工 - 關卡版</title>
+  <link rel="stylesheet" href="../static/css/game3.css" />
+</head>
 <body>
-    <div class="game-wrapper">
-    <button id="home-button" class="home-button">🏠 回到首頁</button>      
-        
-        <header>
-            <h1>滅火</h1>
-            <div class="score-display">
-                <p>得分: <span id="current-score">0</span></p>
-                <p>最高分: <span id="high-score">0</span> (<span id="high-score-player">N/A</span>)</p>
-            </div>
-        </header>
+  <h1>彩金礦工</h1>
+  <div id="info">
+    <span id="score">分數：0</span>
+    <span id="level">關卡：1</span>
+    <span id="target">目標：60</span>
+    <span id="timer">時間：60</span>
+    <span class="tips">空白鍵：發射夾子　R：重新開始</span>
+  </div>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-        <canvas id="game-canvas"></canvas>
-
-        <div id="game-overlay">
-            <h2 id="overlay-title">點擊開始</h2>
-            <p id="overlay-message">使用方向鍵 (↑↓←→) 或 W/A/S/D 控制</p>
-            <button id="start-button">開始遊戲</button>
-        </div>
-    </div>
-
-    <script src="../static/js/game3.js"></script>
+  <script src="../static/js/game3.js"></script>
 </body>
 </html>

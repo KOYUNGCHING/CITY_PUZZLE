@@ -1,121 +1,49 @@
-/*
- * 修正後的貪吃蛇遊戲樣式 (支援滿視窗, 滾動與背景圖)
- */
-
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%; 
-    width: 100%;
-    
-    /* --- 應用背景圖片和淡化效果 --- */
-    background-image: url('../picture/首頁.jpg'); 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    
-    /* 關鍵：使用淺色背景與 overlay 模式混合，實現圖片淡化 */
-    background-color: rgba(255, 255, 255, 0.7); 
-    background-blend-mode: overlay;
-    
-    /* 將預設文字顏色改為深色，以對應淡化後的淺色背景 */
-    color: #333; 
-    
-    font-family: 'Arial', sans-serif;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    overflow: auto; 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.game-wrapper {
-    /* 保持遊戲容器為深色，確保與淡化背景形成強烈對比 */
-    background-image: url('../picture/首頁.jpg');  
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    position: relative;
-    display: block; 
-    
-    /* 確保容器內的文字是白色，與深色背景對比 */
-    color: white; 
+body {
+  background: #222;
+  color: #fff;
+  font-family: "Microsoft JhengHei", system-ui, -apple-system,
+    BlinkMacSystemFont;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding-top: 20px;
 }
 
-/* 回首頁按鈕 */
-.home-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 8px 15px;
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
-    z-index: 20; 
-}
-.home-button:hover {
-    background-color: #c0392b;
+h1 {
+  margin-bottom: 8px;
+  font-size: 28px;
 }
 
-header h1 {
-    color: #f1c40f;
-    margin-top: 0;
+#info {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 15px;
 }
 
-.score-display {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 15px;
-    font-size: 1.1em;
-    /* 確保分數文字清晰 */
-    color: white; 
+#score,
+#level,
+#target,
+#timer {
+  font-weight: bold;
 }
 
-/* 遊戲畫布 */
-#game-canvas {
-    border: 5px solid #2ecc71; 
-    background-color: #ecf0f1; 
-    display: block; 
+.tips {
+  font-size: 13px;
+  opacity: 0.9;
 }
 
-/* 遊戲覆蓋層 (開始/遊戲結束) */
-#game-overlay {
-    position: absolute;
-    top: 50%; 
-    left: 50%;
-    transform: translate(-50%, -50%);
-    
-    background-color: rgba(0, 0, 0, 0.85);
-    padding: 30px 40px;
-    border-radius: 10px;
-    color: white;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-    transition: opacity 0.5s;
-    z-index: 10;
-}
-
-#overlay-title {
-    color: #3498db;
-}
-
-#start-button {
-    padding: 12px 25px;
-    font-size: 1.2em;
-    font-weight: bold;
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: background-color 0.2s;
-}
-#start-button:hover {
-    background-color: #27ae60;
+canvas {
+  border: 2px solid #555;
+  background: #00111a;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
