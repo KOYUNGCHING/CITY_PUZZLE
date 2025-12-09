@@ -25,7 +25,7 @@ body, html {
     background-repeat: no-repeat;
     
     /* 關鍵：將背景顏色淡化 */
-    background-color: rgba(255, 255, 255, 0.7); /* 白色半透明覆蓋 */
+    background-color: rgba(255, 255, 255, 0.167); /* 白色半透明覆蓋 */
     background-blend-mode: overlay; /* 讓背景圖與顏色混合 */
 }
 
@@ -37,8 +37,8 @@ body, html {
     padding: 12px 25px;
     font-size: 1.1em;
     font-weight: bold;
-    color: white;
-    background-color: rgba(200, 50, 50, 0.9); /* 紅色系 */
+    color: rgba(255, 255, 255, 0.446);
+    background-color: rgba(142, 42, 42, 0.9); /* 紅色系 */
     border: 2px solid white;
     border-radius: 6px;
     cursor: pointer;
@@ -54,7 +54,7 @@ body, html {
 /* --- 標題樣式 --- */
 .ranking-title {
     color: #333;
-    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+    text-shadow: 2px 2px 4px rgba(128, 54, 54, 0.8);
     margin-bottom: 30px;
     padding: 10px;
     background-color: rgba(255, 255, 255, 0.8);
@@ -80,7 +80,7 @@ body, html {
 }
 
 #ranking-table thead th {
-    background-color: #afffaf; /* 表頭顏色 */
+    background-color: #223852; /* 表頭顏色 */
     color: white;
     font-size: 1.1em;
 }
@@ -96,15 +96,15 @@ body, html {
 
 /* 前三名特別樣式 */
 #ranking-table tbody tr:nth-child(1) td {
-    background-color: #faefb5; /* 金色 */
+    background-color: #9a801ba9; /* 金色 */
     font-weight: bold;
 }
 #ranking-table tbody tr:nth-child(2) td {
-    background-color: #c0c0c0; /* 銀色 */
+    background-color: #c0c0c0af; /* 銀色 */
     font-weight: bold;
 }
 #ranking-table tbody tr:nth-child(3) td {
-    background-color: #ffbf7e; /* 銅色 */
+    background-color: #885f3690; /* 銅色 */
     font-weight: bold;
 }
 

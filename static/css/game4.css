@@ -109,6 +109,10 @@ body {
 }
 
 .board {
+  /* 新增/修改：從 JS 搬過來，使用 CSS 變數 --cols (由 JS 設定) */
+  /* 預設非 RWD 狀態下，使用 40px 的寬度 */
+  grid-template-columns: repeat(var(--cols, 15), 40px);
+
   background: #020617;
   border-radius: 12px;
   border: 1px solid rgba(55, 65, 81, 0.9);
@@ -120,7 +124,7 @@ body {
 /* 一顆格子 */
 .cell {
   width: 40px;
-  height: 40px;
+  height: 40px; /* 確保初始狀態是正方形 */
   border-radius: 6px;
   border: 1px solid #1f2937;
   display: flex;
@@ -176,9 +180,14 @@ body {
     padding: 14px;
   }
 
+  /* 修改：RWD 狀態下的 Grid 欄寬改為 32px */
+  .board {
+    grid-template-columns: repeat(var(--cols, 15), 32px);
+  }
+
   .cell {
     width: 32px;
-    height: 32px;
+    height: 32px; /* 確保 RWD 狀態下是正方形 */
     font-size: 0.9rem;
   }
 }

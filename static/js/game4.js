@@ -13,7 +13,7 @@ const statusTextEl = document.getElementById("status-text");
 const startBtn = document.getElementById("start-btn");
 
 // 根據欄數設定 CSS grid（配合你 CSS 裡的 cell 32px）
-boardEl.style.gridTemplateColumns = `repeat(${COLS}, 32px)`;
+// boardEl.style.gridTemplateColumns = `repeat(${COLS}, 32px)`; // <-- 註釋或移除此行，改由 CSS 處理
 
 // === 遊戲狀態 ===
 let board = [];            // 固定方塊的棋盤 (ROWS x COLS)
@@ -299,6 +299,9 @@ function startGame() {
   isDragging = false;
   dragType = null;
 
+  // 設置 CSS 變數 COLS 的值，以便 CSS Grid 使用
+  document.documentElement.style.setProperty('--cols', COLS);
+
   if (timerId) clearInterval(timerId);
   timerId = setInterval(tick, TICK_MS);
 
@@ -359,6 +362,7 @@ function getCellFromMouseEvent(e) {
     return null;
   }
 
+  // 這裡不再依賴固定的 32px 寬度，而是使用 Grid 容器的實際寬度來計算
   const col = Math.floor((x / rect.width) * COLS);
   const row = Math.floor((y / rect.height) * ROWS);
 
@@ -405,6 +409,12 @@ function handleMouseDown(e) {
 
   // 再看是不是盤面上的固定方塊
   if (board[row][col] > 0) {
+    // 檢查下面一格是否為空，若是空則不允許拖曳，除非它是最底層
+    if (row + 1 < ROWS && board[row + 1][col] === 0) {
+      // 不允許拖動懸空的固定方塊 (除非我們也實作了重力拖動，但目前沒有)
+      return;
+    }
+    
     isDragging = true;
     dragType = "board";
     dragRow = row;
@@ -460,6 +470,7 @@ function handleMouseMove(e) {
     dragCol = targetCol;
 
     // ⭐ 這裡是關鍵：移動後立即處理合併，讓拖動感覺很順
+    // 為了讓拖動更順暢，在拖動後立即觸發一次 resolveBoard()
     isDragging = false;
     dragType = null;
     dragRow = null;
@@ -488,6 +499,8 @@ window.addEventListener("mouseup", handleMouseUp);
 
 // 初始畫面
 board = createEmptyBoard();
+// 初始時也設置一次 COLS 變數，以便 CSS 渲染初始畫面
+document.documentElement.style.setProperty('--cols', COLS);
 render();
 statusTextEl.textContent =
   "按下「開始 / 重來」後，方塊會自動下落，可以用滑鼠拖動它們。";
