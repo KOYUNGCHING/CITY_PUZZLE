@@ -56,7 +56,7 @@ def home():
 
 @app.route("/game")
 def game_hub():
-    return render_template("game_hub.html")  
+    return render_template("game.html")  
 
 @app.route("/game/1")
 def game1():
@@ -74,6 +74,10 @@ def game3():
 def game4():
     return render_template("game4.html")
 
+@app.route("/game/5")
+def game5():
+    return render_template("game5.html")
+    
 @app.route("/ranking")
 def ranking():
     return render_template("ranking.html")
