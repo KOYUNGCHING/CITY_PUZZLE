@@ -409,10 +409,3 @@ function updateUI() {
     let frags = Math.floor(score / 100);
     document.getElementById('fragment-display').innerText = frags;
 }
-// ====== 新增：回首頁按鈕 ======
-document.getElementById("homeBtn").addEventListener("click", () => {
-  // 如果你的首頁是 "/"
-  window.location.href = "/game";
-  // 若要導向其他頁，例如 "/index" 可改成：
-  // window.location.href = "/index";
-});
