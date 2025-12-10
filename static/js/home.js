@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // === 載入動態玩家資料 ===
     function loadPlayerData() {
         // 這裡應該從 localStorage 或 API 獲取登入數據
-        const username = localStorage.getItem('logged_in_username') || '勇敢的記者';
+        const username = localStorage.getItem('logged_in_username') || '哈哈';
         // 我們從 localStorage 獲取分數 (如果存在的話)
-        const fragments = localStorage.getItem('logged_in_fragments') || '0'; 
+        const fragments = localStorage.getItem('logged_in_fragments') || '20000'; 
 
         playerName.textContent = username;
         playerScore.textContent = `總得分: ${fragments}`; 

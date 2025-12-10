@@ -30,7 +30,7 @@ body, html {
     top: 0;
     left: 0;
     width: 100%;
-    padding: 20px;
+    padding: 30px;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between; /* 將元素分開到兩側 */
@@ -47,7 +47,7 @@ body, html {
     bottom: 0;
     left: 0;
     width: 100%;
-    padding: 20px;
+    padding: 30px;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between; /* 將元素分開到兩側 */
@@ -60,8 +60,8 @@ body, html {
 .player-info {
     display: flex;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.6); /* 半透明背景 */
-    padding: 10px 15px;
+    background-color: rgba(0, 0, 0, 0.656); /* 半透明背景 */
+    padding: 35px 30px;
     border-radius: 8px;
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
@@ -70,8 +70,8 @@ body, html {
 }
 
 .avatar-container {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     margin-right: 15px;
     border: 3px solid gold; /* 頭貼邊框 */
     border-radius: 50%;
@@ -107,7 +107,7 @@ body, html {
 .logout-position {
     /* 使用絕對定位，讓它位於 player-info 旁邊或斜下方 */
     position: absolute; 
-    top: 95px; /* 保持垂直位置不變 */
+    top: 20px; /* 保持垂直位置不變 */
     left: 20px; /* 關鍵修正：將水平位置往左調整 */
     
     /* 確保按鈕本身沒有多餘的樣式干擾定位 */
@@ -120,8 +120,8 @@ body, html {
 
 .logout-position .button-icon {
     /* 調整登出圖標的大小 */
-    width: 40px; 
-    height: 40px; 
+    width: 45px; 
+    height: 45px; 
     display: block;
 }
 
@@ -132,8 +132,8 @@ body, html {
 
 .logout-position .button-icon {
     /* 調整登出圖標的大小 */
-    width: 40px; 
-    height: 40px; 
+    width: 45px; 
+    height: 45px; 
     display: block;
 }
 
@@ -144,8 +144,8 @@ body, html {
 
 .logout-position .button-icon {
     /* 調整登出圖標的大小 */
-    width: 40px; 
-    height: 40px; 
+    width: 45px; 
+    height: 45px; 
     display: block;
 }
 
@@ -163,8 +163,8 @@ body, html {
     box-shadow: none;
 
     /* 給一個基礎點擊範圍（可再調） */
-    width: 90px;
-    height: 90px;
+    width: 130px;
+    height: 130px;
 
     padding: 0;
     color: white;

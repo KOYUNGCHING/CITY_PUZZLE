@@ -2,20 +2,28 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>彩金礦工 - 關卡版</title>
+  <title>Catch Alien - 關卡版</title>
   <link rel="stylesheet" href="../static/css/game3.css" />
 </head>
 <body>
-  <h1>彩金礦工</h1>
+
+  <!-- 左上角 Back 按鈕 -->
+  <button id="homeBtn" class="back-btn">⬅ BACK</button>
+
+  <h1>Catch Alien</h1>
   <div id="info">
-    <span id="score">分數：0</span>
+    <span id="score">Score: 0</span>
     <span id="level">關卡：1</span>
     <span id="target">目標：60</span>
     <span id="timer">時間：60</span>
     <span class="tips">空白鍵：發射夾子　R：重新開始</span>
   </div>
+
   <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+  <div class="btn-area">
+    <button id="restartBtn">RESTART</button>
+  </div>
 
   <script src="../static/js/game3.js"></script>
 </body>
-</html>

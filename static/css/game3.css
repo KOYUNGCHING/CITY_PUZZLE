@@ -47,3 +47,49 @@ canvas {
   background: #00111a;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
+/* ====== 按鈕區域 ====== */
+.btn-area {
+  margin-top: 15px;
+  display: flex;
+  gap: 18px;
+}
+
+.btn-area button {
+  padding: 10px 22px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  background: #0a84ff;
+  color: white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  transition: 0.2s;
+}
+
+.btn-area button:hover {
+  background: #006be6;
+  transform: translateY(-2px);
+}
+
+/* ===== 左上角 Back 按鈕 ===== */
+.back-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 10px 18px;
+  font-size: 15px;
+  background: #0a84ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  transition: 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #006be6;
+  transform: scale(1.05);
+}
