@@ -49,7 +49,7 @@ const CLAW_CATCH_RADIUS = 35;
 let score = 0;                 // 玩家目前總分
 let currentLevelIndex = 0;     // 目前關卡的 index（0 代表第 1 關）
 let currentTarget = 100;       // 目前關卡要達到的目標分數
-let timeLeft = 60;             // 本關剩餘時間（秒）
+let timeLeft = 40;             // 本關剩餘時間（秒）
 let gameOver = false;          // 是否遊戲結束（失敗）
 
 let caughtItem = null;         // 爪子目前抓到的物件（null 表示沒有）
@@ -163,13 +163,13 @@ function drawMeteor(x, y, r) {
 function loadLevel(levelIndex) {
   items.length = 0;             // 清空上一關的物件
   gameOver = false;             // 確保不是失敗狀態
-  timeLeft = 60;                // 每關時間重新設 60 秒
+  timeLeft = 40;                // 每關時間重新設 60 秒
 
   let L = levelIndex + 1;       // 顯示用關卡數（index 0 對應第 1 關）
 
   // 各種外星人與隕石數量（有上限、稍微變多）
   const SMALL   = Math.min(3 + levelIndex, 5); // 小外星人：3 起跳，慢慢到 6 上限
-  const MEDIUM  = Math.min(2 + levelIndex, 4); // 中外星人：2 起跳，最多 4
+  const MEDIUM  = Math.min(2 + levelIndex, 3); // 中外星人：2 起跳，最多 4
   const LARGE   = Math.min(1 + levelIndex, 2); // 大外星人：1 起跳，最多 2
   const METEORS = Math.min(2 + levelIndex, 5); // 隕石：2 起跳，最多 5
 
@@ -201,7 +201,7 @@ function loadLevel(levelIndex) {
 
     // 第 10 關之後外星人會左右移動（speed 非 0）
     const speed =
-      (levelIndex >= 9)       // index 9 = 第 10 關
+      (levelIndex >= 5)       // index 9 = 第 10 關
         ? (Math.random() * 1.2 + 0.6) * (Math.random() < 0.5 ? 1 : -1) // 隨機方向與速度
         : 0;                   // 10 關之前不會移動
 
@@ -218,7 +218,7 @@ function loadLevel(levelIndex) {
   }
 
   // 目標分數：隨關卡線性上升
-  currentTarget = 120 + levelIndex * 150;
+  currentTarget = 100 + levelIndex * 150;
 
   // 爪子擺動難度設定：關卡越高，擺越快、擺幅越大
   angleSpeed = 0.02 + levelIndex * 0.004; // 左右擺動速度增加
@@ -242,7 +242,7 @@ function loadLevel(levelIndex) {
 // =======================================
 function moveAliens() {
   // currentLevelIndex < 9 表示第 1~9 關（第 10 關 index = 9）
-  if (currentLevelIndex < 9) return; // 10 關前不動作
+  if (currentLevelIndex < 5) return; // 10 關前不動作
 
   // 逐一檢查 items 中的物件
   for (const it of items) {
