@@ -56,11 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFallbackData(tbody) {
         tbody.innerHTML = ''; // 清空
         const fallbackData = [
-            { name: "戰地記者W", account: "press_w", score: 12500 },
-            { name: "鷹眼偵探", account: "eye007", score: 9800 },
-            { name: "暗夜追蹤者", account: "dark_tracker", score: 8500 },
-            { name: "真相守護者", account: "truth_guard", score: 7200 },
-            { name: "獨家報導員", account: "exclusive_r", score: 5500 },
+            { name: "戰地記者W", score: 12500 },
+            { name: "鷹眼偵探", score: 9800 },
+            { name: "暗夜追蹤者", score: 8500 },
+            { name: "真相守護者", score: 7200 },
+            { name: "獨家報導員",  score: 5500 },
         ];
 
         fallbackData.forEach((player, index) => {

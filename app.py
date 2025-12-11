@@ -91,6 +91,8 @@ def puzzle_page():
 # API 邏輯 (Login, Register, High Score, Ranking) (保持不變)
 # -------------------------
 
+# app.py (替換原本的 /api/login 區塊)
+
 @app.route('/api/login', methods=['POST'])
 def login_api():
     data = request.json
@@ -99,6 +101,7 @@ def login_api():
 
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
+    # 欄位順序: (0:id, 1:username, 2:password, 3:avatar_id, 4:total_fragments, 5:current_fragments, 6:progress_id)
     c.execute("SELECT * FROM users WHERE username=?", (username,))
     user = c.fetchone()
     conn.close()
@@ -109,17 +112,14 @@ def login_api():
                 'status': 'success', 
                 'message': '登入成功', 
                 'username': user[1],
-                'avatar_id': user[3],
-                'total_fragments': user[4],
-                'current_fragments': user[5],
-                'score': user[5],
-                'progress_id': user[6]
+                'avatar_id': user[3],               # 頭像 ID
+                'current_fragments': user[5],       # 目前持有的碎片 (用於分數顯示)
+                'progress_id': user[6]              # 拼圖解鎖進度
             })
         else:
             return jsonify({'status': 'wrong_password', 'message': '密碼錯誤'})
     else:
         return jsonify({'status': 'user_not_found', 'message': '帳號不存在'})
-
 @app.route('/api/register', methods=['POST'])
 def register_api():
     data = request.json
@@ -169,7 +169,7 @@ def get_ranking_data():
         real_ranking_data.append({
             "name": row[0],
             "account": row[0],
-            "score": row[1],
+            "total_fragments": row[1],
             "avatar_id": row[2]
         })
     
