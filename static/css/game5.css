@@ -12,6 +12,7 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  overflow: hidden; /* 防止滾動條出現 */
 }
 
 .title {
