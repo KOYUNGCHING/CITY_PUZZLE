@@ -12,6 +12,7 @@ body {
     align-items: center;
     position: relative; 
     z-index: 1; 
+    overflow: hidden; /* 防止滾動條出現 */
 }
 
 /* 添加一個偽元素作為背景層，並應用淡化濾鏡 */

@@ -14,6 +14,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    overflow: hidden; /* 防止滾動條出現 */
 }
 
 /* 添加一個偽元素作為背景層 */
