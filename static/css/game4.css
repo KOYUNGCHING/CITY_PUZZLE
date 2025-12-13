@@ -150,7 +150,10 @@ body::after{
   opacity: 0.8;
 }
 
-:root { --cell: 46px; --gap: 6px; }
+:root {
+  --cell: min(46px, 5vw);
+  --gap: min(6px, 0.8vw);
+}
 
 .grid {
   display: grid;
