@@ -4,6 +4,12 @@ const COLS = 8;
 const BLOCK_SIZE = 64; 
 const COLORS = [1, 2, 3, 4]; 
 
+// ===== Combo（大消連續）=====
+let bigClearStreak = 0;          // 連續大消次數（>=10 才算）
+let lastBigClearAt = 0;          // 上一次大消時間
+const BIG_CLEAR_MIN = 10;        // 一次至少消 10 個才算大消
+const BIG_CLEAR_WINDOW_MS = 1600;// 兩次大消間隔 <= 1.6s 才算連續
+
 // --- 提示資料庫 ---
 const GAME_TIPS = [
     "Tip: 一次消除 15 個以上方塊，分數加倍！(x2)",
@@ -24,6 +30,8 @@ let maxTime = 0;
 let timerInterval = null;
 let tipsInterval = null; 
 let isAnimating = false;
+
+
 let isGameRunning = false;
 let isPaused = false; 
 
@@ -124,6 +132,7 @@ function getLevelConfig(lv) {
 function generateBoard(numColors) {
     const gameBoard = document.getElementById('game-board');
     gameBoard.innerHTML = '';
+    ensureComboLayer();
     board = [];
 
     for(let r=0; r<ROWS; r++) {
@@ -176,9 +185,41 @@ async function handleBlockClick(divElement) {
 
     if (group.length >= 3) {
         isAnimating = true;
-        
+        // ===== 大消連續 Combo 規則（一次>=10 才顯示；第一次就顯示 x1）=====
+        if (group.length >= BIG_CLEAR_MIN) {
+        const now = Date.now();
+
+        // 時間窗內：連續大消 → streak+1；超過時間窗 → 重新從 1
+        bigClearStreak = (now - lastBigClearAt <= BIG_CLEAR_WINDOW_MS) ? (bigClearStreak + 1) : 1;
+        lastBigClearAt = now;
+
+        // 顯示在被點到的方塊中心
+        const boardEl = document.getElementById("game-board");
+        const rectBoard = boardEl.getBoundingClientRect();
+        const rectBlock = divElement.getBoundingClientRect();
+        const px = (rectBlock.left - rectBoard.left) + rectBlock.width / 2;
+        const py = (rectBlock.top  - rectBoard.top ) + rectBlock.height / 2;
+
+        // 第一次大消也跳 x1
+        comboBlastFx(px, py, bigClearStreak);
+        }
+
+        // group.length < 10：不跳任何東西（什麼都不做）
+        // 顯示在被點到的方塊中心
+        const boardEl = document.getElementById("game-board");
+        const rectBoard = boardEl.getBoundingClientRect();
+        const rectBlock = divElement.getBoundingClientRect();
+
+        const px = (rectBlock.left - rectBoard.left) + rectBlock.width / 2;
+        const py = (rectBlock.top  - rectBoard.top ) + rectBlock.height / 2;
+
+
         // ★★★ 15+ Combo 雙倍分 ★★★
+        // 15+ 仍保留 x2
         let multiplier = 1;
+        if (group.length >= 15) multiplier = 2;
+
+        // Combo 額外加成（上限避免爆分）
         if (group.length >= 15) {
             multiplier = 2;
             console.log("Big Combo! x2 Points");
@@ -408,4 +449,96 @@ function updateUI() {
 
     let frags = Math.floor(score / 100);
     document.getElementById('fragment-display').innerText = frags;
+}
+function showComboFx(text, px, py, isBig=false) {
+    const layer = document.getElementById("combo-layer");
+    if (!layer) return;
+
+    const el = document.createElement("div");
+    el.className = "combo-fx" + (isBig ? " big" : "");
+    el.textContent = text;
+    el.style.left = px + "px";
+    el.style.top  = py + "px";
+
+    layer.appendChild(el);
+
+    // 動畫結束移除
+    el.addEventListener("animationend", () => el.remove());
+}
+function ensureComboLayer() {
+  const boardEl = document.getElementById("game-board");
+  if (!boardEl) return;
+  let layer = document.getElementById("combo-layer");
+  if (!layer) {
+    layer = document.createElement("div");
+    layer.id = "combo-layer";
+    boardEl.appendChild(layer);
+  }
+}
+
+function clearComboLayer() {
+  const layer = document.getElementById("combo-layer");
+  if (layer) layer.innerHTML = "";
+}
+function comboBlastFx(px, py, comboN) {
+  comboN = Math.max(1, Number(comboN) || 1); 
+  ensureComboLayer();
+  ensureComboLayer();
+  const layer = document.getElementById("combo-layer");
+  if (!layer) return;
+
+  // 1) 浮字（很亮但透明）
+  const text = document.createElement("div");
+  text.className = "combo-fx" + (comboN >= 3 ? " big" : "");
+  text.textContent = `COMBO x${comboN}`;
+  text.style.left = px + "px";
+  text.style.top = py + "px";
+  layer.appendChild(text);
+  text.addEventListener("animationend", () => text.remove());
+
+  // 連續兩次以上：加強特效（不擋畫面）
+    if (comboN >= 2) {
+    const boardEl = document.getElementById("game-board");
+    if (boardEl) {
+        boardEl.classList.remove("board-pulse"); // 讓連續觸發也會重新播放
+        void boardEl.offsetWidth;                // reflow 觸發動畫重播（很輕量）
+        boardEl.classList.add("board-pulse");
+    }
+
+    // Shockwave（大光圈）
+    const shock = document.createElement("div");
+    shock.className = "combo-shock" + (comboN >= 3 ? " big" : "");
+    shock.style.left = px + "px";
+    shock.style.top  = py + "px";
+    layer.appendChild(shock);
+    shock.addEventListener("animationend", () => shock.remove());
+    }
+  // 2) 霓虹圈（不遮擋，看起來很科技）
+  const ring = document.createElement("div");
+  ring.className = "combo-ring";
+  ring.style.left = px + "px";
+  ring.style.top  = py + "px";
+  layer.appendChild(ring);
+  ring.addEventListener("animationend", () => ring.remove());
+
+  // 3) 粒子（少量即可很炫，不會卡）
+  const particleCount = Math.min(24, 10 + comboN * 4);
+  for (let i = 0; i < particleCount; i++) {
+    const p = document.createElement("div");
+    p.className = "combo-particle";
+
+    const ang = Math.random() * Math.PI * 2;
+    const dist = 40 + Math.random() * (50 + comboN * 10);
+    const dx = Math.cos(ang) * dist;
+    const dy = Math.sin(ang) * dist;
+
+    p.style.left = px + "px";
+    p.style.top  = py + "px";
+    p.style.setProperty("--dx", dx.toFixed(1) + "px");
+    p.style.setProperty("--dy", dy.toFixed(1) + "px");
+    p.style.setProperty("--d", (0.55 + Math.random() * 0.25).toFixed(2) + "s");
+
+    layer.appendChild(p);
+    p.addEventListener("animationend", () => p.remove());
+  }
 }
