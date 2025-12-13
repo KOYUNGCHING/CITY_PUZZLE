@@ -1,202 +1,184 @@
-/* 設定整個頁面和遊戲容器的基礎樣式 */
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    font-family: 'Arial', sans-serif;
-    overflow: hidden; /* 防止滾動條出現 */
+/* ========================= */
+/* 全域設定 */
+/* ========================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
+/* ========================= */
+/* 遊戲背景容器 */
+/* ========================= */
 .game-container {
-    height: 100vh; /* 視窗高度 */
-    width: 100vw;  /* 視窗寬度 */
-    position: relative;
-    background-color: #000; /* 背景顏色，防止圖片加載前出現空白 */
-    /* 使用您上傳的圖片作為背景 */
-    background-image: url('../picture/首頁.jpg'); 
-    background-size: cover; /* 確保圖片覆蓋整個容器 */
-    background-position: center; /* 圖片中心對齊 */
-    background-repeat: no-repeat;
-    /* 加入一個半透明的深色覆蓋，讓文字更清晰 */
-    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4); 
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-image: url('../picture/首頁.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4);
 }
 
-/* --- 頂部和底部區塊定位 --- */
-
-/* 頂部 header (左上和右上) */
+/* ========================= */
+/* Header / Footer */
+/* ========================= */
 .header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 30px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between; /* 將元素分開到兩側 */
-    align-items: flex-start;
-    z-index: 10; /* 確保在其他元素之上 */
-    
-    /* 確保 header 是一個定位上下文，這是登出按鈕絕對定位的依據 */
-    position: relative; /* 關鍵修正，保持原有邏輯 */
+  position: relative;
+  width: 100%;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 10;
 }
 
-/* 底部 footer (左下和右下) */
 .footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 30px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between; /* 將元素分開到兩側 */
-    align-items: flex-end;
-    z-index: 10;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 10;
 }
 
-/* --- 左上角: 角色資訊樣式 --- */
-
+/* ========================= */
+/* 玩家資訊卡 */
+/* ========================= */
 .player-info {
-    display: flex;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.656); /* 半透明背景 */
-    padding: 35px 30px;
-    border-radius: 8px;
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    
-    /* 保持原有樣式，但移除 position: relative; 如果 header 是 relative，player-info 就不需要 */
+  position: relative;   /* ★ 登出鍵定位基準 */
+  display: flex;
+  align-items: center;
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 10px;
+  color: white;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.5);
 }
 
 .avatar-container {
-    width: 80px;
-    height: 80px;
-    margin-right: 15px;
-    border: 3px solid gold; /* 頭貼邊框 */
-    border-radius: 50%;
-    overflow: hidden;
+  width: 80px;
+  height: 80px;
+  margin-right: 15px;
+  border-radius: 50%;
+  border: 3px solid gold;
+  overflow: hidden;
 }
 
 .avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .text-info {
-    display: flex;
-    flex-direction: column;
-    font-size: 1.1em;
-    font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
 }
 
 #player-score {
-    font-size: 0.9em;
-    color: #ffd700; /* 金色文字 */
-    margin-top: 3px;
+  margin-top: 4px;
+  font-size: 0.9em;
+  color: #ffd700;
 }
 
-/* --- 左上角: 登出按鈕樣式 (LOGOUT) --- */
-/* home.css (修正後的登出按鈕定位) */
-
-/* 登出按鈕的定位 */
-/* home.css (修正後的登出按鈕定位) */
-
-/* 登出按鈕的定位 */
+/* ========================= */
+/* 登出鍵（左上斜外側） */
+/* ========================= */
 .logout-position {
-    /* 使用絕對定位，讓它位於 player-info 旁邊或斜下方 */
-    position: absolute; 
-    top: 20px; /* 保持垂直位置不變 */
-    left: 20px; /* 關鍵修正：將水平位置往左調整 */
-    
-    /* 確保按鈕本身沒有多餘的樣式干擾定位 */
-    padding: 5px; 
-    border: none;
-    background: none;
-    cursor: pointer;
-    z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  /* 關鍵：整顆移到左上外側 */
+  transform: translate(
+    calc(-40% - 5px),
+    calc(-40% - 5px)
+  ) scale(4);
+
+  transform-origin: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 30;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.logout-position:hover {
+  transform: translate(
+    calc(-40% - 5px),
+    calc(-40% - 5px)
+  ) scale(4.5);
+  opacity: 0.9;
 }
 
 .logout-position .button-icon {
-    /* 調整登出圖標的大小 */
-    width: 45px; 
-    height: 45px; 
-    display: block;
+  width: 45px;
+  height: 35px;
+  display: block;
 }
 
-/* 讓按鈕在滑鼠懸停時有效果 (可選) */
-.logout-position:hover {
-    opacity: 0.8;
-}
-
-.logout-position .button-icon {
-    /* 調整登出圖標的大小 */
-    width: 45px; 
-    height: 45px; 
-    display: block;
-}
-
-/* 讓按鈕在滑鼠懸停時有效果 (可選) */
-.logout-position:hover {
-    opacity: 0.8;
-}
-
-.logout-position .button-icon {
-    /* 調整登出圖標的大小 */
-    width: 45px; 
-    height: 45px; 
-    display: block;
-}
-
-/* 讓按鈕在滑鼠懸停時有效果 (可選) */
-.logout-position:hover {
-    opacity: 0.8;
-}
-
-/* --- 四個角落按鈕共用樣式 --- */
+/* ========================= */
+/* 四角功能按鈕 */
+/* ========================= */
 .top-right-button,
 .bottom-left-button,
 .bottom-right-button {
-    background-color: transparent;   /* 按鈕本身透明 */
-    border: none;
-    box-shadow: none;
+  background: transparent;
+  border: none;
+  width: 120px;
+  height: 120px;
+  padding: 0;
+  cursor: pointer;
 
-    /* 給一個基礎點擊範圍（可再調） */
-    width: 130px;
-    height: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    padding: 0;
-    color: white;
-    cursor: pointer;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    /* 先整體放大一點 */
-    transform: scale(1.4);
-    transform-origin: center;
-    transition: transform 0.15s ease;
+  transform: scale(6);
+  transition: transform 0.15s ease;
 }
 
-/* 圖片填滿整個按鈕區域 */
-.top-right-button .button-icon,
-.bottom-left-button .button-icon,
-.bottom-right-button .button-icon {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;   /* 保持比例不變形 */
-}
-
-/* 滑過去再稍微放大一點（在原本 1.4 的基礎上） */
 .top-right-button:hover,
 .bottom-left-button:hover,
 .bottom-right-button:hover {
-    transform: scale(1.5);
+  transform: scale(6.5);
 }
 
-/* 主內容區域（用於在 header 和 footer 之間佔位，通常在背景設置完畢後會被圖片覆蓋） */
+.top-right-button .button-icon,
+.bottom-left-button .button-icon,
+.bottom-right-button .button-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ========================= */
+/* 中央內容 */
+/* ========================= */
 .main-content {
-    /* 如果有內容，可能需要定位 */
+  width: 100%;
+  height: 100%;
+}
+/* 右上按鈕往中間推 */
+.top-right-button {
+  margin-right: 100px;
+}
+
+/* 右下按鈕往中間推 */
+.bottom-right-button {
+  margin-right: 100px;
+}
+
+.bottom-left-button {
+  margin-left: 50px;
 }
