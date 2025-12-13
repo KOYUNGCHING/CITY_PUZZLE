@@ -2,28 +2,65 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>Catch Alien - 關卡版</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alien Claw - Tech</title>
   <link rel="stylesheet" href="../static/css/game3.css" />
 </head>
 <body>
+  <div class="page">
+    <!-- 左：遊戲區 -->
+    <div class="left">
+      <div class="topbar">
+        <div class="hud">
+          <span id="score">Score: 0</span>
+          <span id="level">關卡：1</span>
+          <span id="target">目標：60</span>
+          <span id="timer">時間：60</span>
+        </div>
+      </div>
 
-  <!-- 左上角 Back 按鈕 -->
-  <button id="homeBtn" class="back-btn">⬅ BACK</button>
+      <div class="canvas-wrap">
+        <canvas id="gameCanvas"></canvas>
+      </div>
+    </div>
 
-  <h1>Catch Alien</h1>
-  <div id="info">
-    <span id="score">Score: 0</span>
-    <span id="level">關卡：1</span>
-    <span id="target">目標：60</span>
-    <span id="timer">時間：60</span>
-    <span class="tips">空白鍵：發射夾子　R：重新開始</span>
-  </div>
+    <!-- 右：控制台 -->
+    <aside class="right">
+      <div class="panel">
+        <div class="panel-title">CONTROL</div>
 
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="right-controls">
+          <a href="/game" class="action-btn back-btn">EXIT</a>
+          <button id="pauseBtn" class="tech-btn">PAUSE</button>
+          <button id="restartBtn" class="tech-btn">RESTART</button>
+        </div>
 
-  <div class="btn-area">
-    <button id="restartBtn">RESTART</button>
+        <div class="rules">
+          <div class="rules-title">遊戲規則</div>
+
+          <ul>
+            <li><b>操作：</b>空白鍵發射爪子；<b>P</b> 暫停/繼續；<b>R</b> 重新開始。</li>
+            <li><b>外星人三種：</b>紅色、藍色、紫色。</li>
+            <li><b>分數：</b>外星人越小分數越高（紫 &gt; 藍 &gt; 紅）。</li>
+            <li><b>速度：</b>夾到越大的外星人，爪子拉回越慢。</li>
+            <li><b>第 5 關開始：</b>外星人會亂跑亂動。</li>
+            <li><b>過關：</b>達到目標分數自動進入下一關，目標逐關提高。</li>
+          </ul>
+
+          <div class="legend">
+            <div class="tag red">RED (大) 低分 / 最慢</div>
+            <div class="tag blue">BLUE (中) 中分 / 中速</div>
+            <div class="tag purple">PURPLE (小) 高分 / 最快</div>
+          </div>
+        </div>
+
+        <div class="note">
+          提示：抓到隕石會扣分（-20）<br/>
+        </div>
+      </div>
+    </aside>
   </div>
 
   <script src="../static/js/game3.js"></script>
 </body>
+</html>

@@ -1,96 +1,327 @@
+/* =========================
+   Global
+   ========================= */
 * {
   box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  background: #050615;
+  color: rgba(210,255,245,0.95);
+  font-family: Arial, sans-serif;
+  overflow: hidden; /* ★ 關鍵：整頁不滾動，避免出界 */
 }
 
-body {
-  background: #222;
-  color: #fff;
-  font-family: "Microsoft JhengHei", system-ui, -apple-system,
-    BlinkMacSystemFont;
+/* =========================
+   Page Layout
+   ========================= */
+.page {
+  height: 100vh;              /* ★ 用視窗高度，不用 100% */
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  overflow: hidden;
+}
+
+/* =========================
+   Left: Game Area
+   ========================= */
+.left {
+  height: 100vh;
+  min-height: 0;              /* ★ flex 子元素可正確縮小 */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  padding-top: 20px;
-  overflow: hidden; /* 防止滾動條出現 */
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(40,80,120,0.25), transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(140,80,220,0.18), transparent 55%);
 }
 
-h1 {
-  margin-bottom: 8px;
-  font-size: 28px;
+/* =========================
+   Top HUD Bar
+   ========================= */
+.topbar {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(120,255,230,0.18);
+  background: linear-gradient(
+    180deg,
+    rgba(10,14,28,0.88),
+    rgba(8,10,18,0.75)
+  );
+  backdrop-filter: blur(6px);
+  flex-shrink: 0;             /* ★ 不讓 topbar 撐高畫布 */
 }
 
-#info {
+.hud {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.hud span {
+  padding: 6px 10px;
+  border: 1px solid rgba(120,255,230,0.16);
+  border-radius: 12px;
+  background: rgba(10,16,26,0.55);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* =========================
+   Canvas Wrapper
+   ========================= */
+.canvas-wrap {
+  flex: 1;                    /* ★ 吃掉剩餘高度 */
+  min-height: 0;              /* ★ 防止被內容撐爆 */
+  padding: 12px;
+  overflow: hidden;
+}
+
+#gameCanvas {
+  width: 100%;
+  height: 100%;               /* ★ 剛好填滿 canvas-wrap */
+  display: block;
+  border-radius: 18px;
+  border: 1px solid rgba(120,255,230,0.18);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.45),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* =========================
+   Right: Control Panel
+   ========================= */
+.right {
+  height: 100vh;
+  overflow: auto;
+  padding: 14px;
+  border-left: 1px solid rgba(120,255,230,0.14);
+  background: linear-gradient(
+    180deg,
+    rgba(8,10,18,0.98),
+    rgba(5,6,14,0.98)
+  );
+}
+
+.panel {
+  border-radius: 18px;
+  border: 1px solid rgba(120,255,230,0.18);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(90,255,220,0.10), transparent 55%),
+    radial-gradient(circle at 70% 80%, rgba(180,110,255,0.08), transparent 60%),
+    rgba(8,10,18,0.88);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+  padding: 14px;
+}
+
+.panel-title {
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-size: 14px;
   margin-bottom: 10px;
+  color: rgba(180,255,240,0.95);
+}
+
+/* =========================
+   Right Buttons
+   ========================= */
+.right-controls {
   display: flex;
-  gap: 18px;
-  align-items: center;
-  font-size: 15px;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
-#score,
-#level,
-#target,
-#timer {
-  font-weight: bold;
-}
-
-.tips {
-  font-size: 13px;
-  opacity: 0.9;
-}
-
-canvas {
-  border: 2px solid #555;
-  background: #00111a;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
-}
-/* ====== 按鈕區域 ====== */
-.btn-area {
-  margin-top: 15px;
-  display: flex;
-  gap: 18px;
-}
-
-.btn-area button {
-  padding: 10px 22px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
+.tech-btn {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(120,255,230,0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(20,40,60,0.92),
+    rgba(8,18,30,0.92)
+  );
+  color: rgba(210,255,245,0.95);
+  font-weight: 900;
+  letter-spacing: 1px;
   cursor: pointer;
-  font-weight: bold;
-  background: #0a84ff;
-  color: white;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
-  transition: 0.2s;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.35),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
 }
 
-.btn-area button:hover {
-  background: #006be6;
-  transform: translateY(-2px);
-}
-
-/* ===== 左上角 Back 按鈕 ===== */
-.back-btn {
+.tech-btn::before {
+  content: "";
   position: absolute;
-  top: 15px;
-  left: 15px;
-  padding: 10px 18px;
-  font-size: 15px;
-  background: #0a84ff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-  transition: 0.2s ease;
+  inset: -2px;
+  background: radial-gradient(
+    circle at 20% 20%,
+    rgba(120,255,230,0.22),
+    transparent 55%
+  );
+  pointer-events: none;
 }
 
+.tech-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(120,255,230,0.55);
+  box-shadow:
+    0 14px 28px rgba(0,0,0,0.42),
+    0 0 18px rgba(120,255,230,0.18),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.tech-btn:active {
+  transform: scale(0.99);
+}
+
+.tech-btn.danger {
+  border-color: rgba(255,80,80,0.45);
+}
+
+.tech-btn.danger:hover {
+  box-shadow:
+    0 14px 28px rgba(0,0,0,0.42),
+    0 0 18px rgba(255,80,80,0.16),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+/* =========================
+   Rules Section
+   ========================= */
+.rules {
+  border-top: 1px solid rgba(120,255,230,0.14);
+  padding-top: 12px;
+}
+
+.rules-title {
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.rules ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.legend {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.tag {
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(120,255,230,0.14);
+  background: rgba(10,16,26,0.55);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.tag.red    { border-color: rgba(255,80,80,0.25); }
+.tag.blue   { border-color: rgba(80,160,255,0.25); }
+.tag.purple { border-color: rgba(180,110,255,0.25); }
+
+.note {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(120,255,230,0.12);
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* =========================
+   Responsive (Mobile)
+   ========================= */
+@media (max-width: 980px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .right {
+    height: auto;
+    border-left: none;
+    border-top: 1px solid rgba(120,255,230,0.14);
+  }
+
+  body {
+    overflow: auto; /* 手機可滑 */
+  }
+
+  #gameCanvas {
+    height: 58vh;  /* 保守高度，避免出界 */
+  }
+}
+/* =========================
+   Action Button (EXIT)
+   仿 action-btn back-btn
+   ========================= */
+.action-btn {
+  width: 100%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.18s ease;
+}
+
+/* EXIT：偏危險/離開感 */
+.back-btn {
+  color: rgba(255,220,220,0.95);
+  border: 1px solid rgba(255,90,90,0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(80,20,20,0.92),
+    rgba(30,10,10,0.92)
+  );
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.38),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* 光暈層 */
+.back-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(
+    circle at 20% 20%,
+    rgba(255,120,120,0.28),
+    transparent 55%
+  );
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Hover */
 .back-btn:hover {
-  background: #006be6;
-  transform: scale(1.05);
+  transform: translateY(-1px);
+  border-color: rgba(255,120,120,0.65);
+  box-shadow:
+    0 14px 28px rgba(0,0,0,0.45),
+    0 0 18px rgba(255,80,80,0.25),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+/* Active */
+.back-btn:active {
+  transform: scale(0.98);
 }

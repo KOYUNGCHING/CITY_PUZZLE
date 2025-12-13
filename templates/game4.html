@@ -10,7 +10,7 @@
   <main class="wrap">
     <header class="top">
       <h1>Tower Defense</h1>
-      <p class="sub">點格子放塔，外星人會找最短路徑繞開。擊殺 +20 分，分數越高出怪越快。</p>
+      <p class="sub">點格子放塔守住右側終點；左側 <b>敵人出生塔</b> 會轟你的塔。分數越高出怪越快。</p>
     </header>
 
     <section class="hud">
@@ -19,6 +19,7 @@
       <div class="pill">生命：<span id="life">20</span></div>
       <div class="pill">波次：<span id="wave">1</span></div>
       <div class="pill">存活敵人：<span id="alive">0</span></div>
+      <div class="pill">塔數：<span id="towerCount">0</span></div>
       <div class="spacer"></div>
 
       <button id="howBtn" class="btn">遊戲說明</button>
@@ -36,7 +37,7 @@
     </section>
 
     <footer class="foot">
-      <p id="msg">提示：點空白格放塔；若堵死路徑會被拒絕。分數越高，出怪越快。</p>
+      <p id="msg">提示：點空白格放塔；若堵死路徑會被拒絕。小心左側敵人出生塔會轟你的塔。</p>
     </footer>
   </main>
 
@@ -55,22 +56,23 @@
         <div class="card">
           <b>放塔</b>
           <ul>
-            <li>點擊空白格放塔（每座 <b>25</b> 金幣）。</li>
+            <li>點擊空白格放塔（每座 <b>50</b> 金幣）。</li>
             <li>塔會阻擋路徑；若堵死起點到終點，放塔會被拒絕。</li>
+            <li>塔會阻擋路徑，請避免把路完全堵死。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <b>敵人出生塔會反擊</b>
+          <ul>
+            <li>左側綠色格是 <b>敵人出生塔</b>，會定期攻擊你最近的塔。</li>
+            <li>你的塔有耐久（HP），被打到歸零就會被摧毀。</li>
           </ul>
         </div>
         <div class="card">
           <b>積分與出怪</b>
           <ul>
-            <li>擊殺一隻外星人 <b>+20 分</b>。</li>
+            <li>擊殺一隻外星人 <b>+10 分</b>，並獲得金幣。</li>
             <li>分數越高，出怪越頻繁（有上限）。</li>
-          </ul>
-        </div>
-        <div class="card">
-          <b>敵人尋路</b>
-          <ul>
-            <li>找最短路徑。</li>
-            <li>你放塔後，敵人會重新算路並繞開。</li>
           </ul>
         </div>
       </div>
