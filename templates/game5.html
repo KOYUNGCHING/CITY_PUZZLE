@@ -9,25 +9,69 @@
   <button id="back-btn" class="back-btn">⬅ Back</button>
   <h1 class="title">Stickman vs Aliens</h1>
 
+  <!-- 遊戲說明（可收合） -->
+  <details class="game-desc" open>
+    <summary>遊戲說明（點我展開/收合）</summary>
+    <div class="desc-body">
+      <div><b>目標：</b>生存越久越好，擊殺外星人累積分數。</div>
+      <div><b>操作：</b>W/A/S/D 移動；滑鼠瞄準；空白鍵或滑鼠按住連射。</div>
+      <div><b>牆壁：</b>玩家與外星人都不能穿牆；子彈碰到牆會消失（不穿牆）。</div>
+      <div><b>難度：</b>每達到 1000 分，敵人上限增加、生成更快（越來越多）。</div>
+      <div><b>掉落：</b>紅怪掉回血、藍怪掉加速、黃怪掉護盾；紫色迷你怪擊殺後分數加倍並回滿血+護盾。</div>
+      <div><b>暫停：</b>P 或右側按鈕。</div>
+      <div><b>重開：</b>R 或右側按鈕（重開後會回到未開始狀態，方便再看說明）。</div>
+      <div><b>開始：</b>按右側「開始遊戲」或 Enter 才會真正開打。</div>
+    </div>
+  </details>
+
   <div class="game-container">
     <canvas id="game" width="900" height="600"></canvas>
 
+    <!-- 右側 HUD -->
     <div class="ui">
       <div class="stat">HP: <span id="hpText"></span></div>
       <div class="stat">Score: <span id="scoreText">0</span></div>
       <div class="stat">Aliens: <span id="alienCount">0</span></div>
-      <div class="stat">Buffs:
-        <span id="buffText">None</span>
+      <div class="stat">Buffs: <span id="buffText">None</span></div>
+
+      <div class="control-box">
+        <button id="startBtn">▶ 開始遊戲 (Enter)</button>
+        <button id="pauseBtn">⏸ 暫停 (P)</button>
+        <button id="restartBtn">重新開始 (R)</button>
       </div>
+
       <div class="hint">
-        移動：方向鍵 ↑ ↓ ← →<br>
-        射擊：空白鍵　瞄準：滑鼠<br>
+        移動：W A S D<br>
+        瞄準：滑鼠移動<br>
+        射擊：空白鍵 / 滑鼠按住<br>
+        暫停：P　重來：R　開始：Enter<br>
+      </div>
+
+      <!-- 道具介紹（放在 hint 下方） -->
+      <div class="powerup-hint">
+        <div class="powerup-title">擊倒外星人掉落與獎勵</div>
+
+        <div class="powerup-item">
+          <span class="dot heal"></span>
+          <span><b>紅色外星人</b>：掉落 <b>回血（+HP）</b></span>
+        </div>
+
+        <div class="powerup-item">
+          <span class="dot speed"></span>
+          <span><b>藍色外星人</b>：掉落 <b>加速（SPD）</b></span>
+        </div>
+
+        <div class="powerup-item">
+          <span class="dot shield"></span>
+          <span><b>黃色外星人</b>：掉落 <b>護盾（S）</b></span>
+        </div>
+
+        <div class="powerup-item">
+          <span class="dot purple"></span>
+          <span><b>紫色迷你外星人</b>：擊殺 <b>分數加倍</b>＋<b>HP 補滿</b>＋<b>護盾</b></span>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="footer">
-    <button id="restartBtn">重新開始</button>
   </div>
 
   <script src="../static/js/game5.js"></script>
