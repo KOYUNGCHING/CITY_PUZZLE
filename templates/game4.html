@@ -1,59 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <title>遊戲 20 - 數字方塊下落</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tower Defense</title>
   <link rel="stylesheet" href="../static/css/game4.css" />
 </head>
 <body>
-
-  <!-- 左上角 Back 按鈕 -->
-  <button id="back-btn" class="back-btn">⬅ Back</button>
-
-  <div class="wrapper">
-    <header class="header">
-      <h1>T W E N T Y</h1>
-      <p>用滑鼠移動下落的數字方塊，點一下讓它落到底；同數字合併 +1，達到 20 就收走計分！</p>
+  <main class="wrap">
+    <header class="top">
+      <h1>Tower Defense</h1>
+      <p class="sub">點格子放塔守住右側終點；左側 <b>敵人出生塔</b> 會轟你的塔。分數越高出怪越快。</p>
     </header>
 
+    <section class="hud">
+      <div class="pill">分數：<span id="score">0</span></div>
+      <div class="pill">金幣：<span id="gold">120</span></div>
+      <div class="pill">生命：<span id="life">20</span></div>
+      <div class="pill">波次：<span id="wave">1</span></div>
+      <div class="pill">存活敵人：<span id="alive">0</span></div>
+      <div class="pill">塔數：<span id="towerCount">0</span></div>
+      <div class="spacer"></div>
 
-    <section class="panel">
-      <div class="stats">
-        <div class="stat">
-          <span class="label">收集到的 20：</span>
-          <span id="score">0</span>
-        </div>
-        <div class="stat">
-          <span class="label">目前最大數字：</span>
-          <span id="max-tile">0</span>
-        </div>
-        <div class="stat">
-          <span class="label">遊戲狀態：</span>
-          <span id="status-text">按下「開始 / 重來」開始遊戲</span>
-        </div>
-      </div>
-      <button id="start-btn" class="btn">開始 / 重來</button>
-  
+      <button id="howBtn" class="btn">遊戲說明</button>
+      <button id="startBtn" class="btn primary">開始</button>
+      <button id="pauseBtn" class="btn">暫停</button>
+      <button id="resetBtn" class="btn">重開</button>
+      <a href="/game" class="btn danger">EXIT</a>
     </section>
 
-    <section class="board-section">
-      <div id="board" class="board">
-        <!-- JS 會把格子畫進來 -->
+    <section class="game">
+      <div id="grid" class="grid" aria-label="grid"></div>
+      <div id="units" class="units" aria-label="units layer">
+        <canvas id="uCanvas"></canvas>
       </div>
     </section>
 
-    <section class="help">
-      <h2>操作說明</h2>
-      <ul>
-        <li>方塊會自動從上方掉落。</li>
-        <li><strong>把滑鼠移到棋盤上方</strong>，就可以左右移動方塊所在欄。</li>
-        <li><strong>在棋盤上點一下滑鼠左鍵</strong>，方塊會直接「硬降到底」。</li>
-        <li>同數字方塊相鄰（上下左右）時會「合併」成 <strong>原數字 + 1</strong> 的方塊。</li>
-        <li>合併過程中若出現 <strong>20</strong>，會被收走並累計到「收集到的 20」。</li>
-        <li>方塊堆到最上面，新的方塊無法產生時，遊戲結束。</li>
-        <li>（備用）鍵盤 ← → ↓ ↑ 也仍然可以操控方塊。</li>
-      </ul>
-    </section>
+    <footer class="foot">
+      <p id="msg">提示：點空白格放塔；若堵死路徑會被拒絕。小心左側敵人出生塔會轟你的塔。</p>
+    </footer>
+  </main>
+
+  <!-- How-to modal -->
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="How to Play">
+      <h2>遊戲說明｜怎麼玩</h2>
+      <div class="cards">
+        <div class="card">
+          <b>目標</b>
+          <ul>
+            <li>不要讓外星人走到右側 <b>紅色終點</b>。</li>
+            <li>每漏一隻扣 <b>1</b> 生命，生命歸零就結束。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <b>放塔</b>
+          <ul>
+            <li>點擊空白格放塔（每座 <b>40</b> 金幣）。</li>
+            <li>塔會阻擋路徑；若堵死起點到終點，放塔會被拒絕。</li>
+            <li>塔會阻擋路徑，請避免把路完全堵死。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <b>敵人出生塔會反擊</b>
+          <ul>
+            <li>左側綠色格是 <b>敵人出生塔</b>，會定期攻擊你最近的塔。</li>
+            <li>你的塔有耐久（HP），被打到歸零就會被摧毀。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <b>積分與出怪</b>
+          <ul>
+            <li>擊殺一隻外星人 <b>+20 分</b>，並獲得金幣。</li>
+            <li>分數越高，出怪越頻繁（有上限）。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="closeHow" class="btn">關閉</button>
+        <button id="startHow" class="btn primary">開始遊戲</button>
+      </div>
+    </div>
   </div>
 
   <script src="../static/js/game4.js"></script>

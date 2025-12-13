@@ -6,6 +6,7 @@ body, html {
     width: 100%;
     font-family: 'Arial', sans-serif;
     overflow: auto; /* 允許排名過長時滾動 */
+    overflow: hidden; /* 防止滾動條出現 */
 }
 
 .ranking-container {
