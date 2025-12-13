@@ -30,7 +30,7 @@ html, body {
 .header {
   position: relative;
   width: 100%;
-  padding: 30px;
+  padding: 40px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -102,7 +102,7 @@ html, body {
   transform: translate(
     calc(-40% - 5px),
     calc(-40% - 5px)
-  ) scale(4);
+  ) scale(5);
 
   transform-origin: center;
   background: none;
@@ -117,7 +117,7 @@ html, body {
   transform: translate(
     calc(-40% - 5px),
     calc(-40% - 5px)
-  ) scale(4.5);
+  ) scale(5.5);
   opacity: 0.9;
 }
 
@@ -144,14 +144,14 @@ html, body {
   justify-content: center;
   align-items: center;
 
-  transform: scale(6);
+  transform: scale(7);
   transition: transform 0.15s ease;
 }
 
 .top-right-button:hover,
 .bottom-left-button:hover,
 .bottom-right-button:hover {
-  transform: scale(6.5);
+  transform: scale(7.5);
 }
 
 .top-right-button .button-icon,
