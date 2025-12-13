@@ -385,7 +385,7 @@ const claw = {
   originX: () => canvas.getBoundingClientRect().width / 2,
   originY: () => 75,
   minLen: 70,
-  maxLen: 520,
+  maxLen: 600,
   len: 70,
   ang: 0,
   dir: 1,
