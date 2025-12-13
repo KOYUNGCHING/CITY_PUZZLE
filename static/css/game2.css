@@ -419,3 +419,143 @@ body {
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+/* ===== Combo 浮字特效層 ===== */
+#combo-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:50;
+}
+
+/* 單個浮字 */
+.combo-fx{
+  position:absolute;
+  transform: translate(-50%, -50%);
+  font-weight: 800;
+  letter-spacing: 2px;
+  color:#00ffcc;
+  text-shadow: 0 0 10px rgba(0,255,204,0.9), 0 0 24px rgba(0,255,204,0.45);
+  opacity:0;
+  animation: comboPop 650ms ease-out forwards;
+  padding: 6px 10px;
+  border: 1px solid rgba(0,255,204,0.55);
+  border-radius: 10px;
+  background: rgba(0, 255, 204, 0.08);
+  backdrop-filter: blur(4px);
+}
+
+/* 大連擊更亮 */
+.combo-fx.big{
+  color:#ffff66;
+  border-color: rgba(255,255,120,0.65);
+  text-shadow: 0 0 10px rgba(255,255,120,0.9), 0 0 26px rgba(255,255,120,0.55);
+}
+
+@keyframes comboPop{
+  0%   { opacity:0; transform: translate(-50%,-50%) scale(0.75); }
+  20%  { opacity:1; transform: translate(-50%,-56%) scale(1.08); }
+  100% { opacity:0; transform: translate(-50%,-86%) scale(1.0); }
+}
+/* Combo overlay：不吃滑鼠、不擋畫面 */
+#combo-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:999;
+}
+
+/* 浮字：透明霓虹 */
+.combo-fx{
+  position:absolute;
+  transform: translate(-50%, -50%);
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(0,255,204,0.08);
+  border: 1px solid rgba(0,255,204,0.55);
+  color: rgba(0,255,204,0.95);
+  text-shadow: 0 0 10px rgba(0,255,204,0.9), 0 0 24px rgba(0,255,204,0.45);
+  opacity: 0;
+  animation: comboPop 650ms ease-out forwards;
+  backdrop-filter: blur(4px);
+}
+
+.combo-fx.big{
+  background: rgba(255,255,120,0.08);
+  border-color: rgba(255,255,120,0.65);
+  color: rgba(255,255,120,0.95);
+  text-shadow: 0 0 10px rgba(255,255,120,0.9), 0 0 26px rgba(255,255,120,0.55);
+}
+
+/* 霓虹圈：只有線條與光暈，不會遮到方塊 */
+.combo-ring{
+  position:absolute;
+  left:0; top:0;
+  width: 18px; height: 18px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: 2px solid rgba(0,255,204,0.85);
+  box-shadow: 0 0 12px rgba(0,255,204,0.55), inset 0 0 10px rgba(0,255,204,0.35);
+  opacity: 0.9;
+  animation: ringExpand 520ms ease-out forwards;
+}
+
+@keyframes ringExpand{
+  0%   { width: 18px; height: 18px; opacity: 0.95; }
+  100% { width: 140px; height: 140px; opacity: 0; }
+}
+
+@keyframes comboPop{
+  0%   { opacity:0; transform: translate(-50%,-50%) scale(0.75); }
+  20%  { opacity:1; transform: translate(-50%,-56%) scale(1.12); }
+  100% { opacity:0; transform: translate(-50%,-88%) scale(1.0); }
+}
+
+/* 粒子：少量 DOM 粒子（很炫但不重） */
+.combo-particle{
+  position:absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(0,255,204,0.95);
+  box-shadow: 0 0 10px rgba(0,255,204,0.75);
+  transform: translate(-50%, -50%);
+  opacity: 0.9;
+  animation: particleFly var(--d) ease-out forwards;
+}
+
+@keyframes particleFly{
+  0%   { transform: translate(-50%,-50%) translate(0,0) scale(1); opacity:0.9; }
+  100% { transform: translate(-50%,-50%) translate(var(--dx), var(--dy)) scale(0.2); opacity:0; }
+}
+/* 棋盤脈衝：只動 box-shadow，不重排 */
+.game-board.board-pulse{
+  animation: boardPulse 260ms ease-out;
+}
+@keyframes boardPulse{
+  0%   { box-shadow: 0 0 20px rgba(0,255,204,0.10); }
+  50%  { box-shadow: 0 0 42px rgba(0,255,204,0.55); }
+  100% { box-shadow: 0 0 20px rgba(0,255,204,0.10); }
+}
+
+/* Shockwave：大範圍光圈（更炫但透明，不遮畫面） */
+.combo-shock{
+  position:absolute;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 2px solid rgba(0,255,204,0.55);
+  box-shadow: 0 0 18px rgba(0,255,204,0.35);
+  opacity: 0.85;
+  animation: shockExpand 520ms ease-out forwards;
+}
+.combo-shock.big{
+  border-color: rgba(255,255,120,0.65);
+  box-shadow: 0 0 22px rgba(255,255,120,0.45);
+}
+@keyframes shockExpand{
+  0%   { width: 30px; height: 30px; opacity: 0.85; }
+  100% { width: 260px; height: 260px; opacity: 0; }
+}

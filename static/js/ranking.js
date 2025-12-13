@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeButton = document.getElementById('home-button');
 
     // 回首頁按鈕的邏輯
-    homeButton.addEventListener('click', () => {
-        // 在真實專案中，這裡會是跳回首頁的 URL
-        window.location.href = 'index.html'; 
+    homeButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = '/home';
     });
 
     // 取得排名數據並渲染到表格
@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 插入名次、名稱、帳號、積分
                 row.insertCell().textContent = rank;
                 row.insertCell().textContent = player.name;
-                row.insertCell().textContent = player.account;
                 row.insertCell().textContent = player.score.toLocaleString(); // 格式化分數
             });
             
@@ -67,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = tbody.insertRow();
             row.insertCell().textContent = index + 1;
             row.insertCell().textContent = player.name;
-            row.insertCell().textContent = player.account;
             row.insertCell().textContent = player.score.toLocaleString();
         });
         loadingMessage.style.display = 'none';
