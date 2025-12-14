@@ -1,56 +1,63 @@
-document.addEventListener("DOMContentLoaded", function() {
-    
+document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('btn-login');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
 
-    // 綁定點擊事件
-    loginBtn.addEventListener('click', doLogin);
+    // 點擊事件
+    if (loginBtn) {
+        loginBtn.addEventListener('click', performLogin);
+    }
 
-    // 綁定 Enter 鍵事件 (在密碼框按 Enter 也可登入)
-    document.getElementById('password').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') doLogin();
+    // Enter 鍵事件
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') performLogin();
     });
 
-    async function doLogin() {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
+    async function performLogin() {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
 
-        if(!user || !pass) {
+        if (!username || !password) {
             alert("請輸入帳號與密碼");
             return;
         }
 
         try {
-            // 注意：如果直接打開 html 檔案，這裡會報錯，因為沒有後端 server
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: user, password: pass })
+                body: JSON.stringify({ username, password })
             });
-            
-            const result = await response.json();
 
-            if (result.status === 'success') {
-                // 登入成功
-                localStorage.setItem('username', user);
-                localStorage.setItem('avatar_id', result.avatar_id);
-                localStorage.setItem('score', result.score);
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                // 登入成功：存入 LocalStorage
+                localStorage.setItem('logged_in_username', data.username);
+                localStorage.setItem('avatar_id', data.avatar_id);
+                localStorage.setItem('total_fragments', data.total_fragments);
                 
-                // 導向主頁
-                window.location.href = '/home'; 
-                
-            } else if (result.status === 'wrong_password') {
-                alert("提示：密碼錯誤");
-                document.getElementById('password').value = ''; 
-                
-            } else if (result.status === 'user_not_found') {
-                alert("查無此帳號，將為您導向註冊頁面...");
-                // 導向註冊頁
-                window.location.href = '/register';
+                alert(`登入成功！歡迎回来，${data.username}`);
+                window.location.href = "/home";
+
+            } else if (data.status === 'user_not_found') {
+                // 找不到帳號：引導註冊
+                alert("查無此帳號，請先註冊！");
+                window.location.href = "/register";
+
+            } else if (data.status === 'wrong_password') {
+                // 密碼錯誤
+                alert("密碼錯誤，請重試。");
+                passwordInput.value = '';
+
+            } else {
+                // 其他錯誤
+                alert(`登入失敗：${data.message}`);
             }
 
         } catch (error) {
             console.error("Login Error:", error);
-            alert("目前為預覽模式，或後端未啟動，無法進行實際登入驗證。");
+            alert("伺服器連線錯誤，請確認 app.py 是否正在執行。");
         }
     }
 });
