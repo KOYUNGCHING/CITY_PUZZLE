@@ -4,17 +4,17 @@ import os
 
 app = Flask(__name__)
 DB_NAME = "city_puzzle.db"
-FRAGMENT_COST = 10 
+FRAGMENT_COST = 10  # 解鎖一片拼圖需要的碎片數
 
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row # 讓資料可以用欄位名稱存取
+    conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
     conn = get_db_connection()
     c = conn.cursor()
-    # 建立包含所有欄位的表格
+    # 保留所有欄位
     c.execute('''CREATE TABLE IF NOT EXISTS users 
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                   username TEXT UNIQUE, 
@@ -25,7 +25,6 @@ def init_db():
                   progress_id INTEGER DEFAULT 0)''')
     conn.commit()
     conn.close()
-    print("--- 資料庫初始化成功 ---")
 
 if not os.path.exists(DB_NAME):
     init_db()
@@ -63,7 +62,6 @@ def puzzle_page(): return render_template("puzzle_select.html")
 @app.route('/api/register', methods=['POST'])
 def register_api():
     data = request.json
-    print(f"[Register] 收到註冊請求: {data}") 
     try:
         conn = get_db_connection()
         c = conn.cursor()
@@ -73,21 +71,15 @@ def register_api():
                   (data['username'], data['password'], data.get('avatar_id', 1)))
         conn.commit()
         conn.close()
-        print(f"[Register] 註冊成功: {data['username']}")
         return jsonify({'status': 'success', 'message': '註冊成功'})
-    except sqlite3.IntegrityError:
-        print("[Register] 失敗: 帳號重複")
+    except:
         return jsonify({'status': 'error', 'message': '該帳號已被註冊'})
-    except Exception as e:
-        print(f"[Register] 錯誤: {e}")
-        return jsonify({'status': 'error', 'message': str(e)})
 
 @app.route('/api/login', methods=['POST'])
 def login_api():
     data = request.json
     username = data.get('username')
     password = data.get('password')
-    print(f"[Login] 嘗試登入: {username}")
 
     conn = get_db_connection()
     c = conn.cursor()
@@ -95,24 +87,17 @@ def login_api():
     user = c.fetchone()
     conn.close()
 
-    if user:
-        if user['password'] == password:
-            print(f"[Login] 成功: {username}")
-            return jsonify({
-                'status': 'success', 
-                'message': '登入成功', 
-                'username': user['username'],
-                'avatar_id': user['avatar_id'],
-                'total_fragments': user['total_fragments'],     
-                'current_fragments': user['current_fragments'], 
-                'progress_id': user['progress_id']
-            })
-        else:
-            print("[Login] 失敗: 密碼錯誤")
-            return jsonify({'status': 'wrong_password', 'message': '密碼錯誤'})
-    else:
-        print("[Login] 失敗: 找不到帳號")
-        return jsonify({'status': 'user_not_found', 'message': '帳號不存在'})
+    if user and user['password'] == password:
+        return jsonify({
+            'status': 'success', 
+            'message': '登入成功', 
+            'username': user['username'],
+            'avatar_id': user['avatar_id'],
+            'total_fragments': user['total_fragments'],     # 總分
+            'current_fragments': user['current_fragments'], # 錢包
+            'progress_id': user['progress_id']
+        })
+    return jsonify({'status': 'error', 'message': '登入失敗'})
 
 @app.route('/api/game_complete', methods=['POST'])
 def game_complete():
@@ -126,6 +111,7 @@ def game_complete():
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        # 同時增加總分(total)和錢包(current)
         c.execute('''UPDATE users 
                      SET total_fragments = total_fragments + ?,
                          current_fragments = current_fragments + ?
@@ -134,13 +120,14 @@ def game_complete():
         conn.commit()
         conn.close()
         return jsonify({'status': 'success', 'added': fragments})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)})
+    except:
+        return jsonify({'status': 'error'})
 
 @app.route("/api/ranking", methods=['GET'])
 def get_ranking_data():
     conn = get_db_connection()
     c = conn.cursor()
+    # 依照 total_fragments (總累計) 排序
     c.execute("SELECT username, total_fragments, avatar_id FROM users ORDER BY total_fragments DESC LIMIT 10")
     data = c.fetchall()
     conn.close()
@@ -150,7 +137,7 @@ def get_ranking_data():
         result.append({
             "rank": i + 1,
             "name": row['username'],
-            "total_score": row['total_fragments'],
+            "total_score": row['total_fragments'], # 前端會讀取這個欄位
             "avatar_id": row['avatar_id']
         })
     return jsonify(result)
@@ -169,8 +156,8 @@ def get_puzzle_progress():
     if user:
         return jsonify({
             'status': 'success',
-            'total_fragments': user['total_fragments'],
-            'current_fragments': user['current_fragments'],
+            'total_fragments': user['total_fragments'],     # 總分 (給主頁用)
+            'current_fragments': user['current_fragments'], # 錢包 (給拼圖頁用)
             'progress_id': user['progress_id'],
             'cost': FRAGMENT_COST
         })
@@ -201,6 +188,7 @@ def unlock_puzzle():
         conn.close()
         return jsonify({'status': 'fail', 'message': '碎片不足'})
         
+    # 扣錢 + 進度+1
     c.execute('''UPDATE users 
                  SET current_fragments = current_fragments - ?, 
                      progress_id = progress_id + 1 

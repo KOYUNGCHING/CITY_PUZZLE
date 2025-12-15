@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🧩 ＰＵＺＺＬＥＳ</title>
-    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle_select.css') }}">
 </head>
 <body>
@@ -13,66 +12,64 @@
         <a href="/home" class="back-button">BACK</a>
         <h2>拼圖 - 收集進度</h2>
         <div id="user-info">
-            <span id="username-display"></span> | 碎片: <span id="current-fragments">0</span>
+            <span id="username-display"></span> | 持有碎片: <span id="current-fragments">0</span>
         </div>
     </header>
 
     <div id="controls">
-        <p>解鎖下一塊拼圖需要 <span id="cost">1000</span> 碎片。</p>
-        <button onclick="unlockNextPiece()" id="unlock-button">
-            解鎖下一塊拼圖 (消費 <span id="cost-display">1000</span> 碎片)
+        <p>解鎖下一塊拼圖需要 <span id="cost">10</span> 碎片。</p>
+        <button id="unlock-button">
+            解鎖下一塊拼圖 (消費 <span id="cost-display">10</span> 碎片)
         </button>
         <p id="message"></p>
     </div>
 
     <main id="puzzle-main">
         <div class="landmark-row">
-            
-            <div class="landmark-container" id="landmark-101" data-start-id="1">
+            <div class="landmark-container" id="landmark-101">
                 <p>Taipei 101</p>
-                <img src="{{ url_for('static', filename='img/Puzzles/101_destroy.jpg') }}" alt="101 灰階底圖" class="base-image">
+                <img src="{{ url_for('static', filename='img/Puzzles/101_destroy.jpg') }}" class="base-image">
                 <div class="pieces-overlay">
-                    <div class="puzzle-piece" data-progress-id="1" data-position="0% 0%"></div>
-                    <div class="puzzle-piece" data-progress-id="2" data-position="100% 0%"></div>
-                    <div class="puzzle-piece" data-progress-id="3" data-position="0% 100%"></div>
-                    <div class="puzzle-piece" data-progress-id="4" data-position="100% 100%"></div>
+                    <div class="puzzle-piece" data-progress-id="1"></div>
+                    <div class="puzzle-piece" data-progress-id="2"></div>
+                    <div class="puzzle-piece" data-progress-id="3"></div>
+                    <div class="puzzle-piece" data-progress-id="4"></div>
                 </div>
             </div>
 
-            <div class="landmark-container" id="landmark-eiffel" data-start-id="5">
+            <div class="landmark-container" id="landmark-eiffel">
                 <p>Eiffel Tower</p>
-                <img src="{{ url_for('static', filename='img/Puzzles/eiffel_destory.jpg') }}" alt="艾菲爾灰階底圖" class="base-image">
+                <img src="{{ url_for('static', filename='img/Puzzles/eiffel_destory.jpg') }}" class="base-image">
                 <div class="pieces-overlay">
-                    <div class="puzzle-piece" data-progress-id="5" data-position="0% 0%"></div>
-                    <div class="puzzle-piece" data-progress-id="6" data-position="100% 0%"></div>
-                    <div class="puzzle-piece" data-progress-id="7" data-position="0% 100%"></div>
-                    <div class="puzzle-piece" data-progress-id="8" data-position="100% 100%"></div>
+                    <div class="puzzle-piece" data-progress-id="5"></div>
+                    <div class="puzzle-piece" data-progress-id="6"></div>
+                    <div class="puzzle-piece" data-progress-id="7"></div>
+                    <div class="puzzle-piece" data-progress-id="8"></div>
                 </div>
             </div>
 
-            <div class="landmark-container" id="landmark-liberty" data-start-id="9">
+            <div class="landmark-container" id="landmark-liberty">
                 <p>Statue of Liberty</p>
-                <img src="{{ url_for('static', filename='img/Puzzles/liberty_destory.jpg') }}" alt="自由女神灰階底圖" class="base-image">
+                <img src="{{ url_for('static', filename='img/Puzzles/liberty_destory.jpg') }}" class="base-image">
                 <div class="pieces-overlay">
-                    <div class="puzzle-piece" data-progress-id="9" data-position="0% 0%"></div>
-                    <div class="puzzle-piece" data-progress-id="10" data-position="100% 0%"></div>
-                    <div class="puzzle-piece" data-progress-id="11" data-position="0% 100%"></div>
-                    <div class="puzzle-piece" data-progress-id="12" data-position="100% 100%"></div>
+                    <div class="puzzle-piece" data-progress-id="9"></div>
+                    <div class="puzzle-piece" data-progress-id="10"></div>
+                    <div class="puzzle-piece" data-progress-id="11"></div>
+                    <div class="puzzle-piece" data-progress-id="12"></div>
                 </div>
             </div>
 
-            <div class="landmark-container" id="landmark-pyramid" data-start-id="13">
+            <div class="landmark-container" id="landmark-pyramid">
                 <p>Pyramid of Egypt</p>
-                <img src="{{ url_for('static', filename='img/Puzzles/pyramid_destroy.jpg') }}" alt="金字塔灰階底圖" class="base-image">
+                <img src="{{ url_for('static', filename='img/Puzzles/pyramid_destroy.jpg') }}" class="base-image">
                 <div class="pieces-overlay">
-                    <div class="puzzle-piece" data-progress-id="13" data-position="0% 0%"></div>
-                    <div class="puzzle-piece" data-progress-id="14" data-position="100% 0%"></div>
-                    <div class="puzzle-piece" data-progress-id="15" data-position="0% 100%"></div>
-                    <div class="puzzle-piece" data-progress-id="16" data-position="100% 100%"></div>
+                    <div class="puzzle-piece" data-progress-id="13"></div>
+                    <div class="puzzle-piece" data-progress-id="14"></div>
+                    <div class="puzzle-piece" data-progress-id="15"></div>
+                    <div class="puzzle-piece" data-progress-id="16"></div>
                 </div>
             </div>
         </div>
-
     </main>
     
     <script src="{{ url_for('static', filename='js/puzzle_select.js') }}"></script>
