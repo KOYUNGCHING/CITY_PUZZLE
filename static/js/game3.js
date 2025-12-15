@@ -18,6 +18,9 @@ const restartBtn = document.getElementById("restartBtn");
 const exitBtn = document.getElementById("exitBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 
+// ★ 防止重複上傳的旗標
+let isDataSaved = false;
+
 /* ---------------------------
  * 1) Resize
  * --------------------------- */
@@ -57,8 +60,8 @@ function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
 
 /* ---------------------------
  * 4) 外星人三種：紅大 / 藍中 / 紫小
- *    value：越小越高
- *    pullSpeed：越大越慢（重）
+ * value：越小越高
+ * pullSpeed：越大越慢（重）
  * --------------------------- */
 const ALIENS = {
   small:  { color: "#ae8effff", r: 22, value: 50, pull: 5.2 }, // 紫小
@@ -577,8 +580,36 @@ function tryCatch() {
 }
 
 /* ---------------------------
- * 11) 爪子狀態機
+ * 11) 爪子狀態機與上傳邏輯
  * --------------------------- */
+
+// ★ 上傳分數 API
+async function saveGameData() {
+    if (isDataSaved) return; // 避免重複上傳
+    isDataSaved = true;
+
+    const username = localStorage.getItem('logged_in_username');
+    // ★ 100 分換 1 碎片
+    const fragments = Math.floor(score / 100); 
+
+    if (username && fragments > 0) {
+        try {
+            await fetch('/api/game_complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: username,
+                    game: 'claw',
+                    fragments: fragments
+                })
+            });
+            console.log(`Uploaded: ${fragments}`);
+        } catch (e) {
+            console.error("Upload failed", e);
+        }
+    }
+}
+
 function updateClaw() {
   const cfg = levelConfig(levelIndex + 1);
   claw.swingRange = cfg.swingRange;
@@ -624,7 +655,13 @@ function updateClaw() {
         populateLevel();
       }
 
-      state = (timeLeft <= 0) ? STATE.OVER : STATE.SWING;
+      // 檢查是否結束
+      if (timeLeft <= 0) {
+          state = STATE.OVER;
+          saveGameData(); // ★ 遊戲結束時上傳
+      } else {
+          state = STATE.SWING;
+      }
     }
   }
 }
@@ -705,6 +742,7 @@ function startTimer() {
     if (timeLeft <= 0) {
       timeLeft = 0;
       state = STATE.OVER;
+      saveGameData(); // ★ 時間到也上傳
     }
     timerSpan.textContent = "時間：" + timeLeft;
   }, 1000);
@@ -777,6 +815,7 @@ restartBtn.addEventListener("click", () => resetGame());
  * --------------------------- */
 function resetGame() {
   paused = false;
+  isDataSaved = false; // ★ 重置上傳旗標
   pauseBtn.textContent = "PAUSE";
 
   score = 0;

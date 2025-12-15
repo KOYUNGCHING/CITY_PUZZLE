@@ -381,26 +381,34 @@ function levelUp() {
     startTimer(); 
 }
 
+// ★★★ 遊戲結束處理（修正後） ★★★
 async function gameOver(isDeadlock) {
     clearInterval(timerInterval);
     isGameRunning = false;
     
-    let fragments = Math.floor(score / 100);
+    // ★ 修改：每 100 分獲得 1 個碎片
+    let fragments = Math.floor(score / 100); 
     let reason = isDeadlock ? "DEADLOCK (No Moves)" : "TIME'S UP";
     
+    // ★ 獲取 username
+    const username = localStorage.getItem('logged_in_username');
+
     try {
-        await fetch('/api/game_complete', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                game: 'collapse',
-                level: level,
-                score: score,
-                fragments: fragments
-            })
-        });
+        if (username && fragments > 0) {
+            await fetch('/api/game_complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: username,
+                    game: 'collapse',
+                    level: level,
+                    score: score,
+                    fragments: fragments
+                })
+            });
+        }
     } catch (e) {
-        console.log("Offline mode");
+        console.log("Offline mode or Upload failed");
     }
 
     showEndScreen(reason, fragments);
@@ -447,6 +455,7 @@ function updateUI() {
     if (timeLeft <= 5) bar.classList.add('critical');
     else bar.classList.remove('critical');
 
+    // UI 上也即時顯示預計能拿到的碎片
     let frags = Math.floor(score / 100);
     document.getElementById('fragment-display').innerText = frags;
 }
