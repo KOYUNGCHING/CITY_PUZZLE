@@ -36,7 +36,7 @@ let powerups = [];
 let spawnTimer = 0;
 let gameOver = false;
 let paused = false;
-let gameStarted = false;   // ✅ 必須按「開始遊戲」才會變 true
+let gameStarted = false;   // 必須按「開始遊戲」才會變 true
 let score = 0;
 
 // ==============================
@@ -75,12 +75,12 @@ function bulletHitsAnyWall(b) {
 // 難度（每 1000 分升級）
 // ==============================
 function difficultyLevel() {
-  return Math.floor(score / 1000);
+  return Math.floor(score / 500);
 }
 
 function getMaxEnemies() {
   const lvl = difficultyLevel();
-  return 10 + lvl * 5;
+  return 10 + lvl * 8;
 }
 
 function getSpawnInterval() {
@@ -161,10 +161,10 @@ function drawHPBar(px, py, r, hp, maxHp) {
 // 敵人類型（顏色→掉落/獎勵）
 // ==============================
 const ENEMY_TYPES = {
-  RED:    { key: "red",    color: "#fe6d88ff", drop: "heal",   radius: 16, maxHp: 2, speed: 110, score: 10 },
-  BLUE:   { key: "blue",   color: "#6bb8ffff", drop: "speed",  radius: 16, maxHp: 2, speed: 115, score: 10 },
-  YELLOW: { key: "yellow", color: "#ffd77bff", drop: "shield", radius: 16, maxHp: 2, speed: 105, score: 10 },
-  PURPLE_MINI: { key: "purple_mini", color: "#af80fcff", drop: null, radius: 11, maxHp: 1, speed: 150, score: 20 }
+  RED:    { key: "red",    color: "#fe6d88ff", drop: "heal",   radius: 16, maxHp: 4, speed: 110, score: 10 },
+  BLUE:   { key: "blue",   color: "#6bb8ffff", drop: "speed",  radius: 16, maxHp: 4, speed: 115, score: 10 },
+  YELLOW: { key: "yellow", color: "#ffd77bff", drop: "shield", radius: 16, maxHp: 4, speed: 105, score: 10 },
+  PURPLE_MINI: { key: "purple_mini", color: "#af80fcff", drop: null, radius: 11, maxHp: 10, speed: 150, score: 20 }
 };
 
 function purpleSpawnChance() {
@@ -513,7 +513,7 @@ function togglePause() {
 // 更新（核心）
 // ==============================
 function update(dt) {
-  if (!gameStarted) return;     // ✅ 沒按開始就不更新
+  if (!gameStarted) return;     // 沒按開始就不更新
   if (paused || gameOver) return;
 
   player.update(dt);
@@ -568,7 +568,7 @@ function update(dt) {
     const dist = Math.hypot(e.x - player.x, e.y - player.y);
     if (dist < e.radius + player.radius) {
       if (!player.hasShield()) {
-        player.hp -= 25 * dt;
+        player.hp -= 30 * dt;
         if (player.hp <= 0) {
           player.hp = 0;
           gameOver = true;
@@ -670,7 +670,7 @@ function draw() {
     ctx.fillText("Press P to Resume", WIDTH / 2, HEIGHT / 2 + 30);
   }
 
-  // ✅ 未開始遮罩（最重要：先看介紹）
+  // 未開始遮罩（最重要：先看介紹）
   if (!gameStarted) {
     ctx.fillStyle = "rgba(0,0,0,0.65)";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -711,7 +711,7 @@ function resetGame() {
 
   gameOver = false;
   paused = false;
-  gameStarted = false; // ✅ 重開後讓你可以再看介紹
+  gameStarted = false; // 重開後讓你可以再看介紹
 
   score = 0;
 
