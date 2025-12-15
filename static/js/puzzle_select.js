@@ -28,9 +28,9 @@ document.addEventListener("DOMContentLoaded", async function() {
                 // 更新錢包顯示
                 if (fragDisplay) fragDisplay.textContent = data.current_fragments;
                 
-                // ★★★ 核心：更新拼圖視覺與繁榮化 ★★★
+                // ★★★ 核心：只更新拼圖塊視覺，不進行底圖切換 ★★★
                 updatePuzzleVisuals(data.progress_id);
-                checkProsperity(data.progress_id);
+                // checkProsperity(data.progress_id); // 移除此行
                 
                 // 更新按鈕狀態
                 const cost = data.cost || 10;
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
     }
 
-    // 2. 解鎖按鈕
+    // 2. 解鎖按鈕 (保持不變)
     if (unlockBtn) {
         unlockBtn.addEventListener('click', async function() {
             try {
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
     }
 
-    // 3. 更新拼圖塊顯示 (加上 .unlocked)
+    // 3. 更新拼圖塊顯示 (保持不變，此函數實現了亮起 1/4 塊的效果)
     function updatePuzzleVisuals(unlockedCount) {
         const pieces = document.querySelectorAll('.puzzle-piece');
         pieces.forEach((piece, index) => {
@@ -96,7 +96,6 @@ document.addEventListener("DOMContentLoaded", async function() {
             }
         });
     }
-
     // 4. ★★★ 檢查是否全解鎖並切換成繁榮圖 (Prosperity) ★★★
     function checkProsperity(progress) {
         // 定義每個地標的完成門檻與圖片 ID

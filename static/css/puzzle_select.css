@@ -122,17 +122,31 @@ header h2 {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
     border: 3px solid #444;
     border-radius: 4px;
+    /* 調整高度以容納下方的標題 */
+    padding-bottom: 30px; 
+}
+
+/* 確保圖片和覆蓋層只佔用 150px 高度 */
+.base-image, .pieces-overlay {
+    width: 100%;
+    height: 150px; /* 固定圖片高度 */
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .landmark-title {
+    /* 移除所有 hover 相關的樣式 */
     position: absolute;
-    top: -30px; 
+    bottom: 5px; /* 改為固定在底部 */
+    top: auto; /* 確保 top 不會干擾 bottom */
     width: 100%;
     text-align: center;
     color: #ffcc00;
     font-weight: bold;
+    font-size: 1.1em;
     z-index: 5;
-    transition: top 0.3s;
+    /* 移除 transition: top 0.3s; */ 
 }
 
 .landmark-container:hover .landmark-title {
