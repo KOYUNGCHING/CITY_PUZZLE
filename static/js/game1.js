@@ -304,31 +304,50 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ★★★ 遊戲勝利條件檢查與 API 串接 ★★★
 async function checkWinCondition() {
     let unfinished = document.querySelector('.cell:not(.fixed):not(.locked)');
     if (!unfinished) {
         clearInterval(timerInterval);
-        let fragments = (currentDifficulty === 'easy') ? 1 : (currentDifficulty === 'medium' ? 3 : 5);
         
+        // ★ 設定數獨碎片獎勵 (1, 3, 5)
+        let fragments = 0;
+        if (currentDifficulty === 'easy') fragments = 1;
+        else if (currentDifficulty === 'medium') fragments = 3;
+        else if (currentDifficulty === 'hard') fragments = 5;
+        
+        // 獲取使用者帳號
+        const username = localStorage.getItem('logged_in_username');
+
         setTimeout(async () => {
             try {
+                // 傳送資料到後端
                 const response = await fetch('/api/game_complete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        username: username, // 必填：為了存檔
                         game: 'sudoku',
                         difficulty: currentDifficulty,
                         time_taken: seconds,
-                        fragments: fragments
+                        fragments: fragments // 傳送對應的碎片數量
                     })
                 });
+                
                 const result = await response.json();
+                
                 if(result.status === 'success') {
-                    alert(`DECRYPTION SUCCESSFUL!\n獲得碎片: ${fragments}\n時間: ${seconds}秒`);
+                    alert(`DECRYPTION SUCCESSFUL!\n獲得碎片: ${fragments}\n(已存入資料庫)`);
+                } else {
+                    // 如果沒登入或失敗，還是提示獲得碎片，但可能沒存到
+                    alert(`DECRYPTION SUCCESSFUL!\n獲得碎片: ${fragments}`);
                 }
             } catch (error) {
-                alert(`【測試過關】\n\n難度: ${currentDifficulty.toUpperCase()}\n碎片: ${fragments}\n時間: ${seconds}秒`);
+                console.error(error);
+                alert(`連線錯誤，無法儲存進度。\n獲得碎片: ${fragments}`);
             }
+            // 重新整理頁面，重置遊戲
+            location.reload();
         }, 300);
     }
 }

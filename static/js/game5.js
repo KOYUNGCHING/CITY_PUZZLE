@@ -39,6 +39,9 @@ let paused = false;
 let gameStarted = false;   // 必須按「開始遊戲」才會變 true
 let score = 0;
 
+// ★ 新增：防止重複上傳的旗標
+let dataUploaded = false;
+
 // ==============================
 // 牆壁（矩形）
 // ==============================
@@ -574,6 +577,12 @@ function update(dt) {
           gameOver = true;
           paused = false;
           pauseBtn.textContent = "⏸ 暫停 (P)";
+          
+          // ★ 新增：上傳分數
+          if (!dataUploaded) {
+              dataUploaded = true;
+              uploadScore();
+          }
         }
       }
     }
@@ -711,12 +720,39 @@ function resetGame() {
 
   gameOver = false;
   paused = false;
-  gameStarted = false; // 重開後讓你可以再看介紹
+  gameStarted = false; // ✅ 重開後讓你可以再看介紹
+  dataUploaded = false; // ★ 重置旗標
 
   score = 0;
 
   pauseBtn.textContent = "⏸ 暫停 (P)";
   lastTime = performance.now();
+}
+
+// ==============================
+// 上傳分數 API
+// ==============================
+async function uploadScore() {
+    const username = localStorage.getItem('logged_in_username');
+    // ★ 100 分換 1 碎片
+    const fragments = Math.floor(score / 100); 
+
+    if (username && fragments > 0) {
+        try {
+            await fetch('/api/game_complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: username,
+                    game: 'shooter',
+                    fragments: fragments
+                })
+            });
+            console.log("Score uploaded");
+        } catch (e) {
+            console.error("Upload failed", e);
+        }
+    }
 }
 
 // ==============================

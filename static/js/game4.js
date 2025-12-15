@@ -1057,10 +1057,34 @@ function resetGame() {
   requestAnimationFrame(step);
 }
 
-function gameOver() {
+// ★★★ 遊戲結束處理（修正後） ★★★
+async function gameOver() {
   running = false;
   paused = false;
-  flashMsg("遊戲結束：生命歸零。按「重開」再試一次！");
+  
+  // ★ 上傳分數
+  const username = localStorage.getItem('logged_in_username');
+  // ★ 修改：每 100 分獲得 1 個碎片
+  const fragments = Math.floor(score / 100);
+
+  if (username) {
+      try {
+          await fetch('/api/game_complete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  username: username,
+                  game: 'tower_defense',
+                  fragments: fragments
+              })
+          });
+          flashMsg(`遊戲結束！獲得 ${fragments} 碎片積分。`);
+      } catch (e) {
+          console.error(e);
+      }
+  } else {
+      flashMsg("遊戲結束 (未登入不紀錄分數)。");
+  }
 }
 
 /* =========================
