@@ -720,8 +720,10 @@ function resetGame() {
 
   gameOver = false;
   paused = false;
+
   gameStarted = false; // ✅ 重開後讓你可以再看介紹
   dataUploaded = false; // ★ 重置旗標
+
 
   score = 0;
 
