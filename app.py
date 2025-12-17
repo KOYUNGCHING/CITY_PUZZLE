@@ -162,7 +162,7 @@ def get_puzzle_progress():
 
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT total_fragments, current_fragments, progress_id FROM users WHERE username=?", (username,))
+    c.execute("SELECT total_fragments, current_fragments, progress_id, avatar_id FROM users WHERE username=?", (username,))
     user = c.fetchone()
     conn.close()
 
@@ -172,6 +172,7 @@ def get_puzzle_progress():
             'total_fragments': user['total_fragments'],
             'current_fragments': user['current_fragments'],
             'progress_id': user['progress_id'],
+            'avatar_id': user['avatar_id'],
             'cost': FRAGMENT_COST
         })
     return jsonify({'status': 'error'})
