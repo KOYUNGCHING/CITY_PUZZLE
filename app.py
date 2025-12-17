@@ -12,7 +12,6 @@ def calc_next_unlock_cost(progress_id: int) -> int:
     成本：10, 20, 30, ... => BASE * (progress_id + 1)
     """
     return BASE_FRAGMENT_COST * (progress_id + 1)
-
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row # 讓資料可以用欄位名稱存取
@@ -211,10 +210,10 @@ def unlock_puzzle():
         return jsonify({'status': 'fail', 'message': '碎片不足'})
         
     c.execute('''UPDATE users 
-             SET current_fragments = current_fragments - ?, 
-                 progress_id = progress_id + 1 
-             WHERE username = ?''', 
-          (cost, username))
+                 SET current_fragments = current_fragments - ?, 
+                     progress_id = progress_id + 1 
+                 WHERE username = ?''', 
+              (FRAGMENT_COST, username))
     conn.commit()
     conn.close()
     
