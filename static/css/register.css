@@ -11,7 +11,7 @@ body {
 
 /* --- 2. 核心容器 --- */
 .reg-wrapper {
-    background-image: url('../img/base_map/REGISTER_page.jpg');
+    background-image: url('../img/base_map/Register_page.jpg');
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: center;
