@@ -25,11 +25,13 @@ const SHOW_PATH_HINT = true;
 
 /* ---- 玩家塔 (Player Towers) ---- */
 const TOWER_COST = 40;            // 放塔花費（你要 50）
+const MAX_TOWERS = 30;   //  塔數上限
 const TOWER_RANGE = 3;            // 射程（格子）
 const TOWER_COOLDOWN = 0.55;      // 攻擊冷卻（秒）
-const TOWER_DAMAGE = 18;          // 傷害
+const TOWER_DAMAGE = 15;          // 傷害
 const TOWER_MAX_HP = 70;          // 塔耐久（被敵出生塔打會扣）
 const TOWER_HIT_FLASH_MS = 120;   // 被打閃紅時間（毫秒）
+const towerCountEl = document.getElementById("towerCount");
 
 /* ---- 敵方出生塔 (Enemy Spawn Base Turret) ---- */
 const ENEMY_TOWER_RANGE = 7;      // 出生塔攻擊射程（格子）
@@ -40,17 +42,17 @@ const ENEMY_TOWER_DAMAGE = 14;
 const ENEMY_BASE_HP = 120;        // 敵人基礎血量
 const ENEMY_SPEED = 2.6;          // 速度（格子/秒）
 const GOLD_PER_KILL = 8;          // 擊殺金幣
-const SCORE_PER_KILL = 20;        // 擊殺得分
+const SCORE_PER_KILL = 5;        // 擊殺得分
 const LIFE_LOSS_ON_LEAK = 1;      // 漏怪扣生命
 
 /* ---- 波次模板：小→中→大 循環（基底，不寫死最終難度） ---- */
 const WAVE_PATTERN = [
   { name: "小波", baseCount: 6, baseInterval: 1.25 },
-  { name: "中波", baseCount: 10, baseInterval: 1.05 },
-  { name: "大波", baseCount: 16, baseInterval: 0.85 }
+  { name: "中波", baseCount: 10, baseInterval: 1.25 },
+  { name: "大波", baseCount: 16, baseInterval: 1.25 }
 ];
 
-const WAVE_REST_TIME = 4.0; // 每波打完休息幾秒
+const WAVE_REST_TIME = 2.5; // 每波打完休息幾秒
 
 /* ---- 難度遞增參數（你只要調這裡） ----
    - count：每波怪數量增加
@@ -58,8 +60,8 @@ const WAVE_REST_TIME = 4.0; // 每波打完休息幾秒
    - hp：每波怪血量以比例成長（越來越硬，壓力更有感）
 */
 const COUNT_GROWTH = 0.12;      // 每波數量成長率（0.12 = +12% / 波）
-const INTERVAL_DECAY = 0.05;    // 每波間隔縮短率（0.05 = -5% / 波）
-const MIN_INTERVAL = 0.35;      // 出怪間隔下限（秒）
+const INTERVAL_DECAY = 0.08;    // 每波間隔縮短率（0.05 = -5% / 波）
+const MIN_INTERVAL = 0.2;      // 出怪間隔下限（秒）
 
 const HP_GROWTH = 0.08;         // 每波血量成長率（0.08 = +8% / 波）
 const HP_CAP = 1200;            // 血量上限（防止太誇張，可自行調整）
@@ -99,7 +101,7 @@ const BASE = {
 let running = false;
 let paused = false;
 
-let gold = 120;
+let gold = 200;
 let life = 20;
 let score = 0;
 let wave = 1;
@@ -181,6 +183,7 @@ function updateHUD() {
   lifeEl && (lifeEl.textContent = String(life));
   waveEl && (waveEl.textContent = String(wave));
   aliveEl && (aliveEl.textContent = String(enemies.filter(e => e.alive).length));
+  towerCountEl && (towerCountEl.textContent = `${towers.length}/${MAX_TOWERS}`);
 }
 
 let msgTimer = null;
@@ -817,12 +820,17 @@ function onCellClick(e) {
     return;
   }
 
-  // 金幣不足
-  if (gold < TOWER_COST) {
-    flashMsg("金幣不足。");
+  // 1️⃣ 金幣粗檢（避免白算）
+  const dynamicCost = Math.round(TOWER_COST * (1 + 0.05 * towers.length));
+  if (gold < dynamicCost) {
+    flashMsg(`金幣不足（這座塔要 ${dynamicCost}）。`);
     return;
   }
-
+  // 塔數上限檢查
+  if (towers.length >= MAX_TOWERS) {
+    flashMsg(`塔數已達上限（最多 ${MAX_TOWERS} 座）。`);
+    return;
+  }
   // 先假設這格變成阻擋，試算路徑
   gridBlocked[y][x] = true;
 
@@ -846,7 +854,7 @@ function onCellClick(e) {
   rerouteAliveEnemies();
 
   // 扣錢、加入塔、畫塔
-  gold -= TOWER_COST;
+  gold -= dynamicCost;
   towers.push(makeTower(x, y));
   paintTowerCell(x, y);
 
