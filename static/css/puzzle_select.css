@@ -148,7 +148,33 @@ header h2 {
 }
 
 .puzzle-piece.unlocked { opacity: 1; }
+/* 讓拼圖塊本體可做特效 */
+.puzzle-piece {
+  position: absolute;
+  opacity: 0;
+  transform: scale(0.98);
+  filter: brightness(0.9);
+  transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
+}
 
+/* 解鎖後顯示 + 播放一次動畫 */
+.puzzle-piece.unlocked {
+  opacity: 1;
+  transform: scale(1);
+  filter: brightness(1);
+  animation: unlockPop 520ms ease-out 1;
+}
+
+/* 解鎖瞬間：亮一下 + 稍微放大 */
+@keyframes unlockPop {
+  0%   { transform: scale(0.92); filter: brightness(0.85); }
+  45%  { transform: scale(1.06); filter: brightness(1.35); }
+  100% { transform: scale(1.00); filter: brightness(1.00); }
+}
+/* 強制重播動畫用 */
+.puzzle-piece.just-unlocked {
+  animation: unlockPop 520ms ease-out 1;
+}
 /* --- 4. 四塊固定位置 + 固定切圖座標 --- */
 /* 解鎖順序：左上 → 右上 → 左下 → 右下 */
 
