@@ -164,10 +164,10 @@ function drawHPBar(px, py, r, hp, maxHp) {
 // 敵人類型（顏色→掉落/獎勵）
 // ==============================
 const ENEMY_TYPES = {
-  RED:    { key: "red",    color: "#fe6d88ff", drop: "heal",   radius: 16, maxHp: 8, speed: 110, score: 10 },
-  BLUE:   { key: "blue",   color: "#6bb8ffff", drop: "speed",  radius: 16, maxHp: 8, speed: 115, score: 10 },
-  YELLOW: { key: "yellow", color: "#ffd77bff", drop: "shield", radius: 16, maxHp: 8, speed: 105, score: 10 },
-  PURPLE_MINI: { key: "purple_mini", color: "#af80fcff", drop: null, radius: 11, maxHp: 15, speed: 150, score: 20 }
+  RED:    { key: "red",    color: "#fe6d88ff", drop: "heal",   radius: 16, maxHp: 5, speed: 110, score: 10 },
+  BLUE:   { key: "blue",   color: "#6bb8ffff", drop: "speed",  radius: 16, maxHp: 5, speed: 115, score: 10 },
+  YELLOW: { key: "yellow", color: "#ffd77bff", drop: "shield", radius: 16, maxHp: 5, speed: 105, score: 10 },
+  PURPLE_MINI: { key: "purple_mini", color: "#af80fcff", drop: null, radius: 11, maxHp: 10, speed: 150, score: 20 }
 };
 
 function purpleSpawnChance() {
