@@ -4,7 +4,14 @@ import os
 
 app = Flask(__name__)
 DB_NAME = "city_puzzle.db"
-FRAGMENT_COST = 10 
+BASE_FRAGMENT_COST = 10
+def calc_next_unlock_cost(progress_id: int) -> int:
+    """
+    progress_id = 已解鎖的塊數 (0~16)
+    下一塊是第 (progress_id + 1) 塊
+    成本：10, 20, 30, ... => BASE * (progress_id + 1)
+    """
+    return BASE_FRAGMENT_COST * (progress_id + 1)
 
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
@@ -173,7 +180,7 @@ def get_puzzle_progress():
             'current_fragments': user['current_fragments'],
             'progress_id': user['progress_id'],
             'avatar_id': user['avatar_id'],
-            'cost': FRAGMENT_COST
+            'cost': calc_next_unlock_cost(user['progress_id'])
         })
     return jsonify({'status': 'error'})
 
@@ -193,27 +200,28 @@ def unlock_puzzle():
         
     current = user['current_fragments']
     pid = user['progress_id']
+    cost = calc_next_unlock_cost(pid)
 
     if pid >= 16:
         conn.close()
         return jsonify({'status': 'fail', 'message': '已全部解鎖'})
 
-    if current < FRAGMENT_COST:
+    if current < cost:
         conn.close()
         return jsonify({'status': 'fail', 'message': '碎片不足'})
         
     c.execute('''UPDATE users 
-                 SET current_fragments = current_fragments - ?, 
-                     progress_id = progress_id + 1 
-                 WHERE username = ?''', 
-              (FRAGMENT_COST, username))
+             SET current_fragments = current_fragments - ?, 
+                 progress_id = progress_id + 1 
+             WHERE username = ?''', 
+          (cost, username))
     conn.commit()
     conn.close()
     
     return jsonify({
         'status': 'success', 
         'message': '解鎖成功！',
-        'new_fragments': current - FRAGMENT_COST,
+        'new_fragments': current - cost,
         'new_progress_id': pid + 1
     })
 

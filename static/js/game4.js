@@ -41,7 +41,7 @@ const ENEMY_TOWER_DAMAGE = 14;
 /* ---- 敵人 (Enemies) ---- */
 const ENEMY_BASE_HP = 120;        // 敵人基礎血量
 const ENEMY_SPEED = 2.6;          // 速度（格子/秒）
-const GOLD_PER_KILL = 8;          // 擊殺金幣
+const GOLD_PER_KILL = 10;          // 擊殺金幣
 const SCORE_PER_KILL = 5;        // 擊殺得分
 const LIFE_LOSS_ON_LEAK = 1;      // 漏怪扣生命
 
