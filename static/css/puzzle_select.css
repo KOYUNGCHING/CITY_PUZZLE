@@ -2,188 +2,186 @@
 
 /* --- 1. 全頁背景圖設定 --- */
 body {
-    font-family: 'Arial', sans-serif;
-    /* 讓內容層疊在背景圖之上 */
-    position: relative; 
-    z-index: 1; 
-    width: 100%; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #f0f0f0;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    overflow: hidden; /* 防止滾動條出現 */
+  font-family: 'Arial', sans-serif;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
-/* 添加一個偽元素作為背景層 */
+/* 背景層 */
 body::before {
-    content: '';
-    position: fixed; 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    /* 修正背景圖路徑：從 css/ 退回一層到 static/，再進入 img/ 找 home_page.jpg */
-    background-image: url('../img/base_map/home_page.jpg'); 
-    background-size: cover; 
-    background-position: center; 
-    
-    /* 淡化濾鏡 */
-    filter: brightness(0.3) grayscale(50%); 
-    z-index: -1; 
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../img/base_map/home_page.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.3) grayscale(50%);
+  z-index: -1;
 }
 
-
-/* --- 2. header/controls 樣式 (添加半透明背景讓文字清晰) --- */
+/* --- 2. header/controls --- */
 header {
-    width: 100%;
-    padding: 15px 50px;
-    background-color: rgba(128, 66, 63, 0.8); /* 讓 header 半透明 */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    margin-bottom: 20px;
+  width: 100%;
+  padding: 15px 50px;
+  background-color: rgba(128, 66, 63, 0.8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
 }
 
 header h2 {
-    margin: 0;
-    color: #fff;
-    flex-grow: 1;
-    text-align: center;
+  margin: 0;
+  color: #fff;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .back-button {
-    text-decoration: none;
-    color: #ffcc00;
-    padding: 8px 15px;
-    border: 1px solid #ffcc00;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+  text-decoration: none;
+  color: #ffcc00;
+  padding: 8px 15px;
+  border: 1px solid #ffcc00;
+  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
 .back-button:hover {
-    background-color: #ffcc00;
-    color: #1a1a2e;
+  background-color: #ffcc00;
+  color: #1a1a2e;
 }
 
 #user-info {
-    text-align: right;
-    font-weight: bold;
+  text-align: right;
+  font-weight: bold;
 }
 
-/* --- 控制台樣式 --- */
 #controls {
-    margin-bottom: 30px;
-    padding: 15px 30px;
-    background-color: rgba(119, 33, 33, 0.9); /* 讓控制台更不透明 */
-    border-radius: 8px;
-    text-align: center;
+  margin-bottom: 30px;
+  padding: 15px 30px;
+  background-color: rgba(119, 33, 33, 0.9);
+  border-radius: 8px;
+  text-align: center;
 }
 
 #controls button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #ffcc00;
-    color: #1a1a2e;
-    border: none;
-    border-radius: 5px; 
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ffcc00;
+  color: #1a1a2e;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
-#controls button:hover:not(:disabled) {
-    background-color: #e0b000;
-}
-
+#controls button:hover:not(:disabled) { background-color: #e0b000; }
 #controls button:disabled {
-    background-color: #555;
-    cursor: not-allowed;
-    color: #ccc;
+  background-color: #555;
+  cursor: not-allowed;
+  color: #ccc;
 }
 
-/* --- 3. 拼圖主體樣式 --- */
-
+/* --- 3. 拼圖主體 --- */
 .landmark-row {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
+  display: flex;
+  gap: 20px;
+  padding: 20px;
 }
 
 .landmark-container {
-    position: relative;
-    width: 250px; 
-    height: 150px; 
-    overflow: hidden;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-    border: 3px solid #444;
-    border-radius: 4px;
+  position: relative;
+  width: 250px;
+  height: 180px;           /* 150 圖 + 30 標題 */
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+  border: 3px solid #444;
+  border-radius: 4px;
+  padding-bottom: 30px;
 }
 
-.landmark-title {
-    position: absolute;
-    top: -30px; 
-    width: 100%;
-    text-align: center;
-    color: #ffcc00;
-    font-weight: bold;
-    z-index: 5;
-    transition: top 0.3s;
-}
-
-.landmark-container:hover .landmark-title {
-    top: 5px; 
-}
-
-/* 圖片底圖和覆蓋層 */
-.base-image, .pieces-overlay {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.base-image {
-    display: block;
-    filter: brightness(0.5); 
-}
-
-.pieces-overlay {
-    filter: grayscale(100%); 
-}
-
-/* 單個拼圖塊的通用樣式 */
+/* 圖層：固定 150px 高度 */
+.base-image,
+.pieces-overlay,
 .puzzle-piece {
-    position: absolute;
-    width: 50%; 
-    height: 50%; 
-    opacity: 0; 
-    transition: opacity 1s ease-in-out; 
-    background-size: 200% 200%; 
-    background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
 }
 
-/* 解鎖時的樣式 */
-.unlocked {
-    opacity: 1;
+/* 底圖：預設灰階（未解鎖狀態） */
+.base-image {
+  display: block;
+  object-fit: cover;
+  z-index: 1;
+  filter: grayscale(100%) brightness(0.5);
+}
+/* 灰階遮罩：不需要了，直接關掉 */
+.pieces-overlay {
+  display: none !important;
 }
 
-/* --- 4. 彩色拼圖塊背景圖路徑修正 --- */
-/* 從 static/css/ 退回一層到 static/，再進入 img/Puzzles/ 找圖片 */
+/* 拼圖塊：出現時遮掉灰階（因為在 overlay 之上） */
+.puzzle-piece {
+  width: 50%;
+  height: 50%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  background-repeat: no-repeat;
+  background-size: 200% 200%;  /* ✅ 2x2 切圖的關鍵 */
+  z-index: 3;
+}
+
+.puzzle-piece.unlocked { opacity: 1; }
+
+/* --- 4. 四塊固定位置 + 固定切圖座標 --- */
+/* 解鎖順序：左上 → 右上 → 左下 → 右下 */
+
+.puzzle-piece.p1 { top: 0;    left: 0;    background-position: 0%   0%;   }
+.puzzle-piece.p2 { top: 0;    left: 50%;  background-position: 100% 0%;   }
+.puzzle-piece.p3 { top: 50%;  left: 0;    background-position: 0%   100%; }
+.puzzle-piece.p4 { top: 50%;  left: 50%;  background-position: 100% 100%; }
+
+/* 標題 */
+.landmark-title {
+  position: absolute;
+  bottom: 5px;
+  width: 100%;
+  text-align: center;
+  color: #ffcc00;
+  font-weight: bold;
+  font-size: 1.1em;
+  z-index: 5;
+}
+
+/* --- 5. 每個地標拼圖塊的彩色來源圖（同一張圖切四塊） --- */
 #landmark-101 .puzzle-piece {
-    background-image: url('../img/Puzzles/101_prosperity.jpg'); 
+  background-image: url('../img/Puzzles/101_prosperity.jpg');
 }
+
 #landmark-eiffel .puzzle-piece {
-    background-image: url('../img/Puzzles/eiffel_prosperity.jpg'); 
+  background-image: url('../img/Puzzles/eiffel_prosperity.jpg');
 }
+
 #landmark-liberty .puzzle-piece {
-    background-image: url('../img/Puzzles/liberty_prosperity.jpg'); 
+  background-image: url('../img/Puzzles/liberty_prosperity.jpg');
 }
+
 #landmark-pyramid .puzzle-piece {
-    background-image: url('../img/Puzzles/pyramid_prosperity.jpg'); 
+  background-image: url('../img/Puzzles/pyramid_prosperity.jpg');
 }

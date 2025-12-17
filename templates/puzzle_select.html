@@ -1,77 +1,88 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧩 ＰＵＺＺＬＥＳ</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle_select.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧩 ＰＵＺＺＬＥＳ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/puzzle_select.css') }}">
 </head>
 <body>
 
-    <header>
-        <a href="/home" class="back-button">BACK</a>
-        <h2>拼圖 - 收集進度</h2>
-        <div id="user-info">
-            <span id="username-display"></span> | 持有碎片: <span id="current-fragments">0</span>
-        </div>
-    </header>
-
-    <div id="controls">
-        <p>解鎖下一塊拼圖需要 <span id="cost">10</span> 碎片。</p>
-        <button id="unlock-button">
-            解鎖下一塊拼圖 (消費 <span id="cost-display">10</span> 碎片)
-        </button>
-        <p id="message"></p>
+  <header>
+    <a href="/home" class="back-button">BACK</a>
+    <h2>拼圖 - 收集進度</h2>
+    <div id="user-info">
+      <span id="username-display"></span> | 持有碎片: <span id="current-fragments">0</span>
     </div>
+  </header>
 
-    <main id="puzzle-main">
-        <div class="landmark-row">
-            <div class="landmark-container" id="landmark-101">
-                <p>Taipei 101</p>
-                <img src="{{ url_for('static', filename='img/Puzzles/101_destroy.jpg') }}" class="base-image">
-                <div class="pieces-overlay">
-                    <div class="puzzle-piece" data-progress-id="1"></div>
-                    <div class="puzzle-piece" data-progress-id="2"></div>
-                    <div class="puzzle-piece" data-progress-id="3"></div>
-                    <div class="puzzle-piece" data-progress-id="4"></div>
-                </div>
-            </div>
+  <div id="controls">
+    <p>解鎖下一塊拼圖需要 <span id="cost">10</span> 碎片。</p>
+    <button id="unlock-button">
+      解鎖下一塊拼圖 (消費 <span id="cost-display">10</span> 碎片)
+    </button>
+    <p id="message"></p>
+  </div>
 
-            <div class="landmark-container" id="landmark-eiffel">
-                <p>Eiffel Tower</p>
-                <img src="{{ url_for('static', filename='img/Puzzles/eiffel_destory.jpg') }}" class="base-image">
-                <div class="pieces-overlay">
-                    <div class="puzzle-piece" data-progress-id="5"></div>
-                    <div class="puzzle-piece" data-progress-id="6"></div>
-                    <div class="puzzle-piece" data-progress-id="7"></div>
-                    <div class="puzzle-piece" data-progress-id="8"></div>
-                </div>
-            </div>
+  <main id="puzzle-main">
+    <div class="landmark-row">
 
-            <div class="landmark-container" id="landmark-liberty">
-                <p>Statue of Liberty</p>
-                <img src="{{ url_for('static', filename='img/Puzzles/liberty_destory.jpg') }}" class="base-image">
-                <div class="pieces-overlay">
-                    <div class="puzzle-piece" data-progress-id="9"></div>
-                    <div class="puzzle-piece" data-progress-id="10"></div>
-                    <div class="puzzle-piece" data-progress-id="11"></div>
-                    <div class="puzzle-piece" data-progress-id="12"></div>
-                </div>
-            </div>
+      <!-- ========== 101 (1~4) ========== -->
+      <div class="landmark-container" id="landmark-101">
+        <img src="{{ url_for('static', filename='img/Puzzles/101_prosperity.jpg') }}" class="base-image" alt="Taipei 101">
+        <div class="pieces-overlay" aria-hidden="true"></div>
 
-            <div class="landmark-container" id="landmark-pyramid">
-                <p>Pyramid of Egypt</p>
-                <img src="{{ url_for('static', filename='img/Puzzles/pyramid_destroy.jpg') }}" class="base-image">
-                <div class="pieces-overlay">
-                    <div class="puzzle-piece" data-progress-id="13"></div>
-                    <div class="puzzle-piece" data-progress-id="14"></div>
-                    <div class="puzzle-piece" data-progress-id="15"></div>
-                    <div class="puzzle-piece" data-progress-id="16"></div>
-                </div>
-            </div>
-        </div>
-    </main>
-    
-    <script src="{{ url_for('static', filename='js/puzzle_select.js') }}"></script>
+        <!-- 解鎖順序：左上 → 右上 → 左下 → 右下 -->
+        <div class="puzzle-piece p1" data-progress-id="1"></div>
+        <div class="puzzle-piece p2" data-progress-id="2"></div>
+        <div class="puzzle-piece p3" data-progress-id="3"></div>
+        <div class="puzzle-piece p4" data-progress-id="4"></div>
+
+        <p class="landmark-title">Taipei 101</p>
+      </div>
+
+      <!-- ========== Eiffel (5~8) ========== -->
+      <div class="landmark-container" id="landmark-eiffel">
+        <img src="{{ url_for('static', filename='img/Puzzles/eiffel_prosperity.jpg') }}" class="base-image" alt="Eiffel Tower">
+        <div class="pieces-overlay" aria-hidden="true"></div>
+
+        <div class="puzzle-piece p1" data-progress-id="5"></div>
+        <div class="puzzle-piece p2" data-progress-id="6"></div>
+        <div class="puzzle-piece p3" data-progress-id="7"></div>
+        <div class="puzzle-piece p4" data-progress-id="8"></div>
+
+        <p class="landmark-title">Eiffel Tower</p>
+      </div>
+
+      <!-- ========== Liberty (9~12) ========== -->
+      <div class="landmark-container" id="landmark-liberty">
+        <img src="{{ url_for('static', filename='img/Puzzles/liberty_prosperity.jpg') }}" class="base-image" alt="Statue of Liberty">
+        <div class="pieces-overlay" aria-hidden="true"></div>
+
+        <div class="puzzle-piece p1" data-progress-id="9"></div>
+        <div class="puzzle-piece p2" data-progress-id="10"></div>
+        <div class="puzzle-piece p3" data-progress-id="11"></div>
+        <div class="puzzle-piece p4" data-progress-id="12"></div>
+
+        <p class="landmark-title">Statue of Liberty</p>
+      </div>
+
+      <!-- ========== Pyramid (13~16) ========== -->
+      <div class="landmark-container" id="landmark-pyramid">
+        <img src="{{ url_for('static', filename='img/Puzzles/pyramid_prosperity.jpg') }}" class="base-image" alt="Pyramid of Egypt">
+        <div class="pieces-overlay" aria-hidden="true"></div>
+
+        <div class="puzzle-piece p1" data-progress-id="13"></div>
+        <div class="puzzle-piece p2" data-progress-id="14"></div>
+        <div class="puzzle-piece p3" data-progress-id="15"></div>
+        <div class="puzzle-piece p4" data-progress-id="16"></div>
+
+        <p class="landmark-title">Pyramid of Egypt</p>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/puzzle_select.js') }}"></script>
 </body>
 </html>

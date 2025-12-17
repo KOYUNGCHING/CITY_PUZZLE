@@ -44,7 +44,7 @@ let state = STATE.SWING;
 let score = 0;
 let levelIndex = 0;     // 0-based
 let currentTarget = 60;
-let timeLeft = 60;
+let timeLeft = 30;
 let timerId = null;
 
 let paused = false;
@@ -645,6 +645,19 @@ function updateClaw() {
       claw.len = claw.minLen;
 
       if (caughtItem) {
+
+        // ★【新增】第一次就夾到隕石 → 直接 Game Over
+        if (score === 0 && caughtItem.type === "meteor") {
+          score += caughtItem.value;          // 分數變 -20（可顯示）
+          scoreSpan.textContent = "Score: " + score;
+
+          state = STATE.OVER;                 // 直接結束
+          saveGameData();                     // 上傳紀錄
+          caughtItem = null;
+          return;                             // ★ 非常重要：立刻中斷
+        }
+
+        // 原本正常流程
         score += caughtItem.value;
         scoreSpan.textContent = "Score: " + score;
         caughtItem = null;
