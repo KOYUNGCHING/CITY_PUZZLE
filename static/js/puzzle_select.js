@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const costDisplay = document.getElementById("cost-display");
   const costSpan = document.getElementById("cost");
   const messageP = document.getElementById("message");
-
+  let lastUnlockedCount = 0;
   // 地標分段：每 4 塊完成一張
   const LANDMARKS = [
     { id: "landmark-101", min: 4 },
@@ -38,16 +38,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ========== 2. 更新視覺：拼圖塊 + 灰階遮罩 ==========
   function updatePuzzleVisuals(unlockedCount) {
-  // 依 progress_id 決定每一塊要不要顯示
-  document.querySelectorAll(".puzzle-piece").forEach((piece) => {
-    const pid = parseInt(piece.dataset.progressId, 10);
-    if (pid <= unlockedCount) {
-      piece.classList.add("unlocked");   // 顯示彩色 1/4
-    } else {
-      piece.classList.remove("unlocked"); // 隱藏
-    }
+    document.querySelectorAll(".puzzle-piece").forEach((piece) => {
+        const pid = parseInt(piece.dataset.progressId, 10);
+
+        if (pid <= unlockedCount) {
+        // 已解鎖：顯示
+        if (!piece.classList.contains("unlocked")) {
+            piece.classList.add("unlocked");
+        }
+
+        // 只有「這次新解鎖」的那一塊才亮一下
+        if (pid === unlockedCount && unlockedCount !== lastUnlockedCount) {
+            piece.classList.remove("just-unlocked"); // 先移除一次，確保重播
+            void piece.offsetWidth;                  // 觸發 reflow
+            piece.classList.add("just-unlocked");
+
+            setTimeout(() => piece.classList.remove("just-unlocked"), 600);
+        }
+        } else {
+        // 未解鎖：隱藏
+        piece.classList.remove("unlocked");
+        piece.classList.remove("just-unlocked");
+        }
     });
-}
+
+    lastUnlockedCount = unlockedCount;
+    }
 
   // ========== 3. 更新按鈕狀態 ==========
   function updateUnlockButton({ progress_id, current_fragments, cost }) {
