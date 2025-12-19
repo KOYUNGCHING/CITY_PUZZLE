@@ -111,7 +111,7 @@ body {
 .color-1 { background: #ff3333; border: 2px solid #ff6666; } 
 .color-2 { background: #3388ff; border: 2px solid #66aaff; } 
 .color-3 { background: #33ff66; border: 2px solid #66ff88; } 
-.color-4 { background: #ffff33; border: 2px solid #ffff88; } 
+.color-4 { background: #f9ffe0; border: 2px solid #ffffff; } 
 
 .block.vanishing { transform: scale(0); opacity: 0; }
 .block.connected-hint { filter: brightness(1.3); box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
