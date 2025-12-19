@@ -213,7 +213,7 @@ def unlock_puzzle():
                  SET current_fragments = current_fragments - ?, 
                      progress_id = progress_id + 1 
                  WHERE username = ?''', 
-              (FRAGMENT_COST, username))
+              (cost, username))
     conn.commit()
     conn.close()
     
@@ -225,4 +225,4 @@ def unlock_puzzle():
     })
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5050, debug=True)
+    app.run(host="127.0.0.1", port=5000)
