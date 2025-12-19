@@ -213,7 +213,7 @@ def unlock_puzzle():
                  SET current_fragments = current_fragments - ?, 
                      progress_id = progress_id + 1 
                  WHERE username = ?''', 
-              (FRAGMENT_COST, username))
+              (cost, username))
     conn.commit()
     conn.close()
     
